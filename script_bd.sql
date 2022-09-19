@@ -1,7 +1,5 @@
-/*CREATE DATABASE IF NOT EXISTS GRAND_GALOP DEFAULT CHARACTER SET UTF8MB4 COLLATE utf8_general_ci;
+CREATE DATABASE IF NOT EXISTS GRAND_GALOP DEFAULT CHARACTER SET utf8 COLLATE utf8_general_ci;
 USE GRAND_GALOP;
-*/
-
 
 -- supression des tables avant des les créées
 
@@ -14,28 +12,6 @@ drop table if exists PERSONNE;
 
 -- création des tables
 
-CREATE TABLE CLIENT (
-  idp int,
-  cotisationA boolean,
-  PRIMARY KEY (idp)
-) ENGINE=InnoDB DEFAULT CHARSET=UTF8MB4;  
-
-
-CREATE TABLE COURS (
-  idc int,
-  nomc VARCHAR(42),
-  descc VARCHAR(42),
-  typec VARCHAR(42),
-  prix decimal(4,2),
-  PRIMARY KEY (idc)
-) ENGINE=InnoDB DEFAULT CHARSET=UTF8MB4;
-
-
-
-CREATE TABLE MONITEUR (
-  idp int,
-  PRIMARY KEY (idp)
-) ENGINE=InnoDB DEFAULT CHARSET=UTF8MB4;
 
 CREATE TABLE PERSONNE (
   idp int,
@@ -52,6 +28,30 @@ CREATE TABLE PERSONNE (
   PRIMARY KEY (idp)
 ) ENGINE=InnoDB DEFAULT CHARSET=UTF8MB4;
 
+
+CREATE TABLE MONITEUR (
+  idp int,
+  PRIMARY KEY (idp)
+) ENGINE=InnoDB DEFAULT CHARSET=UTF8MB4;
+
+
+CREATE TABLE CLIENT (
+  idp int,
+  cotisationA boolean,
+  PRIMARY KEY (idp)
+) ENGINE=InnoDB DEFAULT CHARSET=UTF8MB4;  
+
+
+CREATE TABLE COURS (
+  idc int,
+  nomc VARCHAR(42),
+  descc VARCHAR(300),
+  typec VARCHAR(42),
+  prix decimal(4.2),
+  PRIMARY KEY (idc)
+) ENGINE=InnoDB DEFAULT CHARSET=UTF8MB4;
+
+
 CREATE TABLE PONEYS (
   idpo int,
   nomp VARCHAR(42),
@@ -59,13 +59,14 @@ CREATE TABLE PONEYS (
   PRIMARY KEY (idpo)
 ) ENGINE=InnoDB DEFAULT CHARSET=UTF8MB4;
 
+
 CREATE TABLE RESERVER (
 
   jmahms datetime,
   idp int,
   idc int,
   idpo int,
-  duree time,
+  duree time check (HOUR(duree) <= 2),
   a_paye boolean,
   PRIMARY KEY (jmahms, idp, idpo)
 ) ENGINE=InnoDB DEFAULT CHARSET=UTF8MB4;
@@ -77,3 +78,6 @@ ALTER TABLE CLIENT ADD FOREIGN KEY (idp) REFERENCES PERSONNE (idp);
 
 ALTER TABLE RESERVER ADD FOREIGN KEY (idpo) REFERENCES PONEYS (idpo);
 ALTER TABLE RESERVER ADD FOREIGN KEY (idc) REFERENCES COURS (idc);
+
+-- ALTER TABLE ADD CONSTRAINT CHK_Poids CHECK ((select poids from PERSONNE where idp = RESERVER.idp) <= (select poidssup from PONEYS where idpo = PONEYS.idpo));
+-- à modifier ci-dessus (permet de vérifier que la personne qui reserve à un poids conforme pour le poney)
