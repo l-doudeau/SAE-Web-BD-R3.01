@@ -47,12 +47,12 @@ insert into PERSONNE values(1, "Doudeau", "Luis", 2003-10-03, 70, "luis.doudeau@
                             (10, "Retour", "Erve", 2010-10-10, 50, "roides10@icloud.com", "10 rue des dix", 10000, "Troyes", 0710101010, "troyesmais10:p");
 
 insert into PONEYS values(1, "Chacha", 180),
-                            (2, "Michella", ),
-                            (1, "Chacha", 180),
-                            (1, "Chacha", 180),
-                            (1, "Chacha", 180),
-                            (1, "Chacha", 180),
-                            (1, "Chacha", 180),
-                            (1, "Chacha", 180),
-                            (1, "Chacha", 180),
-                            (1, "Chacha", 180),
+                            (2, "Michella", 30),
+                            (3, "Parapluie", 42),
+                            (4, "Merveille", 101),
+                            (5, "Shakira", 100),
+                            (6, "Souja boy", 55),
+                            (7, "Prune", 84),
+                            (8, "Virgule", 40),
+                            (9, "Bouteille", 62),
+                            (10, "Mure", 71);
