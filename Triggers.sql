@@ -18,3 +18,23 @@ create trigger verifPoids before insert on RESERVER for each row
 delimiter ;
 
 -- si le cours est un cours collectif, le nombre de personne max est 10
+
+delimiter |
+
+create or replace trigger ajoutPersonneCollectif before insert on RESERVER for each row
+begin
+  declare nbmax int;
+  declare nbPersonnes int;
+  declare typeCours VARCHAR(42);
+  declare mes VARCHAR(100);
+  set nbmax = 10;
+  select count(idp) into nbPersonnes from RESERVER where idc = new.idc and jmahms = new.jmahms;
+  select typec into typeCours from RESERVER where idc = new.idc and jmahms = new.jmahms;
+  if typeCours = "Collectif" then
+    if nbPersonnes + 1 > nbmax then
+      set mes = concat ("Inscription impossible à l'activité avec l'id : ", new.ida, " car elle est complète");
+      signal SQLSTATE '45000' set MESSAGE_TEXT = mes;
+    enf if;
+  end if;
+end |
+delimiter ;
