@@ -32,9 +32,9 @@ begin
   select typec into typeCours from RESERVER where idc = new.idc and jmahms = new.jmahms;
   if typeCours = "Collectif" then
     if nbPersonnes + 1 > nbmax then
-      set mes = concat ("Inscription impossible à l'activité avec l'id : ", new.ida, " car elle est complète");
+      set mes = concat ("Inscription impossible à l'activité avec l'id : ", new.idc, " car elle est complète");
       signal SQLSTATE '45000' set MESSAGE_TEXT = mes;
-    enf if;
+    end if;
   end if;
 end |
 delimiter ;
