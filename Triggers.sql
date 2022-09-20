@@ -1,6 +1,8 @@
+drop trigger if exists verifPoids;
+
 delimiter |
 
-create or replace trigger verifPoids before insert on RESERVER for each row
+create trigger verifPoids before insert on RESERVER for each row
     begin 
         declare poidsup decimal(3.3);
         declare poidsPersonne decimal(3.3);
@@ -14,3 +16,5 @@ create or replace trigger verifPoids before insert on RESERVER for each row
     end |
 
 delimiter ;
+
+-- si le cours est un cours collectif, le nombre de personne max est 10
