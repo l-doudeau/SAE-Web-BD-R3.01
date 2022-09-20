@@ -1,5 +1,5 @@
---CREATE DATABASE IF NOT EXISTS GRAND_GALOP DEFAULT CHARACTER SET utf8 COLLATE utf8_general_ci;
---USE GRAND_GALOP;
+-- CREATE DATABASE IF NOT EXISTS GRAND_GALOP DEFAULT CHARACTER SET utf8 COLLATE utf8_general_ci;
+-- USE GRAND_GALOP;
 
 -- supression des tables avant des les créées
 
@@ -62,7 +62,7 @@ CREATE TABLE PONEYS (
 
 CREATE TABLE RESERVER (
 
-  jmahms datetime,
+  jmahms datetime check (HOUR(jmahms) >= 8 and HOUR(jmahms)<=20),
   idp int,
   idc int,
   idpo int,
@@ -80,4 +80,4 @@ ALTER TABLE RESERVER ADD FOREIGN KEY (idpo) REFERENCES PONEYS (idpo);
 ALTER TABLE RESERVER ADD FOREIGN KEY (idc) REFERENCES COURS (idc);
 
 -- ALTER TABLE ADD CONSTRAINT CHK_Poids CHECK ((select poids from PERSONNE where idp = RESERVER.idp) <= (select poidssup from PONEYS where idpo = PONEYS.idpo));
--- à modifier ci-dessus (permet de vérifier que la personne qui reserve à un poids conforme pour le poney)
+-- peut-être mieux que le trigger 'verifPoids'
