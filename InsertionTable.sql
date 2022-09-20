@@ -94,12 +94,13 @@ insert into PONEYS values   (1, "Chacha", 180),
                             
 insert into RESERVER values(STR_TO_DATE("13-01-2014 12:30:00", "%d-%m-%Y %H:%i:%s"), 1, 1, 1, STR_TO_DATE("01:00:00", "%H:%i:%s"), true),
                             (STR_TO_DATE('07-06-2015 10:00:00',"%d-%m-%Y %H:%i:%s"), 2, 14, 2, STR_TO_DATE('02:00:00', "%H:%i:%s"), false), 
-                            (STR_TO_DATE('18-07-2015 14:00:00',"%d-%m-%Y %H:%i:%s"), 3, 3, 4, STR_TO_DATE('02:00:00', "%H:%i:%s"), true),
-                            (STR_TO_DATE('03-10-2017 16:00:00',"%d-%m-%Y %H:%i:%s"), 4, 12, 4, STR_TO_DATE('02:00:00', "%H:%i:%s"), true), 
-                            (STR_TO_DATE('24-09-2019 08:40:00',"%d-%m-%Y %H:%i:%s"), 5, 9, 7, STR_TO_DATE('02:00:00', "%H:%i:%s"), false),
+                            (STR_TO_DATE('18-07-2015 14:00:00',"%d-%m-%Y %H:%i:%s"), 3, 3, 4, STR_TO_DATE('02:00:00', "%H:%i:%s"), true), 
+                            (STR_TO_DATE('18-07-2015 16:30:00',"%d-%m-%Y %H:%i:%s"), 4, 12, 4, STR_TO_DATE('02:00:00', "%H:%i:%s"), true), -- pas possible car poney doit reposé au moins 1h
+                            (STR_TO_DATE('18-07-2015 18:30:00',"%d-%m-%Y %H:%i:%s"), 5, 9, 4, STR_TO_DATE('02:00:00', "%H:%i:%s"), false), -- fonctionne si on compte qu'au bout de 1h pile le poney peut de nouveau courrir
                             (STR_TO_DATE('11-01-2021 10:00:00',"%d-%m-%Y %H:%i:%s"), 6, 11, 7, STR_TO_DATE('01:00:00', "%H:%i:%s"), true), 
                             (STR_TO_DATE('14-01-2021 11:30:00',"%d-%m-%Y %H:%i:%s"), 7, 11, 1, STR_TO_DATE('02:00:00', "%H:%i:%s"), false),
-                            (STR_TO_DATE('28-03-2021 14:05:00',"%d-%m-%Y %H:%i:%s"), 8, 11, 5, STR_TO_DATE('01:00:00', "%H:%i:%s"), true), 
+                            (STR_TO_DATE('14-01-2021 12:05:00',"%d-%m-%Y %H:%i:%s"), 8, 11, 5, STR_TO_DATE('01:00:00', "%H:%i:%s"), true), -- CETTE INSERTION + CELLE D'AVANT = 2 SUR LE MEME COURS A LA MM HEURE AVEC CHEVAUX DIFFÉRENTS DONC VOIR SI ON PEUT
                             (STR_TO_DATE('31-08-2022 18:00:00',"%d-%m-%Y %H:%i:%s"), 9, 2, 3, STR_TO_DATE('01:00:00', "%H:%i:%s"), false),
                             (STR_TO_DATE('24-01-2022 15:30:00',"%d-%m-%Y %H:%i:%s"), 2, 14, 1, STR_TO_DATE('02:00:00', "%H:%i:%s"), false), 
                             (STR_TO_DATE('24-01-2022 16:30:00',"%d-%m-%Y %H:%i:%s"), 2, 10, 1, STR_TO_DATE('01:00:00', "%H:%i:%s"), true); -- impossible car la même personne à une séance au même moment
+
