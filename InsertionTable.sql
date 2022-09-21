@@ -7,7 +7,7 @@ insert into PERSONNE values (1, "Doudeau", "Luis", STR_TO_DATE('2003-10-03', '%Y
                             (7, "Plu", "Dinspi", STR_TO_DATE('2002-11-01', '%Y-%m-%d'), 150, "salut@gmail.com", "1 rue du lac", 12000, "Rodez", 0691919191, "INSPI123REV!"),
                             (8, "Plu", "Claude", STR_TO_DATE('1965-01-02', '%Y-%m-%d'), 85, "JCjc@icloud.com", "1 rue du lac", 12000, "Rodez", 0681818181, "JCAHJCAH"),
                             (9, "Chirac", "Jacques", STR_TO_DATE('1989-08-07', '%Y-%m-%d'), 90,"Jesuisunfake@gmail.com", "84 rue du fake", 18260, "Barlieu", 0707080707, "fakercmoi!"),
-                            (10, "Retour", "Erve", STR_TO_DATE('2010-10-10', '%Y-%m-%d'), 90, "roides10@icloud.com", "10 rue des dix", 10000, "Troyes", 0710101010, "troyesmais10:p"),
+                            (10, "Retour", "Erve", STR_TO_DATE('2010-10-10', '%Y-%m-%d'), 10, "roides10@icloud.com", "10 rue des dix", 10000, "Troyes", 0710101010, "troyesmais10:p"),
                             (11, "Retour", "Erve", STR_TO_DATE('2010-10-10', '%Y-%m-%d'), 90, "roides10@icloud.com", "10 rue des dix", 10000, "Troyes", 0710101010, "troyesmais10:p"),
                             (12, "Retour", "Erve", STR_TO_DATE('2010-10-10', '%Y-%m-%d'), 90,"roides10@icloud.com", "10 rue des dix", 10000, "Troyes", 0710101010, "troyesmais10:p"),
                             (13, "Retour", "Erve", STR_TO_DATE('2010-10-10', '%Y-%m-%d'), 90,"roides10@icloud.com", "10 rue des dix", 10000, "Troyes", 0710101010, "troyesmais10:p"),
@@ -93,21 +93,8 @@ insert into PONEYS values   (1, "Chacha", 180),
 
                             
 insert into RESERVER values(STR_TO_DATE("13-01-2014 08:30:00", "%d-%m-%Y %H:%i:%s"), 1, 1, 1, STR_TO_DATE("01:00:00", "%H:%i:%s"), true),
-                            (STR_TO_DATE('07-06-2015 10:00:00',"%d-%m-%Y %H:%i:%s"), 2, 14, 6, STR_TO_DATE('02:00:00', "%H:%i:%s"), false), 
-                            (STR_TO_DATE('18-07-2015 14:00:00',"%d-%m-%Y %H:%i:%s"), 3, 3, 4, STR_TO_DATE('02:00:00', "%H:%i:%s"), true), 
-                            (STR_TO_DATE('18-07-2015 16:30:00',"%d-%m-%Y %H:%i:%s"), 4, 12, 4, STR_TO_DATE('02:00:00', "%H:%i:%s"), true), -- pas possible car poney doit reposé au moins 1h
-                            (STR_TO_DATE('18-07-2015 18:30:00',"%d-%m-%Y %H:%i:%s"), 5, 9, 4, STR_TO_DATE('02:00:00', "%H:%i:%s"), false), -- fonctionne si on compte qu'au bout de 1h pile le poney peut de nouveau courrir
-                            (STR_TO_DATE('11-01-2021 10:00:00',"%d-%m-%Y %H:%i:%s"), 6, 11, 1, STR_TO_DATE('01:00:00', "%H:%i:%s"), true), 
-                            (STR_TO_DATE('14-01-2021 11:30:00',"%d-%m-%Y %H:%i:%s"), 7, 11, 1, STR_TO_DATE('02:00:00', "%H:%i:%s"), false),
-                            (STR_TO_DATE('14-01-2021 12:05:00',"%d-%m-%Y %H:%i:%s"), 8, 11, 5, STR_TO_DATE('01:00:00', "%H:%i:%s"), true), -- CETTE INSERTION + CELLE D'AVANT = 2 SUR LE MEME COURS A LA MM HEURE AVEC CHEVAUX DIFFÉRENTS DONC VOIR SI ON PEUT
-                            (STR_TO_DATE('31-08-2022 18:00:00',"%d-%m-%Y %H:%i:%s"), 9, 2, 1, STR_TO_DATE('01:00:00', "%H:%i:%s"), false),
-                            (STR_TO_DATE('25-01-2022 15:30:00',"%d-%m-%Y %H:%i:%s"), 5, 14, 1, STR_TO_DATE('02:00:00', "%H:%i:%s"), false), 
-                            (STR_TO_DATE('25-01-2022 14:30:00',"%d-%m-%Y %H:%i:%s"), 2, 10, 1, STR_TO_DATE('04:00:00', "%H:%i:%s"), true),
-                            (STR_TO_DATE('24-01-2022 16:30:00',"%d-%m-%Y %H:%i:%s"), 1, 10, 1, STR_TO_DATE('01:00:00', "%H:%i:%s"), true),    
-                            (STR_TO_DATE('24-01-2022 16:30:00',"%d-%m-%Y %H:%i:%s"), 15, 10, 1, STR_TO_DATE('01:00:00', "%H:%i:%s"), true),             
-                            (STR_TO_DATE('24-01-2022 16:30:00',"%d-%m-%Y %H:%i:%s"), 3, 10, 1, STR_TO_DATE('01:00:00', "%H:%i:%s"), true), 
-                            (STR_TO_DATE('24-01-2022 16:30:00',"%d-%m-%Y %H:%i:%s"), 4, 10, 1, STR_TO_DATE('01:00:00', "%H:%i:%s"), true), 
-                            (STR_TO_DATE('31-08-2022 16:00:00',"%d-%m-%Y %H:%i:%s"), 5, 3, 5, STR_TO_DATE('02:00:00', "%H:%i:%s"), true), 
-                            (STR_TO_DATE('31-08-2022 08:00:00',"%d-%m-%Y %H:%i:%s"), 5, 10, 4, STR_TO_DATE('01:00:00', "%H:%i:%s"), true),
-                            (STR_TO_DATE('31-08-2022 12:00:00',"%d-%m-%Y %H:%i:%s"), 12, 10, 4, STR_TO_DATE('02:00:00', "%H:%i:%s"), true),
-                            (STR_TO_DATE('31-08-2022 14:00:00',"%d-%m-%Y %H:%i:%s"), 11, 8, 4, STR_TO_DATE('02:00:00', "%H:%i:%s"), true);
+                            (STR_TO_DATE('07-06-2015 10:00:00',"%d-%m-%Y %H:%i:%s"), 2, 14, 6, STR_TO_DATE('02:00:00', "%H:%i:%s"), false),
+                            (STR_TO_DATE('25-01-2022 14:30:00',"%d-%m-%Y %H:%i:%s"), 2, 10, 1, STR_TO_DATE('02:00:00', "%H:%i:%s"), true),
+                            (STR_TO_DATE('24-01-2022 10:00:00',"%d-%m-%Y %H:%i:%s"), 1, 10, 1, STR_TO_DATE('01:00:00', "%H:%i:%s"), true),    
+                            (STR_TO_DATE('24-01-2022 16:00:00',"%d-%m-%Y %H:%i:%s"), 2, 11, 1, STR_TO_DATE('02:00:00', "%H:%i:%s"), true),             
+                            (STR_TO_DATE('24-01-2022 17:00:00',"%d-%m-%Y %H:%i:%s"), 3, 12, 1, STR_TO_DATE('01:00:00', "%H:%i:%s"), true);
