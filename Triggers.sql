@@ -46,18 +46,20 @@ end |
 
 -- permet de vérifier que le client n'a pas déja un cours au horaire de sa nouvelle réservation
 
+delimiter |
+
 create trigger ajoutPersonneHoraire before insert on RESERVER for each row 
 begin 
   declare msg VARCHAR(300);
-  declare coursAncien time;
+  declare debutAncien time;
   declare dureeAncien time;
-  declare coursNew time;
+  declare debutNew time;
   declare dureeNew time;
-  select TIME(jmahms) into coursAncien from RESERVER where idp = new.idp and year(jmahms) = year(new.jmahms) and month(jmahms) = month(new.jmahms) and day(jmahms) = day(new.jmahms);
+  select TIME(jmahms) into debutAncien from RESERVER where idp = new.idp and year(jmahms) = year(new.jmahms) and month(jmahms) = month(new.jmahms) and day(jmahms) = day(new.jmahms);
   select TIME(duree) into dureeAncien from RESERVER where idp = new.idp and year(jmahms) = year(new.jmahms) and month(jmahms) = month(new.jmahms) and day(jmahms) = day(new.jmahms);
-  select TIME(new.jmahms) into coursNew from RESERVER where idp = new.idp and year(jmahms) = year(new.jmahms) and month(jmahms) = month(new.jmahms) and day(jmahms) = day(new.jmahms);
+  select TIME(new.jmahms) into debutNew from RESERVER where idp = new.idp and year(jmahms) = year(new.jmahms) and month(jmahms) = month(new.jmahms) and day(jmahms) = day(new.jmahms);
   select TIME(new.duree) into dureeNew from RESERVER where idp = new.idp and year(jmahms) = year(new.jmahms) and month(jmahms) = month(new.jmahms) and day(jmahms) = day(new.jmahms);
-  if ((coursNew <= coursAncien) and (ADDTIME(coursNew,dureeNew) >= coursAncien)) or ((coursNew <= ADDTIME(coursAncien, dureeAncien)) and (ADDTIME(coursNew,dureeNew) >= ADDTIME(coursAncien,dureeAncien))) or (coursNew <= coursAncien and ADDTIME(coursNew,dureeNew) >= ADDTIME(coursAncien,dureeAncien)) or (coursNew >= coursAncien and ADDTIME(coursNew,dureeNew) <= ADDTIME(coursAncien,dureeAncien)) then 
+  if (debutAncien > debutNew and ADDTIME(debutNew, dureeNew) > debutAncien or debutAncien < debutNew and debutNew < ADDTIME(debutAncien, dureeAncien)) then 
     set msg = concat ("Inscription impossible à l'activité car le même client à déja un cours à cette heure");
     signal SQLSTATE '45000' set MESSAGE_TEXT = msg;
   end if;
@@ -66,3 +68,5 @@ end |
 delimiter ;
 
 -- trigger sur le repos des chevaux
+
+
