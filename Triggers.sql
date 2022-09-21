@@ -48,7 +48,7 @@ end |
 
 delimiter |
 
-create trigger ajoutPersonneHoraire before insert on RESERVER for each row 
+create or replace trigger ajoutPersonneHoraire before insert on RESERVER for each row 
 begin 
   declare msg VARCHAR(300);
   declare debutAncien time;
@@ -67,6 +67,26 @@ end |
 
 delimiter ;
 
+
+delimiter |
+
+create or replace trigger verifHeureRepos before insert on RESERVER for each row
+begin
+  declare msg VARCHAR(300);
+  declare debutAncien time;
+  declare dureeAncien time ;
+  declare debutNew time;
+
+  select TIME(duree) into dureeAncien from RESERVER where idpo = new.idpo and year(jmahms) = year(new.jmahms) and month(jmahms) = month(new.jmahms) and day(jmahms) = day(new.jmahms) and TIMEDIFF(HOUR(new.jmahms), HOUR(jmahms)) <= TIME("02:00:00");
+  if dureeAncien = TIME("02:00:00") then
+    set msg = concat ("Inscription impossible à l'activité car le cheval n'a pas eu le temps de se reposer");
+    signal SQLSTATE '45000' set MESSAGE_TEXT = msg;
+  end if;
+end |
+
+delimiter ;
 -- trigger sur le repos des chevaux
 
 
+select TIME(duree) into dureeAncien from RESERVER where idpo = new.idpo and year(jmahms) = year(new.jmahms) 
+ and month(jmahms) = month(new.jmahms) and day(jmahms) = day(new.jmahms) and TIMEDIFF(HOUR(new.jmahms), HOUR(jmahms) <= TIME("02:00:00"))

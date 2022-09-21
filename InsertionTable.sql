@@ -101,11 +101,13 @@ insert into RESERVER values(STR_TO_DATE("13-01-2014 08:30:00", "%d-%m-%Y %H:%i:%
                             (STR_TO_DATE('14-01-2021 11:30:00',"%d-%m-%Y %H:%i:%s"), 7, 11, 1, STR_TO_DATE('02:00:00', "%H:%i:%s"), false),
                             (STR_TO_DATE('14-01-2021 12:05:00',"%d-%m-%Y %H:%i:%s"), 8, 11, 5, STR_TO_DATE('01:00:00', "%H:%i:%s"), true), -- CETTE INSERTION + CELLE D'AVANT = 2 SUR LE MEME COURS A LA MM HEURE AVEC CHEVAUX DIFFÉRENTS DONC VOIR SI ON PEUT
                             (STR_TO_DATE('31-08-2022 18:00:00',"%d-%m-%Y %H:%i:%s"), 9, 2, 1, STR_TO_DATE('01:00:00', "%H:%i:%s"), false),
-                            (STR_TO_DATE('25-01-2022 15:30:00',"%d-%m-%Y %H:%i:%s"), 2, 14, 1, STR_TO_DATE('02:00:00', "%H:%i:%s"), false), 
+                            (STR_TO_DATE('25-01-2022 15:30:00',"%d-%m-%Y %H:%i:%s"), 5, 14, 1, STR_TO_DATE('02:00:00', "%H:%i:%s"), false), 
                             (STR_TO_DATE('25-01-2022 14:30:00',"%d-%m-%Y %H:%i:%s"), 2, 10, 1, STR_TO_DATE('04:00:00', "%H:%i:%s"), true),
                             (STR_TO_DATE('24-01-2022 16:30:00',"%d-%m-%Y %H:%i:%s"), 1, 10, 1, STR_TO_DATE('01:00:00', "%H:%i:%s"), true),    
                             (STR_TO_DATE('24-01-2022 16:30:00',"%d-%m-%Y %H:%i:%s"), 15, 10, 1, STR_TO_DATE('01:00:00', "%H:%i:%s"), true),             
                             (STR_TO_DATE('24-01-2022 16:30:00',"%d-%m-%Y %H:%i:%s"), 3, 10, 1, STR_TO_DATE('01:00:00', "%H:%i:%s"), true), 
                             (STR_TO_DATE('24-01-2022 16:30:00',"%d-%m-%Y %H:%i:%s"), 4, 10, 1, STR_TO_DATE('01:00:00', "%H:%i:%s"), true), 
-                            (STR_TO_DATE('31-08-2022 18:00:00',"%d-%m-%Y %H:%i:%s"), 5, 3, 1, STR_TO_DATE('01:00:00', "%H:%i:%s"), true), 
-                            (STR_TO_DATE('24-01-2022 16:30:00',"%d-%m-%Y %H:%i:%s"), 12, 10, 1, STR_TO_DATE('01:00:00', "%H:%i:%s"), true); 
+                            (STR_TO_DATE('31-08-2022 16:00:00',"%d-%m-%Y %H:%i:%s"), 5, 3, 5, STR_TO_DATE('02:00:00', "%H:%i:%s"), true), 
+                            (STR_TO_DATE('31-08-2022 08:00:00',"%d-%m-%Y %H:%i:%s"), 5, 10, 4, STR_TO_DATE('01:00:00', "%H:%i:%s"), true),
+                            (STR_TO_DATE('31-08-2022 12:00:00',"%d-%m-%Y %H:%i:%s"), 12, 10, 4, STR_TO_DATE('02:00:00', "%H:%i:%s"), true),
+                            (STR_TO_DATE('31-08-2022 14:00:00',"%d-%m-%Y %H:%i:%s"), 11, 8, 4, STR_TO_DATE('02:00:00', "%H:%i:%s"), true);
