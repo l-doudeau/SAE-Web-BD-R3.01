@@ -93,9 +93,9 @@ insert into PONEYS values   (1, "Chacha", 180),
 
                             
 insert into RESERVER values(STR_TO_DATE("13-01-2014 08:30:00", "%d-%m-%Y %H:%i:%s"), 1, 1, 1, STR_TO_DATE("01:00:00", "%H:%i:%s"), true),
-                            (STR_TO_DATE('07-06-2015 08:59:59',"%d-%m-%Y %H:%i:%s"), 2, 14, 6, STR_TO_DATE('02:00:00', "%H:%i:%s"), false),
-                            (STR_TO_DATE('25-01-2022 08:00:01',"%d-%m-%Y %H:%i:%s"), 2, 10, 1, STR_TO_DATE('01:00:00', "%H:%i:%s"), true),
-                            (STR_TO_DATE('24-01-2022 20:00:00',"%d-%m-%Y %H:%i:%s"), 1, 10, 1, STR_TO_DATE('01:00:00', "%H:%i:%s"), true),    
-                            (STR_TO_DATE('24-01-2022 20:00:00',"%d-%m-%Y %H:%i:%s"), 4, 10, 1, STR_TO_DATE('01:00:00', "%H:%i:%s"), true),    
+                            (STR_TO_DATE('07-06-2015 08:59:59',"%d-%m-%Y %H:%i:%s"), 2, 14, 6, STR_TO_DATE('00:30:00', "%H:%i:%s"), false),
+                            (STR_TO_DATE('25-01-2022 08:00:01',"%d-%m-%Y %H:%i:%s"), 2, 10, 1, STR_TO_DATE('02:00:00', "%H:%i:%s"), true),
+                            (STR_TO_DATE('24-01-2022 20:00:00',"%d-%m-%Y %H:%i:%s"), 1, 10, 1, STR_TO_DATE('00:30:01', "%H:%i:%s"), true),    
+                            (STR_TO_DATE('24-01-2022 20:00:00',"%d-%m-%Y %H:%i:%s"), 4, 10, 1, STR_TO_DATE('02:00:00', "%H:%i:%s"), true),    
                             (STR_TO_DATE('24-01-2022 16:00:00',"%d-%m-%Y %H:%i:%s"), 2, 11, 1, STR_TO_DATE('01:00:00', "%H:%i:%s"), true),             
                             (STR_TO_DATE('24-01-2022 14:00:00',"%d-%m-%Y %H:%i:%s"), 3, 12, 1, STR_TO_DATE('01:00:00', "%H:%i:%s"), true);

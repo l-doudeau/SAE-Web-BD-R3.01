@@ -67,7 +67,7 @@ CREATE TABLE RESERVER (
   idp int,
   idc int,
   idpo int,
-  duree time check (HOUR(duree) <= 2),
+  duree time,
   a_paye boolean,
   PRIMARY KEY (jmahms, idp, idpo)
 ) ENGINE=InnoDB DEFAULT CHARSET=UTF8MB4;

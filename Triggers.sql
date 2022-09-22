@@ -44,6 +44,34 @@ begin
 end |
 delimiter ;
 
+delimiter |
+create trigger verifHeuresMaxCours before insert on RESERVER for each row
+BEGIN
+  declare msg VARCHAR(300);
+  declare fini int DEFAULT false;
+  declare dureeNew int;
+  declare lesReservations cursor for
+  select TIME(new.duree) as dureeNew from RESERVER;
+
+  DECLARE CONTINUE handler for not found set fini = TRUE;
+
+  open lesReservations;
+    boucle_reservations : LOOP
+    FETCH lesReservations INTO dureeNew;
+      IF fini THEN
+        LEAVE boucle_reservations;
+      END IF;
+
+      IF dureeNew < TIME("00:30:00") or dureeNew > TIME("02:00:00") then
+        set msg = concat("Réservation impossible car un cours dure entre 30min et 2 heures.", new.idp, new.idpo);
+        signal SQLSTATE '45000' set MESSAGE_TEXT = msg;
+      end if;
+    end LOOP;
+  close lesReservations;
+end |
+delimiter ;
+
+
 -- trigger permettant que si le cours est un cours collectif, le nombre de personne max est de 10
 
 create trigger ajoutPersonneCollectif before insert on RESERVER for each row
