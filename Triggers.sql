@@ -17,6 +17,32 @@ create trigger verifPoids before insert on RESERVER for each row
             signal SQLSTATE '45000' set MESSAGE_TEXT = msg;
         end if;
     end |
+delimiter ;
+
+delimiter |
+create trigger verifHeureReservation before insert on RESERVER for each ROW
+begin
+  declare heureNew int;
+  declare msg VARCHAR(300);
+  declare fini INT default false;
+  declare lesReservations cursor for
+  select TIME(new.jmahms) as heureNew from RESERVER;
+  DECLARE CONTINUE HANDLER FOR NOT FOUND SET fini = TRUE;
+
+  OPEN lesReservations;
+    boucle_reservations: LOOP
+    FETCH lesReservations INTO heureNew;
+      IF fini THEN
+        LEAVE boucle_reservations;
+      END IF;
+      if heureNew < TIME("08:00:00") or heureNew > TIME("20:00:00") then
+        set msg = concat(" Réservation impossible car elles ne sont possibles qu'entre 8 heures et 20 heures.", new.idp, new.idpo);
+        signal SQLSTATE '45000' set MESSAGE_TEXT = msg;
+      end if;
+    end LOOP;
+  close lesReservations;
+end |
+delimiter ;
 
 -- trigger permettant que si le cours est un cours collectif, le nombre de personne max est de 10
 
@@ -157,3 +183,5 @@ begin
   CLOSE heureRepos;
 end |
 delimiter;
+
+
