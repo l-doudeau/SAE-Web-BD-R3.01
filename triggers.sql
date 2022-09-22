@@ -2,8 +2,10 @@ drop trigger if exists verifPoids;
 drop trigger if exists ajoutPersonneCollectif;
 drop trigger if exists ajoutPersonneHoraire;
 drop trigger if exists verifHeureRepos;
+drop trigger if exists verifHeureReservation;
+drop trigger if exists verifHeuresMaxCours;
 
-delimiter |
+delimiter | 
 
 create trigger verifPoids before insert on RESERVER for each row
     begin 
@@ -17,9 +19,8 @@ create trigger verifPoids before insert on RESERVER for each row
             signal SQLSTATE '45000' set MESSAGE_TEXT = msg;
         end if;
     end |
-delimiter ;
 
-delimiter |
+
 create trigger verifHeureReservation before insert on RESERVER for each ROW
 begin
   declare heureNew int;
@@ -42,9 +43,10 @@ begin
     end LOOP;
   close lesReservations;
 end |
-delimiter ;
 
-delimiter |
+
+-- trigger qui permet de verifier la duree du cours, qu'elle ne soit pas trop petite ou trop grande
+
 create trigger verifHeuresMaxCours before insert on RESERVER for each row
 BEGIN
   declare msg VARCHAR(300);
@@ -69,7 +71,6 @@ BEGIN
     end LOOP;
   close lesReservations;
 end |
-delimiter ;
 
 
 -- trigger permettant que si le cours est un cours collectif, le nombre de personne max est de 10
@@ -100,50 +101,7 @@ end |
 
 -- permet de vérifier que le client n'a pas déja un cours au horaire de sa nouvelle réservation
 
--- version mauvaise
-
--- delimiter |
-
--- create trigger ajoutPersonneHoraire before insert on RESERVER for each row
--- begin 
---   declare msg VARCHAR(300);
---   declare debutAncien time;
---   declare dureeAncien time;
---   declare debutNew time;
---   declare dureeNew time;
---   declare fini boolean default false;
---   declare lesReservations cursor for
---     select TIME(jmahms), TIME(duree) 
---     from RESERVER 
---     where idp = new.idp and year(jmahms) = year(new.jmahms) 
---     and month(jmahms) = month(new.jmahms) and day(jmahms) = day(new.jmahms);
---   declare continue handler for not found set fini = true;
---     select TIME(new.jmahms)into debutNew
---     from RESERVER 
---     where idp = new.idp and year(jmahms) = year(new.jmahms) and month(jmahms) = month(new.jmahms) and day(jmahms) = day(new.jmahms);
---     select TIME(new.duree) into dureeNew
---     from RESERVER 
---     where idp = new.idp and year(jmahms) = year(new.jmahms) and month(jmahms) = month(new.jmahms) and day(jmahms) = day(new.jmahms);
---   open lesReservations;
---   while not fini do
---     fetch lesReservations into debutAncien, dureeAncien;
---     if not fini then
---       if (debutAncien > debutNew and ADDTIME(debutNew, dureeNew) > debutAncien or debutAncien < debutNew and debutNew < ADDTIME(debutAncien, dureeAncien)) then 
---         set msg = concat ("Inscription impossible à l'activité car le même client à déja un cours à cette heure");
---         signal SQLSTATE '45000' set MESSAGE_TEXT = msg;
---       end if;
---     end if;
---   end while;
---   close lesReservations;
--- end |
-
--- delimiter ;
-
-
--- bonne version
-
-DROP TRIGGER IF EXISTS ajoutPersonneHoraire2;
-CREATE TRIGGER ajoutPersonneHoraire2 BEFORE INSERT ON RESERVER
+CREATE TRIGGER ajoutPersonneHoraire BEFORE INSERT ON RESERVER
 FOR EACH ROW
 BEGIN
     DECLARE done INT DEFAULT FALSE;
@@ -172,7 +130,6 @@ END |
 
 -- trigger sur le repos des chevaux
 
-delimiter |
 create trigger verifHeureRepos before insert on RESERVER for each row
 begin
   declare msg VARCHAR(300);
@@ -210,6 +167,7 @@ begin
     END LOOP;
   CLOSE heureRepos;
 end |
-delimiter;
+
+delimiter ;
 
 
