@@ -168,6 +168,47 @@ begin
   CLOSE heureRepos;
 end |
 
+delimiter |
+
+create or replace trigger verifPayement before insert on RESERVER for each row
+ begin 
+  declare msg VARCHAR(90);
+  declare verifPayementAnnuel boolean;
+  declare verifPayementCours boolean;
+  declare fini boolean DEFAULT false;
+
+  DECLARE lesReservations CURSOR FOR 
+  select cotisationA, a_paye
+  from CLIENT natural join RESERVER;
+
+  DECLARE CONTINUE HANDLER FOR NOT FOUND SET fini = true;
+
+  open lesReservations;
+    boucle_heure : LOOP
+      FETCH lesReservations into verifPayementAnnuel, verifPayementCours;
+      IF fini THEN
+        LEAVE boucle_heure;
+      END IF;
+
+      
+
+      if (verifPayementAnnuel = false) and (verifPayementCours = true) then 
+          set msg = concat ("Inscription impossible à l'activité : ", new.idp, ", car la cotisation anuelle n'est pas payé");
+          signal SQLSTATE '45000' set MESSAGE_TEXT = msg;
+      end if;
+      if (verifPayementAnnuel = true) and (verifPayementCours = false) then 
+          set msg = concat ("Inscription impossible à l'activité : " , new.idp, ", car le payement du cours n'est pas effectués");
+          signal SQLSTATE '45000' set MESSAGE_TEXT = msg;
+      end if;
+      if (verifPayementAnnuel = false) or (verifPayementCours = false) then 
+          set msg = concat ("Inscription impossible à l'activité : ", new.idp, ", car la cotisation anuelle n'est pas payé et le payement du cours n'est pas effectués");
+          signal SQLSTATE '45000' set MESSAGE_TEXT = msg;
+      end if;
+    end LOOP;
+  close lesReservations;
+end |
+
 delimiter ;
 
 
+  --select a_paye into verifPayementCours from CLIENT natural join RESERVER where new.idp = idp;
