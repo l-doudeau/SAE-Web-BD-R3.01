@@ -171,3 +171,35 @@ end |
 delimiter ;
 
 
+delimiter |
+
+create trigger verifPayement before insert on RESERVER for each row
+begin
+  declare msg VARCHAR(300);
+  declare cotistationAnnuelle boolean;
+  declare payementCours boolean ;
+  declare fini int DEFAULT FALSE;
+  declare lesReservations cursor for 
+  select cotisationA as cotistationAnnuelle, a_paye as payementCours
+  from RESERVER natural join CLIENT
+  where idp = new.idp;
+
+  DECLARE CONTINUE HANDLER FOR NOT FOUND SET fini = TRUE;
+
+  open lesReservations;
+    boucle_heure : LOOP
+      FETCH lesReservations into cotistationAnnuelle, payementCours;
+      IF fini THEN
+        LEAVE boucle_heure;
+      END IF;
+        if cotistationAnnuelle = false or payementCours = false then
+          set msg = concat (" idp", new.idp, " cotA ",cotistationAnnuelle, " PayCours",payementCours);
+          signal SQLSTATE '45000' set MESSAGE_TEXT = msg;
+        end if;
+    END LOOP;
+  CLOSE lesReservations;
+end |
+
+delimiter ;
+
+--Inscription impossible à l'activité car la cotisation annuelle ou le payement du cours n'a pas encore était effectué
