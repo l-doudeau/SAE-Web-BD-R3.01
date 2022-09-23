@@ -1,11 +1,19 @@
+-- suppressions des triggers 
+
 drop trigger if exists verifPoids;
 drop trigger if exists ajoutPersonneCollectif;
 drop trigger if exists ajoutPersonneHoraire;
 drop trigger if exists verifHeureRepos;
 drop trigger if exists verifHeureReservation;
 drop trigger if exists verifHeuresMaxCours;
+drop trigger if exists verifPayementFonctionnel;
+drop trigger if exists verifPersonneReserveDansClient;
+
+-- les triggers 
 
 delimiter | 
+
+-- trigger permettant de verifier que le client ait reserver un poney pouvant soutenir son poids
 
 create trigger verifPoids before insert on RESERVER for each row
     begin 
@@ -20,6 +28,8 @@ create trigger verifPoids before insert on RESERVER for each row
         end if;
     end |
 
+
+-- verifie que les horaires de la reservation du cours sont conformes au horaires du club   
 
 create trigger verifHeureReservation before insert on RESERVER for each ROW
 begin
@@ -168,54 +178,8 @@ begin
   CLOSE heureRepos;
 end |
 
-*/*
-delimiter |
 
-create trigger verifPayement before insert on RESERVER for each row
- begin 
-  declare msg VARCHAR(90);
-  declare verifPayementAnnuel boolean;
-  declare verifPayementCours boolean;
-  declare fini boolean DEFAULT false;
-
-  DECLARE lesReservations CURSOR FOR 
-  select new.a_paye, cotisationA
-  from RESERVER natural join CLIENT;
-
-  DECLARE CONTINUE HANDLER FOR NOT FOUND SET fini = true;
-
-
-
-
-  open lesReservations;
-    boucle_heure : LOOP
-      FETCH lesReservations into verifPayementCours, verifPayementAnnuel;
-
-
-
-      IF fini THEN
-        LEAVE boucle_heure;
-      END IF;
-      if verifPayementAnnuel = false and verifPayementCours = false then
-          set msg = concat (" LES 2 idp", new.idp, " cotA ",verifPayementAnnuel, " PayCours",verifPayementCours);
-          signal SQLSTATE '45000' set MESSAGE_TEXT = msg;
-      end if;
-        if verifPayementAnnuel = false and verifPayementCours = true then
-          set msg = concat (" SEULEMENT ANNUEL idp", new.idp, " cotA ",verifPayementAnnuel, " PayCours",verifPayementCours);
-          signal SQLSTATE '45000' set MESSAGE_TEXT = msg;
-      end if;
-      if verifPayementAnnuel = true and verifPayementCours = false then
-          set msg = concat (" SEULEMENT PAYEMENT COURS idp", new.idp, " cotA ",verifPayementAnnuel, " PayCours",verifPayementCours);
-          signal SQLSTATE '45000' set MESSAGE_TEXT = msg;
-      end if;
-    end LOOP;
-  close lesReservations;
-end |
-
-delimiter ;
-/*/*
-
-delimiter |
+-- trigger permettant de vérifier que lors d'une réservation, le client a bien payé sa cotisation annuel et son cours 
 
 create trigger verifPayementFonctionnel before insert on RESERVER for each row
 begin
@@ -224,8 +188,8 @@ begin
   declare payementCours boolean ;
   declare fini int DEFAULT FALSE;
   declare lesReservations cursor for 
-  select cotisationA as cotistationAnnuelle, a_paye as payementCours
-  from RESERVER natural join CLIENT
+  select cotisationA as cotistationAnnuelle, new.a_paye as payementCours
+  from CLIENT
   where idp = new.idp;
 
   DECLARE CONTINUE HANDLER FOR NOT FOUND SET fini = TRUE;
@@ -236,15 +200,36 @@ begin
       IF fini THEN
         LEAVE boucle_heure;
       END IF;
-        if cotistationAnnuelle = false or payementCours = false then
-          set msg = concat (" idp", new.idp, " cotA ",cotistationAnnuelle, " PayCours",payementCours);
+        if cotistationAnnuelle = false and payementCours = true then
+          set msg = concat ("Impossible de réserver l'activité : ", new.idc, ", car la cotisation annuel n'est pas réglé");
+          signal SQLSTATE '45000' set MESSAGE_TEXT = msg;
+        end if;
+        if cotistationAnnuelle = true and payementCours = false then
+          set msg = concat ("Impossible de réserver l'activité : ", new.idc, ", car le payement du cours n'est pas réglé");
+          signal SQLSTATE '45000' set MESSAGE_TEXT = msg;
+        end if;
+        if cotistationAnnuelle = false and payementCours = false then
+          set msg = concat ("Impossible de réserver l'activité : ", new.idc, ", car la cotisation annuel et le payement du cours ne sont pas réglés");
           signal SQLSTATE '45000' set MESSAGE_TEXT = msg;
         end if;
     END LOOP;
   CLOSE lesReservations;
 end |
 
-delimiter ;
 
---Inscription impossible à l'activité car la cotisation annuelle ou le payement du cours n'a pas encore était effectué
-  --select a_paye into verifPayementCours from CLIENT natural join RESERVER where new.idp = idp;
+-- trigger verifiant que la personne qui souhaite réserver un cours, soit bien inscrite en tant que cliente
+
+create trigger verifPersonneReserveDansClient before insert on RESERVER for each row
+  begin 
+    declare msg VARCHAR(300);
+    declare dansClient int;
+    declare pasDansClient int default 0;
+    select ifnull(count(new.idp), 0) as dansClient into dansClient from CLIENT where new.idp = idp;
+
+    if pasDansClient = dansClient then
+      set msg = concat ("Inscription impossible à l'activité car la personne : ", new.idp, " n'est pas inscrite en tant que cliente");
+      signal SQLSTATE '45000' set MESSAGE_TEXT = msg;
+    end if; 
+  end |
+
+delimiter ;
