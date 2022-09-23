@@ -168,9 +168,10 @@ begin
   CLOSE heureRepos;
 end |
 
+*/*
 delimiter |
 
-create or replace trigger verifPayement before insert on RESERVER for each row
+create trigger verifPayement before insert on RESERVER for each row
  begin 
   declare msg VARCHAR(90);
   declare verifPayementAnnuel boolean;
@@ -178,30 +179,33 @@ create or replace trigger verifPayement before insert on RESERVER for each row
   declare fini boolean DEFAULT false;
 
   DECLARE lesReservations CURSOR FOR 
-  select cotisationA, a_paye
-  from CLIENT natural join RESERVER;
+  select new.a_paye, cotisationA
+  from RESERVER natural join CLIENT;
 
   DECLARE CONTINUE HANDLER FOR NOT FOUND SET fini = true;
 
+
+
+
   open lesReservations;
     boucle_heure : LOOP
-      FETCH lesReservations into verifPayementAnnuel, verifPayementCours;
+      FETCH lesReservations into verifPayementCours, verifPayementAnnuel;
+
+
+
       IF fini THEN
         LEAVE boucle_heure;
       END IF;
-
-      
-
-      if (verifPayementAnnuel = false) and (verifPayementCours = true) then 
-          set msg = concat ("Inscription impossible à l'activité : ", new.idp, ", car la cotisation anuelle n'est pas payé");
+      if verifPayementAnnuel = false and verifPayementCours = false then
+          set msg = concat (" LES 2 idp", new.idp, " cotA ",verifPayementAnnuel, " PayCours",verifPayementCours);
           signal SQLSTATE '45000' set MESSAGE_TEXT = msg;
       end if;
-      if (verifPayementAnnuel = true) and (verifPayementCours = false) then 
-          set msg = concat ("Inscription impossible à l'activité : " , new.idp, ", car le payement du cours n'est pas effectués");
+        if verifPayementAnnuel = false and verifPayementCours = true then
+          set msg = concat (" SEULEMENT ANNUEL idp", new.idp, " cotA ",verifPayementAnnuel, " PayCours",verifPayementCours);
           signal SQLSTATE '45000' set MESSAGE_TEXT = msg;
       end if;
-      if (verifPayementAnnuel = false) or (verifPayementCours = false) then 
-          set msg = concat ("Inscription impossible à l'activité : ", new.idp, ", car la cotisation anuelle n'est pas payé et le payement du cours n'est pas effectués");
+      if verifPayementAnnuel = true and verifPayementCours = false then
+          set msg = concat (" SEULEMENT PAYEMENT COURS idp", new.idp, " cotA ",verifPayementAnnuel, " PayCours",verifPayementCours);
           signal SQLSTATE '45000' set MESSAGE_TEXT = msg;
       end if;
     end LOOP;
@@ -209,7 +213,7 @@ create or replace trigger verifPayement before insert on RESERVER for each row
 end |
 
 delimiter ;
-
+/*/*
 
 delimiter |
 

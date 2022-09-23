@@ -30,30 +30,30 @@ insert into PERSONNE values (1, "Doudeau", "Luis", STR_TO_DATE('2003-10-03', '%Y
                             (30, "Retour", "Erve", STR_TO_DATE('2010-10-10', '%Y-%m-%d'), 90,"roides10@icloud.com", "10 rue des dix", 10000, "Troyes", 0710101010, "troyesmais10:p");
 
 
-insert into CLIENT values (2, true);
-insert into CLIENT values (3, true);
-insert into CLIENT values (4, true);
-insert into CLIENT values (5, true);
-insert into CLIENT values (6, false);
-insert into CLIENT values (7, true);
-insert into CLIENT values (8, false);
-insert into CLIENT values (9, false);
-insert into CLIENT values (10, true);
-insert into CLIENT values (11, false);
-insert into CLIENT values (12, true);
-insert into CLIENT values (13, true);
-insert into CLIENT values (14, false);
-insert into CLIENT values (15, true);
-insert into CLIENT values (16, false);
-insert into CLIENT values (17, false);
-insert into CLIENT values (19, true);
-insert into CLIENT values (20, true);
-insert into CLIENT values (22, false);
-insert into CLIENT values (23, true);
-insert into CLIENT values (24, false);
-insert into CLIENT values (25, true);
-insert into CLIENT values (26, true);
-insert into CLIENT values (27, false);
+insert into CLIENT values (2, false),
+                        (3, false),
+                        (4, true),
+                        (5, true),
+                        (6, true),
+                        (7, true),
+                        (8, false),
+                        (9, false),
+                        (10, true),
+                        (11, false),
+                        (12, true),
+                        (13, true),
+                        (14, false),
+                        (15, true),
+                        (16, false),
+                        (17, false),
+                        (19, true),
+                        (20, true),
+                        (22, false),
+                        (23, true),
+                        (24, false),
+                        (25, true),
+                        (26, true),
+                        (27, false);
 
     
 insert into COURS values   (1, 'Cours de saut', "Ce cours portera sur la technique de saut d'obstacle pour les débutants", "Collectif", 45), 
@@ -92,10 +92,10 @@ insert into PONEYS values   (1, "Chacha", 180),
                             (10, "Mure", 71);
 
                             
-insert into RESERVER values(STR_TO_DATE("13-01-2014 08:30:00", "%d-%m-%Y %H:%i:%s"), 6, 1, 1, STR_TO_DATE("01:00:00", "%H:%i:%s"), true);
-insert into RESERVER values(STR_TO_DATE('07-06-2015 08:59:59',"%d-%m-%Y %H:%i:%s"), 2, 14, 6, STR_TO_DATE('00:30:00', "%H:%i:%s"), true);
-insert into RESERVER values(STR_TO_DATE('25-01-2022 08:00:01',"%d-%m-%Y %H:%i:%s"), 2, 10, 1, STR_TO_DATE('02:00:00', "%H:%i:%s"), true);
-insert into RESERVER values(STR_TO_DATE('24-01-2022 20:00:00',"%d-%m-%Y %H:%i:%s"), 1, 10, 1, STR_TO_DATE('00:30:01', "%H:%i:%s"), FALSE);    
-insert into RESERVER values(STR_TO_DATE('24-01-2022 20:00:00',"%d-%m-%Y %H:%i:%s"), 6, 10, 1, STR_TO_DATE('02:00:00', "%H:%i:%s"), false);    
-insert into RESERVER values(STR_TO_DATE('24-01-2022 16:00:00',"%d-%m-%Y %H:%i:%s"), 2, 11, 1, STR_TO_DATE('01:00:00', "%H:%i:%s"), true);            
-insert into RESERVER values(STR_TO_DATE('24-01-2022 14:00:00',"%d-%m-%Y %H:%i:%s"), 3, 12, 1, STR_TO_DATE('01:00:00', "%H:%i:%s"), true);
+insert into RESERVER values(STR_TO_DATE("13-01-2014 08:30:00", "%d-%m-%Y %H:%i:%s"), 6, 1, 1, STR_TO_DATE("01:00:00", "%H:%i:%s"), false),
+                            (STR_TO_DATE('07-06-2015 08:59:59',"%d-%m-%Y %H:%i:%s"), 4, 14, 6, STR_TO_DATE('00:30:00', "%H:%i:%s"), true),
+                            (STR_TO_DATE('25-01-2022 08:00:01',"%d-%m-%Y %H:%i:%s"), 2, 10, 1, STR_TO_DATE('02:00:00', "%H:%i:%s"), true),
+                            (STR_TO_DATE('24-01-2022 20:00:00',"%d-%m-%Y %H:%i:%s"), 1, 10, 1, STR_TO_DATE('00:30:01', "%H:%i:%s"), true),    
+                            (STR_TO_DATE('24-01-2022 20:00:00',"%d-%m-%Y %H:%i:%s"), 6, 10, 1, STR_TO_DATE('02:00:00', "%H:%i:%s"), true),    
+                            (STR_TO_DATE('24-01-2022 16:00:00',"%d-%m-%Y %H:%i:%s"), 8, 11, 1, STR_TO_DATE('01:00:00', "%H:%i:%s"), true),            
+                            (STR_TO_DATE('24-01-2022 14:00:00',"%d-%m-%Y %H:%i:%s"), 3, 12, 1, STR_TO_DATE('01:00:00', "%H:%i:%s"), false);
