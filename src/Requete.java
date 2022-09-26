@@ -46,4 +46,58 @@ public class Requete {
         return res;
     }
 
+
+    public static Map<Integer, Poney> chargerPoney(ConnectionDB bd){
+        try{
+        Map<Integer,Poney> res = new HashMap<>();
+        Statement s = bd.getConnection().createStatement();
+        ResultSet poneys = s.executeQuery("select * from PONEY");
+        while(poneys.next()){
+            res.put(poneys.getInt(0), new Poney(poneys.getInt(1), poneys.getString(2), poneys.getDouble(3)));
+        }
+        System.out.println(res);
+        return res;
+    } catch(SQLException e1){
+        e1.printStackTrace();
+    }
+    return null;
+    }
+
+    public static Map<Integer,Moniteur> chargerMoniteur(ConnectionDB bd){
+        try{
+        Map<Integer, Moniteur> res = new HashMap<>();
+        Statement s = bd.getConnection().createStatement();
+        ResultSet moniteurs = s.executeQuery("select * from MONITEUR natural join PERSONNE");
+        while(moniteurs.next()){
+            res.put(moniteurs.getInt(1),new Moniteur(moniteurs.getInt(1), moniteurs.getString(2), moniteurs.getString(3), moniteurs.getDate(4),moniteurs.getInt(5), moniteurs.getString(6), moniteurs.getString(7), moniteurs.getInt(8), moniteurs.getString(9), moniteurs.getInt(10), moniteurs.getString(11));
+            }
+
+            System.out.println(res);
+            return res;
+        } catch(SQLException e1){
+            e1.printStackTrace();
+        }
+        return null;
+        }
+    
+
+        
+    public static Map<Integer,Cours> chargerCours(ConnectionDB bd){
+        try{
+        Map<Integer, Cours> res = new HashMap<>();
+        Statement s = bd.getConnection().createStatement();
+        ResultSet Courss = s.executeQuery("select * from COURS");
+        while(Courss.next()){
+            res.put(Courss.getInt(0),new Cours(Courss.getInt(1), Courss.getString(2), Courss.getString(3), Courss.getString(4), Courss.getDouble(5));
+            }
+
+            System.out.println(res);
+            return res;
+        } catch(SQLException e1){
+            e1.printStackTrace();
+        }
+        return null;
+        }
+
+
 }
