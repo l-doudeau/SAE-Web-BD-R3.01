@@ -1,3 +1,4 @@
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -115,6 +116,18 @@ public class Requete {
         }
         return null;
         }
+
+    public static void insererReservations(ConnectionDB bd, Date date, TIme time, int idP, int idC, int idPo, Time duree, boolean a_paye){
+        PreparedStatement ps = bd.getConnection().prepareStatement("insert into RESERVER values (?, ?, ?, ?, ?, ?);");
+        ps.setString(1, date + ' ' +time);
+        ps.setInt(2, idP);
+        ps.setInt(3, idC);
+        ps.setInt(4, idPo);
+        ps.setTime(5, duree);
+        ps.setBoolean(6, a_paye);
+
+        ps.executeUpdate();
+    }
 
 
 }
