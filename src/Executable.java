@@ -1,5 +1,6 @@
 import java.net.ConnectException;
 import java.sql.SQLException;
+import java.util.Map;
 import java.util.Scanner;
 
 public class Executable {
@@ -12,6 +13,7 @@ public class Executable {
             bd = new ConnectionDB();
             try {
                 bd.connecter("DBfaucher", "faucher", "Thierry45.");
+                Map<Integer,Client> clients = Requete.chargerClient(bd);
             } catch (SQLException e) {
                 // TODO Auto-generated catch block
                 e.printStackTrace();

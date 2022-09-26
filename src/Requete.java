@@ -36,14 +36,22 @@ public class Requete {
     }
 
     public static Map<Integer,Client> chargerClient(ConnectionDB bd){
-        Map<Integer,Client> res = new HashMap<>();
-        Statement s = bd.getConnection().createStatement();
-        ResultSet clients = s.executeQuery("select * from CLIENT natural join PERSONNE");
-        while(clients.next()){
-            res.put(clients.getInt(0),new Client(clients.getInt(0), clients.getString(2), clients.getString(3), clients.getDate(4),clients.getInt(5), adresseEmail, adresse, codePostal, ville, numTel, motDePasse, clients.getBoolean(1))
+        try {
+            Map<Integer,Client> res = new HashMap<>();
+            Statement s = bd.getConnection().createStatement();
+            ResultSet clients;
+            clients = s.executeQuery("select * from CLIENT natural join PERSONNE");
+            while(clients.next()){
+                res.put(clients.getInt(1),new Client(clients.getInt(1), clients.getString(3), clients.getString(4), clients.getDate(5),clients.getInt(6), clients.getString(7), clients.getString(8), clients.getInt(9), clients.getString(10), clients.getInt(11),clients.getString(12), clients.getBoolean(2)));
             }
 
-        return res;
+            return res;
+        } catch (SQLException e1) {
+            // TODO Auto-generated catch block
+            e1.printStackTrace();
+        }
+        
+        return null;
     }
 
 }
