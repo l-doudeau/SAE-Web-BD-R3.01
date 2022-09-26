@@ -1,9 +1,10 @@
 import java.time.LocalTime;
+import java.util.Calendar;
 import java.util.Date;
 
 public class Reservation {
     
-    private Date date;
+    private Calendar date;
     private int idPersonne;
     private int idCours;
     private int idPoney;
@@ -11,7 +12,7 @@ public class Reservation {
     private boolean aPaye;
     
 
-    public Reservation(Date date, int idPersonne, int idCours, int idPoney, LocalTime duree, boolean aPaye){
+    public Reservation(Calendar date, int idPersonne, int idCours, int idPoney, LocalTime duree, boolean aPaye){
         this.date = date;
         this.idPersonne = idPersonne;
         this.idCours = idCours;
@@ -19,11 +20,11 @@ public class Reservation {
         this.duree = duree;
         this.aPaye = aPaye;
     }
-    public Date getDate() {
+    public Calendar getDate() {
         return this.date;
     }
 
-    public void setDate(Date date) {
+    public void setDate(Calendar date) {
         this.date = date;
     }
 

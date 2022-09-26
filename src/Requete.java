@@ -3,6 +3,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.sql.Time;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -117,9 +118,23 @@ public class Requete {
         return null;
         }
 
-    public static void insererReservations(ConnectionDB bd, Date date, TIme time, int idP, int idC, int idPo, Time duree, boolean a_paye){
-        PreparedStatement ps = bd.getConnection().prepareStatement("insert into RESERVER values (?, ?, ?, ?, ?, ?);");
-        ps.setString(1, date + ' ' +time);
+    public static void insererReservations(ConnectionDB bd, Calendar calendrier, Time time, int idP, int idC, int idPo, Time duree, boolean a_paye){
+        PreparedStatement ps;
+        try {
+            ps = bd.getConnection().prepareStatement("insert into RESERVER values (?, ?, ?, ?, ?, ?);");
+        String mois = ""+calendrier.get(Calendar.MONTH);
+        String jours = ""+calendrier.get(Calendar.DATE);
+        if(mois.length() == 1){
+            mois = "0" + mois;
+
+        }
+
+        if(jours.length() == 1){
+            jours = "0" + jours;
+        }
+        calendrier.set(Calendar.HOUR)
+        ps.setString(1, jours+"-"+mois+"-"+calendrier.get(Calendar.YEAR) + " " +time );
+        ps.setDate(1, calendrier.getTime());
         ps.setInt(2, idP);
         ps.setInt(3, idC);
         ps.setInt(4, idPo);
@@ -127,6 +142,10 @@ public class Requete {
         ps.setBoolean(6, a_paye);
 
         ps.executeUpdate();
+    } catch (SQLException e) {
+        // TODO Auto-generated catch block
+        e.printStackTrace();
+    }
     }
 
 
