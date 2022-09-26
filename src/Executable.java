@@ -10,6 +10,12 @@ public class Executable {
         ConnectionDB bd = null;
         try {
             bd = new ConnectionDB();
+            try {
+                bd.connecter("DBfaucher", "faucher", "Thierry45.");
+            } catch (SQLException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
 
         } catch (ClassNotFoundException e1) {
         
@@ -40,13 +46,24 @@ public class Executable {
                         myObj.nextLine();
                     }
                 }else{
-                    System.out.println(options);
-                    String password = myObj.nextLine();
+
+
+                    Executable.printMenu(options);
+                    myObj.nextLine();
                 }
 
             }
 
 
         }
+    }
+
+    public static void printMenu(String[] options){
+
+        for(String option : options){
+            System.out.println(option);
+        }
+        System.out.print("Choisi ton option : ");
+    
     }
 }

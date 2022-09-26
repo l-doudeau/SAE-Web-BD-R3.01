@@ -22,6 +22,10 @@ public class ConnectionDB{
         return this.isConnected;
     }
 
+    public Connection getConnection(){
+        return this.mysql;
+    }
+
     public void quit() throws SQLException{
         this.mysql.close();
         this.isConnected = false;
