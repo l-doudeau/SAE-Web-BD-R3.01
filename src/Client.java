@@ -8,5 +8,8 @@ public class Client extends Personne {
         super(id, nom, prenom, dateDeNaissance, poids, adresseEmail, adresse, codePostal, ville, numTel, motDePasse);
         this.cotisation = cotisation;
     }
-    
+    @Override
+    public String toString(){
+        return super.toString();
+    }
 }

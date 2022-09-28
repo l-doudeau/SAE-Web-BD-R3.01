@@ -87,7 +87,7 @@ public class Executable {
                     Integer numchoix = Integer.parseInt(choix);
                     switch (numchoix){
                         case 1:
-                            Executable.menuAffichage(sousMenuAffichage,bd,clients,poneys,cours);
+                            Executable.menuAffichage(sousMenuAffichage,bd,clients,poneys,cours,moniteurs);
                             break;
                         case 2:
                             Executable.menuInsertion(sousMenuInsertion, bd, clients, poneys, cours);
@@ -103,7 +103,7 @@ public class Executable {
     }
 
     private static void menuAffichage(String[] sousMenuAffichage,ConnectionDB bd,
-    Map<Integer,Client> clients, Map<Integer,Poney> poneys, Map<Integer,Cours> cours) {
+    Map<Integer,Client> clients, Map<Integer,Poney> poneys, Map<Integer,Cours> cours,Map<Integer,Moniteur> moniteurs) {
         Scanner myObj = new Scanner(System.in);
         boolean fini = false;
         while(!fini){
@@ -112,16 +112,25 @@ public class Executable {
             Integer numchoix = Integer.parseInt(choix);
             switch(numchoix){
                 case 1:
-                    //TODO AFFICHER CLIENTS
+                    System.out.println(clients.toString());
+                    System.out.println("\nAppuyer sur entrée pour continuer");
+                    myObj.nextLine();
                     break;
                 case 2:
-                    //TODO  AFFICHER MONITEURS
+                    System.out.println(moniteurs.toString());
+                    System.out.println("\nAppuyer sur entrée pour continuer");
+                    myObj.nextLine();
                     break;
                 case 3:
-                    //TODO AFFICHER COURS
+                    System.out.println(poneys.toString());
+                    
+                    System.out.println("\nAppuyer sur entrée pour continuer");
+                    myObj.nextLine();
                     break;
                 case 4:
-                    //TODO AFFICHER PONEY
+                    System.out.println(cours.toString());
+                    System.out.println("\nAppuyer sur entrée pour continuer");
+                    myObj.nextLine();
                     break;
                 case 5:
                     Requete.afficheReservation(bd, clients, poneys, cours);
@@ -136,7 +145,6 @@ public class Executable {
         }
         myObj.close();
     }
-
     private static void menuInsertion(String[] sousMenuInsertion,ConnectionDB bd,
     Map<Integer,Client> clients, Map<Integer,Poney> poneys, Map<Integer,Cours> cours) {
         Scanner myObj = new Scanner(System.in);
@@ -167,9 +175,6 @@ public class Executable {
             }
             myObj.close();
         }
-
-
-
     public static void printMenu(String[] options){
         System.out.println("=================================");
         for(String option : options){

@@ -39,6 +39,10 @@ public class Requete {
 
     }
 
+
+    
+
+
     public static Map<Integer,Client> chargerClient(ConnectionDB bd){
         try {
             Map<Integer,Client> res = new HashMap<>();
