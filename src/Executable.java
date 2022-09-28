@@ -40,7 +40,34 @@ public class Executable {
             "6- Exit"
         };
 
-    public static void main(String[] args) {
+        private static void printMenu(String[] options){
+
+            System.out.println("=================================");
+            for(String option : options){
+                
+                System.out.println(option);
+                
+            }
+            System.out.println("=================================\n");
+            System.out.println("Choisi ton option : ");
+        
+        }
+    
+        private static void printMenu(String[] options, String arg){
+            System.out.println("=================================");
+            for(String option : options){
+                
+                System.out.println(option + " " + arg);
+                
+            }
+            System.out.println("=================================\n");
+            System.out.print("Choisi ton option : ");
+        
+        }
+    
+
+
+        public static void main(String[] args) {
         boolean arret = false;
         Map<Integer,Client> clients = null;
         Map<Integer,Cours> cours = null;
@@ -226,42 +253,6 @@ public class Executable {
         System.out.println("");
     }
 
-    private static void afficherLesClients(Map<Integer, Client> clients) {
-
-        for(Client c : clients.values()){
-            System.out.println(c.toString());
-        }
-
-    }
-
-    private static void afficheUneReservation(ConnectionDB bd, Map<Integer, Client> clients) {
-    }
-
-    private static void afficheUnCours(ConnectionDB bd, Map<Integer, Client> clients) {
-    }
-
-    private static void afficheUnPoney(ConnectionDB bd, Map<Integer, Client> clients) {
-    }
-
-    private static void afficheUnMoniteur(ConnectionDB bd, Map<Integer, Client> clients) {
-    }
-
-    private static void pressEnter(Scanner myObj){
-        System.out.println("\nAppuyer sur entrée pour continuer");
-        myObj.nextLine();
-    }
-
-    private static void afficheUnClient(ConnectionDB bd, Map<Integer, Client> clients) {
-        Scanner myObj = new Scanner(System.in);
-        System.out.println("Veuillez rentrer l'id de la personne recherchée");
-        String id_brute = myObj.nextLine();
-        Integer id = Integer.parseInt(id_brute);
-        if(clients.get(id) == null)
-            System.out.println("Cette id ne correspond pas à un client !");
-        else
-            System.out.println(clients.get(id));
-    }
-
     private static void menuInsertion(String[] sousMenuInsertion,ConnectionDB bd,
     Map<Integer,Client> clients, Map<Integer,Poney> poneys, Map<Integer,Cours> cours) {
         Scanner myObj = new Scanner(System.in);
@@ -296,33 +287,44 @@ public class Executable {
                     break;
             }
         }
-        System.out.println("");
     }
+   
+    private static void afficheUneReservation(ConnectionDB bd, Map<Integer, Client> clients) {
+    }
+
+    private static void afficheUnCours(ConnectionDB bd, Map<Integer, Client> clients) {
+    }
+
+    private static void afficheUnPoney(ConnectionDB bd, Map<Integer, Client> clients) {
+    }
+
+    private static void afficheUnMoniteur(ConnectionDB bd, Map<Integer, Client> clients) {
+    }
+
+    
+
+    private static void afficheUnClient(ConnectionDB bd, Map<Integer, Client> clients) {
+        Scanner myObj = new Scanner(System.in);
+        System.out.println("Veuillez rentrer l'id de la personne recherchée");
+        String id_brute = myObj.nextLine();
+        Integer id = Integer.parseInt(id_brute);
+        if(clients.get(id) == null)
+            System.out.println("Cette id ne correspond pas à un client !");
+        else
+            System.out.println(clients.get(id));
+    }
+
+    private static void afficherLesClients(Map<Integer, Client> clients) {
+
+        for(Client c : clients.values()){
+            System.out.println(c.toString());
+        }
+
+    }
+
+
+    
      
-    private static void printMenu(String[] options){
-
-        System.out.println("=================================");
-        for(String option : options){
-            
-            System.out.println(option);
-            
-        }
-        System.out.println("=================================\n");
-        System.out.println("Choisi ton option : ");
-    
-    }
-
-    private static void printMenu(String[] options, String arg){
-        System.out.println("=================================");
-        for(String option : options){
-            
-            System.out.println(option + " " + arg);
-            
-        }
-        System.out.println("=================================\n");
-        System.out.print("Choisi ton option : ");
-    
-    }
 
 
     private static void insererReservations(ConnectionDB bd , Scanner scanner){
@@ -387,4 +389,10 @@ public class Executable {
         }
 
     }
+}
+
+
+private static void pressEnter(Scanner myObj){
+    System.out.println("\nAppuyer sur entrée pour continuer");
+    myObj.nextLine();
 }
