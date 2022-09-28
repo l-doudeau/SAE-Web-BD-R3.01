@@ -17,7 +17,7 @@ insert into PERSONNE values (1, "Doudeau", "Luis", STR_TO_DATE('2003-10-03', '%Y
                             (17, "Retour", "Erve", STR_TO_DATE('2010-10-10', '%Y-%m-%d'), 90,"roides10@icloud.com", "10 rue des dix", 10000, "Troyes", "0710101010", "troyesmais10:p"),
                             (18, "Retour", "Erve", STR_TO_DATE('2010-10-10', '%Y-%m-%d'), 90,"roides10@icloud.com", "10 rue des dix", 10000, "Troyes", "0710101010", "troyesmais10:p"),
                             (19, "Retour", "Erve", STR_TO_DATE('2010-10-10', '%Y-%m-%d'), 90,"roides10@icloud.com", "10 rue des dix", 10000, "Troyes", "0710101010", "troyesmais10:p"),
-                            (20, "Retour", "Erve", STR_TO_DATE('2010-10-10', '%Y-%m-%d'), 90,"roides10@icloud.com", "10 rue des dix", 10000, "Troyes", "0710101010", "troyesmais10:p"),
+                            (20, "Retour", "Erve", STR_TO_DATE('2010-10-10', '%Y-%m-%d'), 90,"roides10@icloud.com", "10 rue des dix", 10000, "Troyes", "0710101010", "troyesmais10:p");
 
 
 insert into CLIENT values (2, true),
@@ -36,14 +36,7 @@ insert into CLIENT values (2, true),
                         (15, true),
                         (16, false),
                         (17, false),
-                        (19, true),
-                        (20, true),
-                        (22, false),
-                        (23, true),
-                        (24, false),
-                        (25, true),
-                        (26, true),
-                        (27, false);
+                        (19, true);
 
     
 insert into COURS values   (1, 'Cours de saut', "Ce cours portera sur la technique de saut d'obstacle pour les débutants", "Collectif", 45), 
@@ -66,8 +59,7 @@ insert into MONITEUR values (1),
                             (5),
                             (12),
                             (17),
-                            (18),
-                            (21);
+                            (18);
 
 
 insert into PONEYS values   (1, "Chacha", 180),
