@@ -1,10 +1,13 @@
 import java.net.ConnectException;
 import java.sql.SQLException;
 import java.sql.Time;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Map;
 import java.util.Scanner;
+import java.util.spi.CalendarDataProvider;
 
 
 public class Executable {
@@ -78,51 +81,8 @@ public class Executable {
                             break;
                         case 2:
                             
-                            /* TODO Faire les verifications des entrées */
-                            System.out.println("Veuillez entrer la date de la reservation sous la forme XX/XX/XXXX ");
-                            String date_brute = myObj.nextLine(); 
-                            String date_net [] =  date_brute.split("/");
-                            Calendar calendrier = Calendar.getInstance();
-                            calendrier.set(Calendar.MONTH, Integer.parseInt(date_net[1]));
-                            calendrier.set(Calendar.YEAR, Integer.parseInt(date_net[2]));
-                            calendrier.set(Calendar.DAY_OF_MONTH, Integer.parseInt(date_net[0]));
-                        
-
-                            System.out.println("Veuillez entrer l'heure reservation sous la forme XX:XX:XX ");
-                            String temps_brute = myObj.nextLine(); 
-                            Time heureReservation = Time.valueOf(temps_brute);
-
-
-                            System.out.println("Veuillez entrer l'id de la personne qui réserve le cours");
-                            String idP_brute = myObj.nextLine();
-                            Integer idP = Integer.parseInt(idP_brute);
-
-                            System.out.println("Veuillez entrer l'id du cours qui est réservé le cours");
-                            String idC_brute = myObj.nextLine();
-                            Integer idC = Integer.parseInt(idC_brute);
-
-                            System.out.println("Veuillez entrer l'id du poney qui est réservé pour le cours");
-                            String idPo_brute = myObj.nextLine();
-                            Integer idPo = Integer.parseInt(idPo_brute);
-
-
-                            System.out.println("Veuillez entrer le temps du cours sous la forme XX:XX:XX ");
-                            String time_brute = myObj.nextLine(); 
-                            Time duree = Time.valueOf(time_brute);
-
-
-                            System.out.println("Veuillez entrer si oui ou non, le client à payé : O/N ");
-                            String reponse = myObj.nextLine();
-                            boolean a_paye;
-                            if(reponse == "O"){
-                                a_paye = true;
-                            }
-                            else{
-                                a_paye = false;
-                            }
-
-
-                            Requete.insererReservations(bd, calendrier, heureReservation, idP, idC, idPo, duree, a_paye);
+                            Executable.insererReservations(bd,myObj);
+                            
 
 
                     }    
@@ -141,5 +101,67 @@ public class Executable {
         }
         System.out.print("Choisi ton option : ");
     
+    }
+    public static void insererReservations(ConnectionDB bd , Scanner scanner){
+        boolean ok =false;
+        Calendar calendrier = Calendar.getInstance();
+        while (!ok){
+            System.out.println("Veuillez entrer la date de la reservation sous la forme XX/XX/XXXX ");
+            String date_brute = scanner.nextLine();
+            System.out.println("Veuillez entrer l'heure reservation sous la forme XX:XX:XX ");
+            String temps_brute = scanner.nextLine();
+            SimpleDateFormat formatDate = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
+            formatDate.setLenient(false);
+            try
+            {
+                Date d = formatDate.parse(date_brute +" " +temps_brute);
+                System.out.println(date_brute+" est une date valide");
+                calendrier.setTime(d);
+                ok = true;
+            }
+            // Date invalide
+            catch (ParseException e)
+            {
+                e.printStackTrace();
+                System.out.println(date_brute + " a " + temps_brute +" est une date invalide");
+            }
+        }
+ 
+        
+        System.out.println("Veuillez entrer l'id de la personne qui réserve le cours");
+        String idP_brute = scanner.nextLine();
+        
+        Integer idP = Integer.parseInt(idP_brute);
+
+        System.out.println("Veuillez entrer l'id du cours qui est réservé le cours");
+        String idC_brute = scanner.nextLine();
+        Integer idC = Integer.parseInt(idC_brute);
+
+        System.out.println("Veuillez entrer l'id du poney qui est réservé pour le cours");
+        String idPo_brute = scanner.nextLine();
+        Integer idPo = Integer.parseInt(idPo_brute);
+
+
+        System.out.println("Veuillez entrer le temps du cours sous la forme XX:XX:XX ");
+        String time_brute = scanner.nextLine(); 
+        Time duree = Time.valueOf(time_brute);
+
+
+        System.out.println("Veuillez entrer si oui ou non, le client à payé : O/N ");
+        String reponse = scanner.nextLine();
+        boolean a_paye;
+        if(reponse == "O"){
+            a_paye = true;
+        }
+        else{
+            a_paye = false;
+        }
+        if(Requete.insererReservations(bd, calendrier ,3, 1, 1, duree, a_paye)){
+            System.out.println("L'inserstion s'est bien déroulé");
+        }
+        else{
+            System.out.println("Erreur dans l'insertion ! ");
+        }
+
     }
 }

@@ -31,14 +31,6 @@ public class Requete {
                 System.out.println("\nReservation du " + date + " " + heure +" " + a_paye + " par " + clients.get(res.getInt(2)).getNom() + " avec le poney " + poneys.get(res.getInt(4)).getNom() + " au cours " + cours.get(res.getInt(3)).getNomCours() + " qui dure " + temps +"h");
             }
 
-
-
-
-
-
-
-
-
         } catch (SQLException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
@@ -118,7 +110,7 @@ public class Requete {
         return null;
         }
 
-    public static void insererReservations(ConnectionDB bd, Calendar calendrier, Time time, int idP, int idC, int idPo, Time duree, boolean a_paye){
+    public static boolean insererReservations(ConnectionDB bd, Calendar calendrier, int idP, int idC, int idPo, Time duree, boolean a_paye){
         PreparedStatement ps;
         try {
             ps = bd.getConnection().prepareStatement("insert into RESERVER values (?, ?, ?, ?, ?, ?);");
@@ -132,9 +124,9 @@ public class Requete {
         if(jours.length() == 1){
             jours = "0" + jours;
         }
-        calendrier.set(Calendar.HOUR)
-        ps.setString(1, jours+"-"+mois+"-"+calendrier.get(Calendar.YEAR) + " " +time );
-        ps.setDate(1, calendrier.getTime());
+        java.util.Date utilDate = calendrier.getTime();
+        java.sql.Date sqlDate = new java.sql.Date(utilDate.getTime());
+        ps.setDate(1, sqlDate);
         ps.setInt(2, idP);
         ps.setInt(3, idC);
         ps.setInt(4, idPo);
@@ -142,9 +134,11 @@ public class Requete {
         ps.setBoolean(6, a_paye);
 
         ps.executeUpdate();
+        return true;
     } catch (SQLException e) {
         // TODO Auto-generated catch block
         e.printStackTrace();
+        return false;
     }
     }
 
