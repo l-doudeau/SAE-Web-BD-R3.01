@@ -219,17 +219,17 @@ public class Executable {
                     break;
                 case 2:
                     switch(arg){
-                        case "Client(e)":
+                        case "Client(e)(s)":
                             afficherLesClients(clients);
                             pressEnter(myObj);
                             break;
 
-                        case "Moniteur/Monitrice":
+                        case "Moniteur(s)/Monitrice(s)":
                             System.out.println(moniteurs.toString());
                             pressEnter(myObj);
                             break;
                         
-                        case "Poney":
+                        case "Poney(s)":
                             System.out.println(poneys.toString());
                             pressEnter(myObj);
                             break;
@@ -238,7 +238,7 @@ public class Executable {
                             System.out.println(cours.toString());
                             pressEnter(myObj);
                             break;
-                        case "Reservation":
+                        case "Reservation(s)":
                             Requete.afficheReservation(bd, clients, poneys, cours);
                             pressEnter(myObj);
                             break;
@@ -323,10 +323,6 @@ public class Executable {
     }
 
 
-    
-     
-
-
     private static void insererReservations(ConnectionDB bd , Scanner scanner){
         boolean ok =false;
         Calendar calendrier = Calendar.getInstance();
@@ -391,7 +387,17 @@ public class Executable {
     }
 
 
+    private static void insererClient(ConnectionDB bd, Scanner scanner){
 
+        boolean ok =false;
+        Calendar calendrier = Calendar.getInstance();
+        while (!ok){
+
+
+            
+        }
+
+    }
     private static void pressEnter(Scanner myObj){
         System.out.println("\nAppuyer sur entrée pour continuer");
         myObj.nextLine();

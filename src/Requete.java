@@ -170,13 +170,13 @@ public class Requete {
         }
     }
     
-    public static boolean insererClient(ConnectionDB bd, int id, String nom, String prenom, Calendar ddn, float poids, String adresseEmail,
+    public static boolean insererClient(ConnectionDB bd, String nom, String prenom, Calendar ddn, float poids, String adresseEmail,
     String adresse, int codePostal, String ville, String numTel, String motDePasse, boolean cotisation){
         PreparedStatement ps;
         try {
             ps = bd.getConnection().prepareStatement("insert into CLIENT values(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);");
             
-            ps.setInt(1, id);
+            
             ps.setString(2, nom);
             ps.setString(3, prenom);
 
