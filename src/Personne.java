@@ -120,7 +120,7 @@ public class Personne {
 
     @Override
     public String toString(){
-        return this.nom + " " + this.prenom + " habite à : " + this.ville + " au " + this.adresse + " " + this.codePostal + ". Il est joignable au " + this.numTel + " ou par mail au " + this.adresseEmail + "\n"; 
+        return "Le client d'ID = " + this.id + ", s'appelle " + this.nom + " " + this.prenom + ", habite à : " + this.ville + " au " + this.adresse + " " + this.codePostal + ". Il est joignable au " + this.numTel + " ou par mail au " + this.adresseEmail + "\n"; 
     }
     @Override
     public boolean equals(Object obj){

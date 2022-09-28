@@ -6,12 +6,39 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Map;
+import java.util.NoSuchElementException;
 import java.util.Scanner;
 import java.util.spi.CalendarDataProvider;
 
 
 public class Executable {
-    
+    static String[] options = {"1- Afficher les résultats",
+        "2- Insérer des données",
+        "3- Exit",
+        };
+
+    static String[] sousMenuAffichage =
+        {"1- Client",
+        "2- Moniteurs",
+        "3- Poneys",
+        "4- Cours",
+        "5- Réservations",    
+        "6- Exit"
+        };
+
+    static String[] sousSousMenuAffichage =
+        {"1- Afficher un(e)",
+        "2- Afficher les",   
+        "3- Exit"
+        };
+    static String[] sousMenuInsertion =
+            {"1- Inserér un Clients",
+            "2- Inserér un Moniteur",
+            "3- Inserér un Poney",
+            "4- Inserér un Cours",
+            "5- Inserér une Réservation",    
+            "6- Exit"
+        };
 
     public static void main(String[] args) {
         boolean arret = false;
@@ -37,28 +64,7 @@ public class Executable {
             System.out.println("Erreur lors de la connexion MYSQL\nVerifier l'ajout de mariaDB dans les Referenced Libraries");
         }
 
-        String[] options = {"1- Afficher les résultats",
-        "2- Insérer des données",
-        "3- Exit",
-        };
-
-        String[] sousMenuAffichage =
-        {"1- Affichier un Client",
-        "2- Affichier les Clients",
-        "3- Afficher les Moniteurs",
-        "4- Afficher les Poneys",
-        "5- Afficher les Cours",
-        "6- Afficher les réservations",    
-        "7- Exit"
-        };
-        String[] sousMenuInsertion =
-            {"1- Inserér un Clients",
-            "2- Inserér un Moniteur",
-            "3- Inserér un Poney",
-            "4- Inserér un Cours",
-            "5- Inserér une Réservation",    
-            "6- Exit"
-        };
+        
     
 
         Scanner myObj = new Scanner(System.in);
@@ -72,17 +78,19 @@ public class Executable {
                     System.out.println("Veuillez entrer votre mot de passe : ");
                     String password = myObj.nextLine();
                     try {
-                        bd.connecter(database, username, password); 
+                        bd.connecter(database, username, password);
+                        clients = Requete.chargerClient(bd);
+                        poneys = Requete.chargerPoney(bd);
+                        cours = Requete.chargerCours(bd);
+                        moniteurs = Requete.chargerMoniteur(bd); 
                     } 
                     catch (SQLException e) {
                         System.out.println("\nIl y a une erreur dans les informations saisies !  \nAppuyez sur entrée pour recommencer");
                         myObj.nextLine();
-                        clients = Requete.chargerClient(bd);
-                        poneys = Requete.chargerPoney(bd);
-                        cours = Requete.chargerCours(bd);
-                        moniteurs = Requete.chargerMoniteur(bd);
+                        
                     }
                 }else{
+
                     Executable.printMenu(options);
                     String choix = myObj.nextLine();
                     Integer numchoix = Integer.parseInt(choix);
@@ -93,8 +101,12 @@ public class Executable {
                         case 2:
                             Executable.menuInsertion(sousMenuInsertion, bd, clients, poneys, cours);
                             break;
-
+                        case 3:
+                            arret = true;
+                            System.out.println("Merci d'avoir utilisé notre application");
+                            break;
                     }    
+                
                 }
 
             }   
@@ -113,38 +125,21 @@ public class Executable {
             Integer numchoix = Integer.parseInt(choix);
             switch(numchoix){
                 case 1:
-                    afficheUnClient(bd,clients);
-
-                    System.out.println("\nAppuyer sur entrée pour continuer");
-                    myObj.nextLine();
+                    menuAffichageCarac(sousSousMenuAffichage, "Client(e)(s)", bd, clients, poneys, cours, moniteurs);
                     break;
                 case 2:
-                    System.out.println(clients.toString());
-                    System.out.println("\nAppuyer sur entrée pour continuer");
-                    myObj.nextLine();
+                    menuAffichageCarac(sousSousMenuAffichage, "Moniteur(s)/Monitrice(s)", bd, clients, poneys, cours, moniteurs);
                     break;
                 case 3:
-                    System.out.println(moniteurs.toString());
-                    System.out.println("\nAppuyer sur entrée pour continuer");
-                    myObj.nextLine();
+                    menuAffichageCarac(sousSousMenuAffichage, "Poney(s)", bd, clients, poneys, cours, moniteurs);
                     break;
                 case 4:
-                    System.out.println(poneys.toString());
-                    
-                    System.out.println("\nAppuyer sur entrée pour continuer");
-                    myObj.nextLine();
+                    menuAffichageCarac(sousSousMenuAffichage, "Cours", bd, clients, poneys, cours, moniteurs);
                     break;
                 case 5:
-                    System.out.println(cours.toString());
-                    System.out.println("\nAppuyer sur entrée pour continuer");
-                    myObj.nextLine();
+                    menuAffichageCarac(sousSousMenuAffichage, "Reservation(s)", bd, clients, poneys, cours, moniteurs);
                     break;
                 case 6:
-                    Requete.afficheReservation(bd, clients, poneys, cours);
-                    System.out.println("\nAppuyer sur entrée pour continuer");
-                    myObj.nextLine();
-                    break;
-                case 7:
                     fini = true;
                     break;
                 default:
@@ -154,8 +149,108 @@ public class Executable {
             }
             
         }
-        myObj.close();
     }
+
+    private static void menuAffichageCarac(String[] sousMenuAffichage, String arg,ConnectionDB bd,
+    Map<Integer,Client> clients, Map<Integer,Poney> poneys, Map<Integer,Cours> cours,Map<Integer,Moniteur> moniteurs){
+
+        Scanner myObj = new Scanner(System.in);
+        boolean fini = false;
+        while(!fini){
+            Executable.printMenu(sousMenuAffichage,arg);
+            String choix = myObj.nextLine();
+            Integer numchoix = Integer.parseInt(choix);
+            switch(numchoix){
+                case 1:
+                    switch(arg){
+                        case "Client(e)(s)":
+                            afficheUnClient(bd,clients);
+                            pressEnter(myObj);
+                            break;
+
+                        case "Moniteur/Monitrice(s)":
+                            afficheUnMoniteur(bd,clients);
+                            pressEnter(myObj);
+                            break;
+                        
+                        case "Poney(s)":
+                            afficheUnPoney(bd,clients);
+                            pressEnter(myObj);
+                            break;
+
+                        case "Cours":
+                            afficheUnCours(bd,clients);
+                            System.out.println(cours.toString());
+                            pressEnter(myObj);
+                            break;
+                        case "Reservation(s)":
+                            afficheUneReservation(bd,clients);
+                            pressEnter(myObj);
+                            break;
+                    }
+
+                    break;
+                case 2:
+                    switch(arg){
+                        case "Client(e)":
+                            afficherLesClients(clients);
+                            pressEnter(myObj);
+                            break;
+
+                        case "Moniteur/Monitrice":
+                            System.out.println(moniteurs.toString());
+                            pressEnter(myObj);
+                            break;
+                        
+                        case "Poney":
+                            System.out.println(poneys.toString());
+                            pressEnter(myObj);
+                            break;
+
+                        case "Cours":
+                            System.out.println(cours.toString());
+                            pressEnter(myObj);
+                            break;
+                        case "Reservation":
+                            Requete.afficheReservation(bd, clients, poneys, cours);
+                            pressEnter(myObj);
+                            break;
+                    }
+
+                    break;
+                case 3:
+                    fini = true;
+                    break;
+            }
+        }
+        System.out.println("");
+    }
+
+    private static void afficherLesClients(Map<Integer, Client> clients) {
+
+        for(Client c : clients.values()){
+            System.out.println(c.toString());
+        }
+
+    }
+
+    private static void afficheUneReservation(ConnectionDB bd, Map<Integer, Client> clients) {
+    }
+
+    private static void afficheUnCours(ConnectionDB bd, Map<Integer, Client> clients) {
+    }
+
+    private static void afficheUnPoney(ConnectionDB bd, Map<Integer, Client> clients) {
+    }
+
+    private static void afficheUnMoniteur(ConnectionDB bd, Map<Integer, Client> clients) {
+    }
+
+    private static void pressEnter(Scanner myObj){
+        System.out.println("\nAppuyer sur entrée pour continuer");
+        myObj.nextLine();
+    }
+
     private static void afficheUnClient(ConnectionDB bd, Map<Integer, Client> clients) {
         Scanner myObj = new Scanner(System.in);
         System.out.println("Veuillez rentrer l'id de la personne recherchée");
@@ -200,11 +295,12 @@ public class Executable {
                     myObj.nextLine();
                     break;
             }
-            myObj.close();
         }
+        System.out.println("");
     }
      
-    public static void printMenu(String[] options){
+    private static void printMenu(String[] options){
+
         System.out.println("=================================");
         for(String option : options){
             
@@ -212,10 +308,24 @@ public class Executable {
             
         }
         System.out.println("=================================\n");
+        System.out.println("Choisi ton option : ");
+    
+    }
+
+    private static void printMenu(String[] options, String arg){
+        System.out.println("=================================");
+        for(String option : options){
+            
+            System.out.println(option + " " + arg);
+            
+        }
+        System.out.println("=================================\n");
         System.out.print("Choisi ton option : ");
     
     }
-    public static void insererReservations(ConnectionDB bd , Scanner scanner){
+
+
+    private static void insererReservations(ConnectionDB bd , Scanner scanner){
         boolean ok =false;
         Calendar calendrier = Calendar.getInstance();
         while (!ok){
