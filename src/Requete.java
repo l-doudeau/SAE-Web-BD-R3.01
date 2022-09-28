@@ -171,7 +171,7 @@ public class Requete {
     }
     
     public static boolean insererClient(ConnectionDB bd, int id, String nom, String prenom, Calendar ddn, float poids, String adresseEmail,
-    String adresse, int codePostal, String ville, int numTel, String motDePasse, boolean cotisation){
+    String adresse, int codePostal, String ville, String numTel, String motDePasse, boolean cotisation){
         PreparedStatement ps;
         try {
             ps = bd.getConnection().prepareStatement("insert into CLIENT values(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);");
@@ -199,7 +199,7 @@ public class Requete {
             ps.setString(7, adresse);
             ps.setInt(8, codePostal);
             ps.setString(9, ville);
-            ps.setInt(10, numTel);
+            ps.setString(10, numTel);
             ps.setString(11, motDePasse);
             ps.setBoolean(12, cotisation);
             
@@ -212,7 +212,7 @@ public class Requete {
         }
     }
     public static boolean insererMoniteur(ConnectionDB bd, int id, String nom, String prenom, Calendar ddn, float poids, String adresseEmail,
-    String adresse, int codePostal, String ville, int numTel, String motDePasse){
+    String adresse, int codePostal, String ville, String numTel, String motDePasse){
         PreparedStatement ps;
         try {
             ps = bd.getConnection().prepareStatement("insert into MONITEUR values(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);");
@@ -240,13 +240,52 @@ public class Requete {
             ps.setString(7, adresse);
             ps.setInt(8, codePostal);
             ps.setString(9, ville);
-            ps.setInt(10, numTel);
+            ps.setString(10, numTel);
             ps.setString(11, motDePasse);
             
             ps.executeUpdate();
             return true;
         }
         catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    public static boolean insereCours(ConnectionDB bd, int idc, String nomc, String desc, String typec, Float prix){
+        PreparedStatement ps;
+        try {
+            ps = bd.getConnection().prepareStatement("insert into COURS values(?, ?, ?, ?, ?);");
+
+            ps.setInt(1, idc);
+            ps.setString(2, nomc);
+            ps.setString(3, desc);
+            ps.setString(4, typec);
+            ps.setFloat(5, prix);
+
+            ps.executeUpdate();
+            return true;
+        }
+        catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    public static boolean insererPoney(ConnectionDB bd, int idPo, String nomp, Float poidssup){
+        PreparedStatement ps;
+        try{
+            ps = bd.getConnection().prepareStatement("insert into PONEY values(?, ?, ?);");
+
+            ps.setInt(1, idPo);
+            ps.setString(2, nomp);
+            ps.setFloat(3, poidssup);
+
+            ps.executeUpdate();
+            return true;
+        }
+        
+        catch(SQLException e){
             e.printStackTrace();
             return false;
         }
