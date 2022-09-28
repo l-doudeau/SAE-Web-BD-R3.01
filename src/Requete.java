@@ -114,33 +114,72 @@ public class Requete {
         PreparedStatement ps;
         try {
             ps = bd.getConnection().prepareStatement("insert into RESERVER values (?, ?, ?, ?, ?, ?);");
-        String mois = ""+calendrier.get(Calendar.MONTH);
-        String jours = ""+calendrier.get(Calendar.DATE);
-        if(mois.length() == 1){
-            mois = "0" + mois;
+            String mois = ""+calendrier.get(Calendar.MONTH);
+            String jours = ""+calendrier.get(Calendar.DATE);
+            if(mois.length() == 1){
+                mois = "0" + mois;
+            }
 
+            if(jours.length() == 1){
+                jours = "0" + jours;
+            }
+            java.util.Date utilDate = calendrier.getTime();
+            java.sql.Date sqlDate = new java.sql.Date(utilDate.getTime());
+            ps.setDate(1, sqlDate);
+            ps.setInt(2, idP);
+            ps.setInt(3, idC);
+            ps.setInt(4, idPo);
+            ps.setTime(5, duree);
+            ps.setBoolean(6, a_paye);
+
+            ps.executeUpdate();
+            return true;
+        }catch (SQLException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+            return false;
         }
+    }
+    
+    public static boolean insererClient(ConnectionDB bd, int id, String nom, String prenom, Calendar ddn, float poids, String adresseEmail,
+    String adresse, int codePostal, String ville, int numTel, String motDePasse, boolean cotisation){
+        PreparedStatement ps;
+        try {
+            ps = bd.getConnection().prepareStatement("insert into CLIENT values(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);");
+            
+            ps.setInt(1, id);
+            ps.setString(2, nom);
+            ps.setString(3, prenom);
 
-        if(jours.length() == 1){
-            jours = "0" + jours;
+            String mois = ""+ddn.get(Calendar.MONTH);
+            String jours = ""+ddn.get(Calendar.DATE);
+            if(mois.length() == 1){
+                mois = "0" + mois;
+    
+            }
+    
+            if(jours.length() == 1){
+                jours = "0" + jours;
+            }
+            java.util.Date utilDate = ddn.getTime();
+            java.sql.Date sqlDate = new java.sql.Date(utilDate.getTime());
+
+            ps.setDate(4, sqlDate);
+            ps.setFloat(5, poids);
+            ps.setString(6, adresseEmail);
+            ps.setString(7, adresse);
+            ps.setInt(8, codePostal);
+            ps.setString(9, ville);
+            ps.setInt(10, numTel);
+            ps.setString(11, motDePasse);
+            ps.setBoolean(12, cotisation);
+            
+            ps.executeUpdate();
+            return true;
         }
-        java.util.Date utilDate = calendrier.getTime();
-        java.sql.Date sqlDate = new java.sql.Date(utilDate.getTime());
-        ps.setDate(1, sqlDate);
-        ps.setInt(2, idP);
-        ps.setInt(3, idC);
-        ps.setInt(4, idPo);
-        ps.setTime(5, duree);
-        ps.setBoolean(6, a_paye);
-
-        ps.executeUpdate();
-        return true;
-    } catch (SQLException e) {
-        // TODO Auto-generated catch block
-        e.printStackTrace();
-        return false;
+        catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
     }
-    }
-
-
 }
