@@ -12,6 +12,46 @@ import java.util.Map;
 public class Requete {
     
 
+    public static Integer maxIDPersonne(ConnectionDB bd){
+        try{
+            Statement s = bd.getConnection().createStatement();
+            ResultSet res = s.executeQuery("select max(idp) from PERSONNE");
+            res.next();
+            return res.getInt(1);
+        }
+        catch(SQLException e1){
+            e1.printStackTrace();
+        }
+        return null;
+    }
+
+    public static Integer maxIDCours(ConnectionDB bd){
+        try{
+            Statement s = bd.getConnection().createStatement();
+            ResultSet res = s.executeQuery("select max(idp) from COURS");
+            res.next();
+            return res.getInt(1);
+        }
+        catch(SQLException e1){
+            e1.printStackTrace();
+        }
+        return null;
+    }
+
+    public static Integer maxIDPoney(ConnectionDB bd){
+        try{
+            Statement s = bd.getConnection().createStatement();
+            ResultSet res = s.executeQuery("select max(idp) from PONEYS");
+            res.next();
+            return res.getInt(1);
+        }
+        catch(SQLException e1){
+            e1.printStackTrace();
+        }
+        return null;
+    }
+
+
     public static void afficheReservation(ConnectionDB bd,Map<Integer,Client> clients, Map<Integer,Poney> poneys, Map<Integer,Cours> cours){
         Statement s;
         try {
@@ -176,7 +216,7 @@ public class Requete {
         try {
             ps = bd.getConnection().prepareStatement("insert into CLIENT values(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);");
             
-            
+            ps.setInt(1, maxIDPersonne(bd));
             ps.setString(2, nom);
             ps.setString(3, prenom);
 
@@ -211,13 +251,13 @@ public class Requete {
             return false;
         }
     }
-    public static boolean insererMoniteur(ConnectionDB bd, int id, String nom, String prenom, Calendar ddn, float poids, String adresseEmail,
+    public static boolean insererMoniteur(ConnectionDB bd, String nom, String prenom, Calendar ddn, float poids, String adresseEmail,
     String adresse, int codePostal, String ville, String numTel, String motDePasse){
         PreparedStatement ps;
         try {
             ps = bd.getConnection().prepareStatement("insert into MONITEUR values(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);");
             
-            ps.setInt(1, id);
+            ps.setInt(1, maxIDPersonne(bd));
             ps.setString(2, nom);
             ps.setString(3, prenom);
 
@@ -252,12 +292,12 @@ public class Requete {
         }
     }
 
-    public static boolean insereCours(ConnectionDB bd, int idc, String nomc, String desc, String typec, Float prix){
+    public static boolean insererCours(ConnectionDB bd, String nomc, String desc, String typec, Float prix){
         PreparedStatement ps;
         try {
             ps = bd.getConnection().prepareStatement("insert into COURS values(?, ?, ?, ?, ?);");
 
-            ps.setInt(1, idc);
+            ps.setInt(1, maxIDCours(bd));
             ps.setString(2, nomc);
             ps.setString(3, desc);
             ps.setString(4, typec);
@@ -272,12 +312,12 @@ public class Requete {
         }
     }
 
-    public static boolean insererPoney(ConnectionDB bd, int idPo, String nomp, Float poidssup){
+    public static boolean insererPoney(ConnectionDB bd, String nomp, Float poidssup){
         PreparedStatement ps;
         try{
             ps = bd.getConnection().prepareStatement("insert into PONEY values(?, ?, ?);");
 
-            ps.setInt(1, idPo);
+            ps.setInt(1, maxIDPoney(bd));
             ps.setString(2, nomp);
             ps.setFloat(3, poidssup);
 
