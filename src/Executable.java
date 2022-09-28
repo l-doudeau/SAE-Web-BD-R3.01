@@ -389,10 +389,11 @@ public class Executable {
         }
 
     }
-}
 
 
-private static void pressEnter(Scanner myObj){
-    System.out.println("\nAppuyer sur entrée pour continuer");
-    myObj.nextLine();
+
+    private static void pressEnter(Scanner myObj){
+        System.out.println("\nAppuyer sur entrée pour continuer");
+        myObj.nextLine();
+    }
 }
