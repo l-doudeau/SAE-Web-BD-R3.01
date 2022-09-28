@@ -391,11 +391,67 @@ public class Executable {
 
         boolean ok =false;
         Calendar calendrier = Calendar.getInstance();
-        while (!ok){
-
+        System.out.println("Veuillez entrer le NOM prenom du client ");
+        String nomPrenom_brute = scanner.nextLine();
+        String [] nomPrenom = nomPrenom_brute.split(" ");
+        while(!ok){
 
             
+            System.out.println("Veuillez entrer la date de naissance du client sous la forme XX/XX/XXXX ");
+            String date_brute = scanner.nextLine();
+            SimpleDateFormat formatDate = new SimpleDateFormat("dd/MM/yyyy");
+            formatDate.setLenient(false);
+            try{
+                Date d = formatDate.parse(date_brute);
+                System.out.println(date_brute+" est une date valide");
+                calendrier.setTime(d);
+                ok = true;
+            }
+            // Date invalide
+            catch (ParseException e)
+            {
+                e.printStackTrace();
+                System.out.println(date_brute +" est une date invalide");
+            }
         }
+        System.out.println("Veuillez entrer le poids du client ");
+        Float poids = Float.parseFloat(scanner.nextLine());
+
+
+        System.out.println("Veuillez entrer l'adresse email du client");
+        String email = scanner.nextLine();
+        
+        System.out.println("Veuillez entrer l'adresse du client ");
+        String adresse_postal = scanner.nextLine();
+
+        System.out.println("Veuillez entrer le code postal du client");
+        Integer code_postal = Integer.parseInt(scanner.nextLine());
+
+        System.out.println("Veuillez entrer le numéro de téléphone du client");
+        String numTel = scanner.nextLine();
+
+        System.out.println("Veuillez entrer la ville du client");
+        String ville = scanner.nextLine();
+
+        System.out.println("Veuillez entrer la mot de passe du client");
+        String password = scanner.nextLine();
+
+        System.out.println("Veuillez entrer Si oui ou non le client a cotisé O/N");
+        String cotisation_brute = scanner.nextLine();
+        boolean cotisation;
+
+        if(cotisation_brute.equalsIgnoreCase("O")){
+            cotisation = true;
+        }
+        else{
+            cotisation = false;
+        }
+
+        Client c = new Client(Requete.maxIDPersonne(bd), nomPrenom[0], nomPrenom[1], calendrier, poids, email, adresse_postal, code_postal, ville, numTel, password, cotisation);
+        Requete.insererClient(bd, c);
+
+        }
+
 
     }
     private static void pressEnter(Scanner myObj){
