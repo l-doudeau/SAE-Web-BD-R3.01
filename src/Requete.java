@@ -182,4 +182,44 @@ public class Requete {
             return false;
         }
     }
+    public static boolean insererMoniteur(ConnectionDB bd, int id, String nom, String prenom, Calendar ddn, float poids, String adresseEmail,
+    String adresse, int codePostal, String ville, int numTel, String motDePasse){
+        PreparedStatement ps;
+        try {
+            ps = bd.getConnection().prepareStatement("insert into MONITEUR values(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);");
+            
+            ps.setInt(1, id);
+            ps.setString(2, nom);
+            ps.setString(3, prenom);
+
+            String mois = ""+ddn.get(Calendar.MONTH);
+            String jours = ""+ddn.get(Calendar.DATE);
+            if(mois.length() == 1){
+                mois = "0" + mois;
+    
+            }
+    
+            if(jours.length() == 1){
+                jours = "0" + jours;
+            }
+            java.util.Date utilDate = ddn.getTime();
+            java.sql.Date sqlDate = new java.sql.Date(utilDate.getTime());
+
+            ps.setDate(4, sqlDate);
+            ps.setFloat(5, poids);
+            ps.setString(6, adresseEmail);
+            ps.setString(7, adresse);
+            ps.setInt(8, codePostal);
+            ps.setString(9, ville);
+            ps.setInt(10, numTel);
+            ps.setString(11, motDePasse);
+            
+            ps.executeUpdate();
+            return true;
+        }
+        catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
 }
