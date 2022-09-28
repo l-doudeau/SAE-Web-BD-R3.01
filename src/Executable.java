@@ -43,12 +43,13 @@ public class Executable {
         };
 
         String[] sousMenuAffichage =
-        {"1- Affichier les Clients",
-        "2- Afficher les Moniteurs",
-        "3- Afficher les Poneys",
-        "4- Afficher les Cours",
-        "5- Afficher les réservations",    
-        "6- Exit"
+        {"1- Affichier un Client",
+        "2- Affichier les Clients",
+        "3- Afficher les Moniteurs",
+        "4- Afficher les Poneys",
+        "5- Afficher les Cours",
+        "6- Afficher les réservations",    
+        "7- Exit"
         };
         String[] sousMenuInsertion =
             {"1- Inserér un Clients",
@@ -112,39 +113,60 @@ public class Executable {
             Integer numchoix = Integer.parseInt(choix);
             switch(numchoix){
                 case 1:
-                    System.out.println(clients.toString());
+                    afficheUnClient(bd,clients);
+
                     System.out.println("\nAppuyer sur entrée pour continuer");
                     myObj.nextLine();
                     break;
                 case 2:
-                    System.out.println(moniteurs.toString());
+                    System.out.println(clients.toString());
                     System.out.println("\nAppuyer sur entrée pour continuer");
                     myObj.nextLine();
                     break;
                 case 3:
+                    System.out.println(moniteurs.toString());
+                    System.out.println("\nAppuyer sur entrée pour continuer");
+                    myObj.nextLine();
+                    break;
+                case 4:
                     System.out.println(poneys.toString());
                     
                     System.out.println("\nAppuyer sur entrée pour continuer");
                     myObj.nextLine();
                     break;
-                case 4:
+                case 5:
                     System.out.println(cours.toString());
                     System.out.println("\nAppuyer sur entrée pour continuer");
                     myObj.nextLine();
                     break;
-                case 5:
+                case 6:
                     Requete.afficheReservation(bd, clients, poneys, cours);
                     System.out.println("\nAppuyer sur entrée pour continuer");
                     myObj.nextLine();
                     break;
-                case 6:
+                case 7:
                     fini = true;
+                    break;
+                default:
+                    System.out.println("Saisie incorect ! \nAppuyer sur entrée pour continuer");
+                    myObj.nextLine();
                     break;
             }
             
         }
         myObj.close();
     }
+    private static void afficheUnClient(ConnectionDB bd, Map<Integer, Client> clients) {
+        Scanner myObj = new Scanner(System.in);
+        System.out.println("Veuillez rentrer l'id de la personne recherchée");
+        String id_brute = myObj.nextLine();
+        Integer id = Integer.parseInt(id_brute);
+        if(clients.get(id) == null)
+            System.out.println("Cette id ne correspond pas à un client !");
+        else
+            System.out.println(clients.get(id));
+    }
+
     private static void menuInsertion(String[] sousMenuInsertion,ConnectionDB bd,
     Map<Integer,Client> clients, Map<Integer,Poney> poneys, Map<Integer,Cours> cours) {
         Scanner myObj = new Scanner(System.in);
@@ -171,10 +193,17 @@ public class Executable {
                     break;
                 case 6:
                     fini = true;
-                }
+                    break;
+                
+                default:
+                    System.out.println("Saisie incorect ! \nAppuyer sur entrée pour continuer");
+                    myObj.nextLine();
+                    break;
             }
             myObj.close();
         }
+    }
+     
     public static void printMenu(String[] options){
         System.out.println("=================================");
         for(String option : options){

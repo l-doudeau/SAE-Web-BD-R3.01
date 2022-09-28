@@ -11,11 +11,11 @@ public class Personne {
     private String adresse;
     private int codePostal;
     private String ville;
-    private int numTel;
+    private String numTel;
     private String motdepasse;
 
 
-    public Personne(int id, String nom, String prenom, Date dateDeNaissance, float poids, String adresseEmail, String adresse, int codePostal, String ville, int numTel, String motDePasse){
+    public Personne(int id, String nom, String prenom, Date dateDeNaissance, float poids, String adresseEmail, String adresse, int codePostal, String ville, String numTel, String motDePasse){
         this.id = id;
         this.nom = nom;
         this.prenom = prenom;
@@ -101,11 +101,11 @@ public class Personne {
         this.ville = ville;
     }
 
-    public int getNumTel() {
+    public String getNumTel() {
         return this.numTel;
     }
 
-    public void setNumTel(int numTel) {
+    public void setNumTel(String numTel) {
         this.numTel = numTel;
     }
 
