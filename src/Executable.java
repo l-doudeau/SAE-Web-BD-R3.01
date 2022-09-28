@@ -28,21 +28,37 @@ public class Executable {
                 poneys = Requete.chargerPoney(bd);
                 cours = Requete.chargerCours(bd);
                 moniteurs = Requete.chargerMoniteur(bd);
-            } catch (SQLException e) {
-                // TODO Auto-generated catch block
+            } 
+            catch (SQLException e) {
                 e.printStackTrace();
             }
 
         } catch (ClassNotFoundException e1) {
-        
+            System.out.println("Erreur lors de la connexion MYSQL\nVerifier l'ajout de mariaDB dans les Referenced Libraries");
         }
 
-        String[] options = {"1- Afficher les réservations",
-        "2- Créer une réservation",
-        "3- Ajouter un client",
-        "4- Exit",
+        String[] options = {"1- Afficher les résultats",
+        "2- Insérer des données",
+        "3- Exit",
         };
 
+        String[] sousMenuAffichage =
+        {"1- Affichier les Clients",
+        "2- Afficher les Moniteurs",
+        "3- Afficher les Poneys",
+        "4- Afficher les Cours",
+        "5- Afficher les réservations",    
+        "6- Exit"
+        };
+        String[] sousMenuInsertion =
+            {"1- Inserér un Clients",
+            "2- Inserér un Moniteur",
+            "3- Inserér un Poney",
+            "4- Inserér un Cours",
+            "5- Inserér une Réservation",    
+            "6- Exit"
+        };
+    
 
         Scanner myObj = new Scanner(System.in);
         if(bd!=null){
@@ -55,50 +71,113 @@ public class Executable {
                     System.out.println("Veuillez entrer votre mot de passe : ");
                     String password = myObj.nextLine();
                     try {
-
-                        bd.connecter(database, username, password);
-                        
-
-                    } catch (SQLException e) {
+                        bd.connecter(database, username, password); 
+                    } 
+                    catch (SQLException e) {
                         System.out.println("\nIl y a une erreur dans les informations saisies !  \nAppuyez sur entrée pour recommencer");
                         myObj.nextLine();
-                    clients = Requete.chargerClient(bd);
-                    poneys = Requete.chargerPoney(bd);
-                    cours = Requete.chargerCours(bd);
-                    moniteurs = Requete.chargerMoniteur(bd);
+                        clients = Requete.chargerClient(bd);
+                        poneys = Requete.chargerPoney(bd);
+                        cours = Requete.chargerCours(bd);
+                        moniteurs = Requete.chargerMoniteur(bd);
                     }
                 }else{
-
-
                     Executable.printMenu(options);
                     String choix = myObj.nextLine();
                     Integer numchoix = Integer.parseInt(choix);
                     switch (numchoix){
                         case 1:
-                            Requete.afficheReservation(bd, clients, poneys, cours);
-                            System.out.println("\nAppuyer sur entrée pour continuer");
-                            myObj.nextLine();
+                            Executable.menuAffichage(sousMenuAffichage,bd,clients,poneys,cours);
                             break;
                         case 2:
-                            
-                            Executable.insererReservations(bd,myObj);
-                            
-
+                            Executable.menuInsertion(sousMenuInsertion, bd, clients, poneys, cours);
+                            break;
 
                     }    
                 }
 
-            }
-
+            }   
+            myObj.close();
 
         }
     }
 
-    public static void printMenu(String[] options){
-
-        for(String option : options){
-            System.out.println(option);
+    private static void menuAffichage(String[] sousMenuAffichage,ConnectionDB bd,
+    Map<Integer,Client> clients, Map<Integer,Poney> poneys, Map<Integer,Cours> cours) {
+        Scanner myObj = new Scanner(System.in);
+        boolean fini = false;
+        while(!fini){
+            Executable.printMenu(sousMenuAffichage);
+            String choix = myObj.nextLine();
+            Integer numchoix = Integer.parseInt(choix);
+            switch(numchoix){
+                case 1:
+                    //TODO AFFICHER CLIENTS
+                    break;
+                case 2:
+                    //TODO  AFFICHER MONITEURS
+                    break;
+                case 3:
+                    //TODO AFFICHER COURS
+                    break;
+                case 4:
+                    //TODO AFFICHER PONEY
+                    break;
+                case 5:
+                    Requete.afficheReservation(bd, clients, poneys, cours);
+                    System.out.println("\nAppuyer sur entrée pour continuer");
+                    myObj.nextLine();
+                    break;
+                case 6:
+                    fini = true;
+                    break;
+            }
+            
         }
+        myObj.close();
+    }
+
+    private static void menuInsertion(String[] sousMenuInsertion,ConnectionDB bd,
+    Map<Integer,Client> clients, Map<Integer,Poney> poneys, Map<Integer,Cours> cours) {
+        Scanner myObj = new Scanner(System.in);
+        boolean fini = false;
+        while(!fini){
+            Executable.printMenu(sousMenuInsertion);
+            String choix = myObj.nextLine();
+            Integer numchoix = Integer.parseInt(choix);
+            switch(numchoix){
+                case 1:
+                    //TODO INSERER CLIENTS
+                    break;
+                case 2:
+                    //TODO  INSERER MONITEURS
+                    break;
+                case 3:
+                    //TODO INSERER COURS
+                    break;
+                case 4:
+                    //TODO INSERER PONEY
+                    break;
+                case 5:
+                    Executable.insererReservations(bd, myObj);
+                    break;
+                case 6:
+                    fini = true;
+                }
+            }
+            myObj.close();
+        }
+
+
+
+    public static void printMenu(String[] options){
+        System.out.println("=================================");
+        for(String option : options){
+            
+            System.out.println(option);
+            
+        }
+        System.out.println("=================================\n");
         System.out.print("Choisi ton option : ");
     
     }
