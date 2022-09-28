@@ -24,7 +24,7 @@ CREATE TABLE PERSONNE (
   adresse VARCHAR(42),
   code_postal int,
   ville VARCHAR(20),
-  numerotel int,
+  numerotel VARCHAR(20),
   mdp VARCHAR(42),
   PRIMARY KEY (idp)
 ) ENGINE=InnoDB DEFAULT CHARSET=UTF8MB4;
