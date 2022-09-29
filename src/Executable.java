@@ -1,4 +1,4 @@
-import java.net.ConnectException;
+
 import java.sql.SQLException;
 import java.sql.Time;
 import java.text.ParseException;
@@ -6,9 +6,7 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Map;
-import java.util.NoSuchElementException;
 import java.util.Scanner;
-import java.util.spi.CalendarDataProvider;
 
 
 public class Executable {
@@ -65,14 +63,14 @@ public class Executable {
         
         }
     
-
+        static Map<Integer,Client> clients ;
+        static Map<Integer,Cours> cours;
+        static Map<Integer,Moniteur> moniteurs;
+        static Map<Integer,Poney> poneys;
 
         public static void main(String[] args) {
         boolean arret = false;
-        Map<Integer,Client> clients = null;
-        Map<Integer,Cours> cours = null;
-        Map<Integer,Moniteur> moniteurs = null;
-        Map<Integer,Poney> poneys = null;
+        
         ConnectionDB bd = null;
         try {
             bd = new ConnectionDB();
@@ -123,10 +121,10 @@ public class Executable {
                     Integer numchoix = Integer.parseInt(choix);
                     switch (numchoix){
                         case 1:
-                            Executable.menuAffichage(sousMenuAffichage,bd,clients,poneys,cours,moniteurs);
+                            Executable.menuAffichage(sousMenuAffichage,bd);
                             break;
                         case 2:
-                            Executable.menuInsertion(sousMenuInsertion, bd, clients, poneys, cours);
+                            Executable.menuInsertion(sousMenuInsertion,bd);
                             break;
                         case 3:
                             arret = true;
@@ -142,8 +140,7 @@ public class Executable {
         }
     }
 
-    private static void menuAffichage(String[] sousMenuAffichage,ConnectionDB bd,
-    Map<Integer,Client> clients, Map<Integer,Poney> poneys, Map<Integer,Cours> cours,Map<Integer,Moniteur> moniteurs) {
+    private static void menuAffichage(String[] sousMenuAffichage,ConnectionDB bd) {
         Scanner myObj = new Scanner(System.in);
         boolean fini = false;
         while(!fini){
@@ -152,19 +149,19 @@ public class Executable {
             Integer numchoix = Integer.parseInt(choix);
             switch(numchoix){
                 case 1:
-                    menuAffichageCarac(sousSousMenuAffichage, "Client(e)(s)", bd, clients, poneys, cours, moniteurs);
+                    menuAffichageCarac(sousSousMenuAffichage, "Client(e)(s)", bd);
                     break;
                 case 2:
-                    menuAffichageCarac(sousSousMenuAffichage, "Moniteur(s)/Monitrice(s)", bd, clients, poneys, cours, moniteurs);
+                    menuAffichageCarac(sousSousMenuAffichage, "Moniteur(s)/Monitrice(s)", bd);
                     break;
                 case 3:
-                    menuAffichageCarac(sousSousMenuAffichage, "Poney(s)", bd, clients, poneys, cours, moniteurs);
+                    menuAffichageCarac(sousSousMenuAffichage, "Poney(s)", bd);
                     break;
                 case 4:
-                    menuAffichageCarac(sousSousMenuAffichage, "Cours", bd, clients, poneys, cours, moniteurs);
+                    menuAffichageCarac(sousSousMenuAffichage, "Cours", bd);
                     break;
                 case 5:
-                    menuAffichageCarac(sousSousMenuAffichage, "Reservation(s)", bd, clients, poneys, cours, moniteurs);
+                    menuAffichageCarac(sousSousMenuAffichage, "Reservation(s)", bd);
                     break;
                 case 6:
                     fini = true;
@@ -178,8 +175,7 @@ public class Executable {
         }
     }
 
-    private static void menuAffichageCarac(String[] sousMenuAffichage, String arg,ConnectionDB bd,
-    Map<Integer,Client> clients, Map<Integer,Poney> poneys, Map<Integer,Cours> cours,Map<Integer,Moniteur> moniteurs){
+    private static void menuAffichageCarac(String[] sousMenuAffichage, String arg,ConnectionDB bd){
 
         Scanner myObj = new Scanner(System.in);
         boolean fini = false;
@@ -191,27 +187,26 @@ public class Executable {
                 case 1:
                     switch(arg){
                         case "Client(e)(s)":
-                            afficheUnClient(bd,clients);
+                            afficheUnClient(bd,myObj);
                             pressEnter(myObj);
                             break;
 
-                        case "Moniteur/Monitrice(s)":
-                            afficheUnMoniteur(bd,clients);
+                        case "Moniteur(s)/Monitrice(s)":
+                            afficheUnMoniteur(bd,myObj);
                             pressEnter(myObj);
                             break;
                         
                         case "Poney(s)":
-                            afficheUnPoney(bd,clients);
+                            afficheUnPoney(bd,myObj);
                             pressEnter(myObj);
                             break;
 
                         case "Cours":
-                            afficheUnCours(bd,clients);
-                            System.out.println(cours.toString());
+                            afficheUnCours(bd,myObj);
                             pressEnter(myObj);
                             break;
                         case "Reservation(s)":
-                            afficheUneReservation(bd,clients);
+                            afficheUneReservation(bd,myObj);
                             pressEnter(myObj);
                             break;
                     }
@@ -220,26 +215,26 @@ public class Executable {
                 case 2:
                     switch(arg){
                         case "Client(e)(s)":
-                            afficherLesClients(clients);
+                            afficherLesClients();
                             pressEnter(myObj);
                             break;
 
                         case "Moniteur(s)/Monitrice(s)":
-                            System.out.println(moniteurs.toString());
+                            afficherLesMoniteurs();
                             pressEnter(myObj);
                             break;
                         
                         case "Poney(s)":
-                            System.out.println(poneys.toString());
+                            afficherLesPoneys();
                             pressEnter(myObj);
                             break;
 
                         case "Cours":
-                            System.out.println(cours.toString());
+                            afficherLesCours();
                             pressEnter(myObj);
                             break;
                         case "Reservation(s)":
-                            Requete.afficheReservation(bd, clients, poneys, cours);
+                            Requete.afficheReservation(bd);
                             pressEnter(myObj);
                             break;
                     }
@@ -253,8 +248,7 @@ public class Executable {
         System.out.println("");
     }
 
-    private static void menuInsertion(String[] sousMenuInsertion,ConnectionDB bd,
-    Map<Integer,Client> clients, Map<Integer,Poney> poneys, Map<Integer,Cours> cours) {
+    private static void menuInsertion(String[] sousMenuInsertion,ConnectionDB bd) {
         Scanner myObj = new Scanner(System.in);
         boolean fini = false;
         while(!fini){
@@ -263,16 +257,16 @@ public class Executable {
             Integer numchoix = Integer.parseInt(choix);
             switch(numchoix){
                 case 1:
-                    //TODO INSERER CLIENTS
+                    insererClient(bd, myObj);
                     break;
                 case 2:
-                    //TODO  INSERER MONITEURS
+                    insererMoniteur(bd, myObj);
                     break;
                 case 3:
-                    //TODO INSERER COURS
+                    insererPoney(bd,myObj);
                     break;
                 case 4:
-                    //TODO INSERER PONEY
+                    insererCours(bd,myObj);
                     break;
                 case 5:
                     Executable.insererReservations(bd, myObj);
@@ -289,22 +283,11 @@ public class Executable {
         }
     }
    
-    private static void afficheUneReservation(ConnectionDB bd, Map<Integer, Client> clients) {
-    }
-
-    private static void afficheUnCours(ConnectionDB bd, Map<Integer, Client> clients) {
-    }
-
-    private static void afficheUnPoney(ConnectionDB bd, Map<Integer, Client> clients) {
-    }
-
-    private static void afficheUnMoniteur(ConnectionDB bd, Map<Integer, Client> clients) {
-    }
 
     
 
-    private static void afficheUnClient(ConnectionDB bd, Map<Integer, Client> clients) {
-        Scanner myObj = new Scanner(System.in);
+
+    private static void afficheUnClient(ConnectionDB bd,Scanner myObj) {
         System.out.println("Veuillez rentrer l'id de la personne recherchée");
         String id_brute = myObj.nextLine();
         Integer id = Integer.parseInt(id_brute);
@@ -314,14 +297,117 @@ public class Executable {
             System.out.println(clients.get(id));
     }
 
-    private static void afficherLesClients(Map<Integer, Client> clients) {
+    private static void afficheUneReservation(ConnectionDB bd,Scanner myObj) {
+        Integer idClient = null;
+        Integer idPoney = null;
+        Calendar calendrier = Calendar.getInstance();
+        boolean ok = false;
+
+        //Demander l'id du client
+        while(!ok){
+        System.out.println("Veuillez rentrer l'id du client de la réservation recherchée");
+        idClient = Integer.parseInt(myObj.nextLine());
+        if(clients.get(idClient) == null)
+            System.out.println("Cette id ne correspond pas à un client !");
+        else
+            ok = true;
+        
+        }
+        //Demander l'id du poney
+        ok = false;
+        while(!ok){
+            System.out.println("Veuillez rentrer l'id du poney de la réservation recherchée");
+            idPoney = Integer.parseInt(myObj.nextLine());
+            if(poneys.get(idPoney) == null)
+                System.out.println("Cette id ne correspond à aucun poney !");
+            else
+                ok = true;
+        }
+
+        //Demander la date de la réservation
+        ok=false;
+        while(!ok){            
+            System.out.println("Veuillez entrer la date de la réservation XX/XX/XXXX HH:mm:ss ");
+            String date_brute = myObj.nextLine();
+            SimpleDateFormat formatDate = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
+            formatDate.setLenient(false);
+            try{
+                Date d = formatDate.parse(date_brute);
+                calendrier.setTime(d);
+                ok = true;
+            }
+            // Date invalide
+            catch (ParseException e)
+            {
+                System.out.println(date_brute +" est une date invalide");
+            }
+        }
+        Requete.afficheUneReservation(bd, idClient, idPoney, calendrier);
+        
+
+    }
+    
+    private static void afficheUnCours(ConnectionDB bd,Scanner myObj) {
+        System.out.println("Veuillez rentrer l'id du cours recherché");
+        String id_brute = myObj.nextLine();
+        Integer id = Integer.parseInt(id_brute);
+        if(cours.get(id) == null)
+            System.out.println("Cette id ne correspond à aucun cours !");
+        else
+            System.out.println(cours.get(id));
+    }
+    
+    private static void afficheUnPoney(ConnectionDB bd,Scanner myObj) {
+        System.out.println("Veuillez rentrer l'id du poney recherché");
+        String id_brute = myObj.nextLine();
+        Integer id = Integer.parseInt(id_brute);
+        if(poneys.get(id) == null)
+            System.out.println("Cette id ne correspond à aucun poney !");
+        else
+            System.out.println(poneys.get(id));
+    
+    }
+
+    private static void afficheUnMoniteur(ConnectionDB bd,Scanner myObj) {
+        System.out.println("Veuillez rentrer l'id de la personne recherchée");
+        String id_brute = myObj.nextLine();
+        Integer id = Integer.parseInt(id_brute);
+        if(moniteurs.get(id) == null)
+            System.out.println("Cette id ne correspond pas à un moniteur !");
+        else
+            System.out.println(moniteurs.get(id));
+    }
+    
+
+
+    private static void afficherLesClients() {
 
         for(Client c : clients.values()){
             System.out.println(c.toString());
         }
 
     }
+    private static void afficherLesMoniteurs() {
 
+        for(Moniteur moniteur : moniteurs.values()){
+            System.out.println(moniteur.toString());
+        }
+
+    }
+    private static void afficherLesCours() {
+
+        for(Cours unCours : cours.values()){
+            System.out.println(unCours.toString());
+        }
+
+    }
+    private static void afficherLesPoneys() {
+
+        for(Poney poney : poneys.values()){
+            System.out.println(poney.toString());
+        }
+
+    }
 
     private static void insererReservations(ConnectionDB bd , Scanner scanner){
         boolean ok =false;
@@ -350,17 +436,14 @@ public class Executable {
  
         
         System.out.println("Veuillez entrer l'id de la personne qui réserve le cours");
-        String idP_brute = scanner.nextLine();
-        
-        Integer idP = Integer.parseInt(idP_brute);
-
+        Integer idP = Integer.parseInt(scanner.nextLine());
+    
         System.out.println("Veuillez entrer l'id du cours qui est réservé le cours");
-        String idC_brute = scanner.nextLine();
-        Integer idC = Integer.parseInt(idC_brute);
+        Integer idC = Integer.parseInt(scanner.nextLine());
+
 
         System.out.println("Veuillez entrer l'id du poney qui est réservé pour le cours");
-        String idPo_brute = scanner.nextLine();
-        Integer idPo = Integer.parseInt(idPo_brute);
+        Integer idPo = Integer.parseInt(scanner.nextLine());
 
 
         System.out.println("Veuillez entrer le temps du cours sous la forme XX:XX:XX ");
@@ -377,7 +460,8 @@ public class Executable {
         else{
             a_paye = false;
         }
-        if(Requete.insererReservations(bd, calendrier ,3, 1, 1, duree, a_paye)){
+        Reservation reservation = new Reservation(calendrier, idP, idC, idPo, duree, a_paye);
+        if(Requete.insererReservations(bd, reservation)){
             System.out.println("L'inserstion s'est bien déroulé");
         }
         else{
@@ -403,7 +487,6 @@ public class Executable {
             formatDate.setLenient(false);
             try{
                 Date d = formatDate.parse(date_brute);
-                System.out.println(date_brute+" est une date valide");
                 calendrier.setTime(d);
                 ok = true;
             }
@@ -420,21 +503,21 @@ public class Executable {
 
         System.out.println("Veuillez entrer l'adresse email du client");
         String email = scanner.nextLine();
-        
-        System.out.println("Veuillez entrer l'adresse du client ");
-        String adresse_postal = scanner.nextLine();
-
-        System.out.println("Veuillez entrer le code postal du client");
-        Integer code_postal = Integer.parseInt(scanner.nextLine());
-
-        System.out.println("Veuillez entrer le numéro de téléphone du client");
-        String numTel = scanner.nextLine();
-
-        System.out.println("Veuillez entrer la ville du client");
-        String ville = scanner.nextLine();
 
         System.out.println("Veuillez entrer la mot de passe du client");
         String password = scanner.nextLine();
+        
+        System.out.println("Veuillez entrer l'adresse du client ");
+        String adresse_postal = scanner.nextLine();
+        
+        System.out.println("Veuillez entrer le code postal du client");
+        Integer code_postal = Integer.parseInt(scanner.nextLine());
+        
+        System.out.println("Veuillez entrer la ville du client");
+        String ville = scanner.nextLine();
+
+        System.out.println("Veuillez entrer le numéro de téléphone du client");
+        String numTel = scanner.nextLine();
 
         System.out.println("Veuillez entrer Si oui ou non le client a cotisé O/N");
         String cotisation_brute = scanner.nextLine();
@@ -447,13 +530,129 @@ public class Executable {
             cotisation = false;
         }
 
-        Client c = new Client(Requete.maxIDPersonne(bd), nomPrenom[0], nomPrenom[1], calendrier, poids, email, adresse_postal, code_postal, ville, numTel, password, cotisation);
-        Requete.insererClient(bd, c);
-
+        Client c = new Client(Requete.maxIDPersonne(bd)+1, nomPrenom[0], nomPrenom[1], calendrier, poids, email, adresse_postal, code_postal, ville, numTel, password, cotisation);
+        if(Requete.insererClient(bd, c)){
+            System.out.println("Insertion efféctuée ");
+            pressEnter(scanner);
         }
+
+    }
+
+    private static void insererMoniteur(ConnectionDB bd, Scanner scanner){
+        boolean ok =false;
+        Calendar calendrier = Calendar.getInstance();
+        System.out.println("Veuillez entrer le NOM prenom du client ");
+        String nomPrenom_brute = scanner.nextLine();
+        String [] nomPrenom = nomPrenom_brute.split(" ");
+        while(!ok){
+
+            
+            System.out.println("Veuillez entrer la date de naissance du client sous la forme XX/XX/XXXX ");
+            String date_brute = scanner.nextLine();
+            SimpleDateFormat formatDate = new SimpleDateFormat("dd/MM/yyyy");
+            formatDate.setLenient(false);
+            try{
+                Date d = formatDate.parse(date_brute);
+                calendrier.setTime(d);
+                ok = true;
+            }
+            // Date invalide
+            catch (ParseException e)
+            {
+                e.printStackTrace();
+                System.out.println(date_brute +" est une date invalide");
+            }
+        }
+        System.out.println("Veuillez entrer le poids du client ");
+        Float poids = Float.parseFloat(scanner.nextLine());
+
+
+        System.out.println("Veuillez entrer l'adresse email du client");
+        String email = scanner.nextLine();
+
+        System.out.println("Veuillez entrer la mot de passe du client");
+        String password = scanner.nextLine();
+        
+        System.out.println("Veuillez entrer l'adresse du client ");
+        String adresse_postal = scanner.nextLine();
+        
+        System.out.println("Veuillez entrer le code postal du client");
+        Integer code_postal = Integer.parseInt(scanner.nextLine());
+        
+        System.out.println("Veuillez entrer la ville du client");
+        String ville = scanner.nextLine();
+
+        System.out.println("Veuillez entrer le numéro de téléphone du client");
+        String numTel = scanner.nextLine();
+
+        Moniteur c = new Moniteur(Requete.maxIDPersonne(bd)+1, nomPrenom[0], nomPrenom[1], calendrier, poids, email, adresse_postal, code_postal, ville, numTel, password);
+        if(Requete.insererMoniteur(bd, c)){
+            System.out.println("Insertion efféctuée ");
+            pressEnter(scanner);
+        
+        }
+
+    }
+
+    private static void insererPoney(ConnectionDB bd,Scanner scanner){
+
+        System.out.println("Veuillez entrer le NOM du poney ");
+        String nomPo = scanner.nextLine();
+
+        System.out.println("Veuillez entrer le poids max du poney");
+        Integer poidsMax = Integer.parseInt(scanner.nextLine());
+
+        Poney poney = new Poney(Requete.maxIDPoney(bd)+1, nomPo, poidsMax);
+        if(Requete.insererPoney(bd,poney)){
+            System.out.println("Insertion efféctuée");
+            pressEnter(scanner);
+        }
+        
 
 
     }
+  
+    private static void insererCours(ConnectionDB bd, Scanner myObj) {
+        
+
+        String nomCours = "";
+        String description = "";
+        String typeCours = "";
+        Integer prix = null;
+
+        System.out.println("Veuillez entrer le nom du cours");
+        nomCours = myObj.nextLine();
+
+        System.out.println("Veuillez entrer la description du cours");
+        description = myObj.nextLine();
+        boolean ok = false;
+        while(!ok){
+ 
+            System.out.println("Veuillez entrer le type du cours (Collectif/Individuel)");
+            typeCours = myObj.nextLine();
+            if(typeCours.equalsIgnoreCase("Collectif") || typeCours.equalsIgnoreCase("Individuel")){
+                ok = true;
+            }
+            else{
+                System.out.println("Saisie incorrect veuillez recommancer !");
+                pressEnter(myObj);
+            }
+        }
+
+        System.out.println("Veuillez entrer le prix du cours");
+        prix  = Integer.parseInt(myObj.nextLine());
+
+
+        Cours cours = new Cours(Requete.maxIDCours(bd)+1, nomCours, description, typeCours, prix);
+        if(Requete.insererCours(bd, cours)){
+            System.out.println("Insertion efféctué ");
+            pressEnter(myObj);
+        }
+        
+    }
+  
+  
+  
     private static void pressEnter(Scanner myObj){
         System.out.println("\nAppuyer sur entrée pour continuer");
         myObj.nextLine();

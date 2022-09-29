@@ -1,11 +1,11 @@
-import java.util.Date;
+import java.util.Calendar;
 
 public class Personne {
     
     private int id;
     private String nom;
     private String prenom;
-    private Date dateDeNaissance;
+    private Calendar dateDeNaissance;
     private float poids;
     private String adresseEmail;
     private String adresse;
@@ -15,7 +15,7 @@ public class Personne {
     private String motdepasse;
 
 
-    public Personne(int id, String nom, String prenom, Date dateDeNaissance, float poids, String adresseEmail, String adresse, int codePostal, String ville, String numTel, String motDePasse){
+    public Personne(int id, String nom, String prenom, Calendar dateDeNaissance, float poids, String adresseEmail, String adresse, int codePostal, String ville, String numTel, String motDePasse){
         this.id = id;
         this.nom = nom;
         this.prenom = prenom;
@@ -53,11 +53,11 @@ public class Personne {
         this.prenom = prenom;
     }
 
-    public Date getDateDeNaissance() {
+    public Calendar getDateDeNaissance() {
         return this.dateDeNaissance;
     }
 
-    public void setDateDeNaissance(Date dateDeNaissance) {
+    public void setDateDeNaissance(Calendar dateDeNaissance) {
         this.dateDeNaissance = dateDeNaissance;
     }
 

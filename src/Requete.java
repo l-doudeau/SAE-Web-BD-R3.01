@@ -6,7 +6,6 @@ import java.sql.Time;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 public class Requete {
@@ -28,7 +27,7 @@ public class Requete {
     public static Integer maxIDCours(ConnectionDB bd){
         try{
             Statement s = bd.getConnection().createStatement();
-            ResultSet res = s.executeQuery("select max(idp) from COURS");
+            ResultSet res = s.executeQuery("select max(idc) from COURS");
             res.next();
             return res.getInt(1);
         }
@@ -41,7 +40,7 @@ public class Requete {
     public static Integer maxIDPoney(ConnectionDB bd){
         try{
             Statement s = bd.getConnection().createStatement();
-            ResultSet res = s.executeQuery("select max(idp) from PONEYS");
+            ResultSet res = s.executeQuery("select max(idpo) from PONEYS");
             res.next();
             return res.getInt(1);
         }
@@ -52,7 +51,7 @@ public class Requete {
     }
 
 
-    public static void afficheReservation(ConnectionDB bd,Map<Integer,Client> clients, Map<Integer,Poney> poneys, Map<Integer,Cours> cours){
+    public static void afficheReservation(ConnectionDB bd){
         Statement s;
         try {
             s = bd.getConnection().createStatement();
@@ -68,7 +67,7 @@ public class Requete {
                 else{
                     a_paye = "n'est pas payé";
                 }
-                System.out.println("\nReservation du " + date + " " + heure +" " + a_paye + " par " + clients.get(res.getInt(2)).getNom() + " avec le poney " + poneys.get(res.getInt(4)).getNom() + " au cours " + cours.get(res.getInt(3)).getNomCours() + " qui dure " + temps +"h");
+                System.out.println("\nReservation du " + date + " " + heure +" " + a_paye + " par " + Executable.clients.get(res.getInt(2)).getNom() + " avec le poney " + Executable.poneys.get(res.getInt(4)).getNom() + " au cours " + Executable.cours.get(res.getInt(3)).getNomCours() + " qui dure " + temps +"h");
             }
 
         } catch (SQLException e) {
@@ -78,34 +77,31 @@ public class Requete {
 
     }
 
-    public static void afficheUnClient(ConnectionDB bd,Map<Integer,Client> clients, Map<Integer,Poney> poneys, Map<Integer,Cours> cours){
+
+    public static void afficheUneReservation(ConnectionDB bd,Integer idClient, Integer idPoney, Calendar dateR){
         Statement s;
         try {
             s = bd.getConnection().createStatement();
-            ResultSet res = s.executeQuery("select * from RESERVER");
-            while(res.next()){
-                Date date = res.getDate(1);
-                Time heure = res.getTime(1);
-                Time temps = res.getTime(5);
-                String a_paye;
-                if(res.getBoolean(5)){
-                    a_paye = "payé";
-                }
-                else{
-                    a_paye = "n'est pas payé";
-                }
-                System.out.println("\nReservation du " + date + " " + heure +" " + a_paye + " par " + clients.get(res.getInt(2)).getNom() + " avec le poney " + poneys.get(res.getInt(4)).getNom() + " au cours " + cours.get(res.getInt(3)).getNomCours() + " qui dure " + temps +"h");
+
+            ResultSet res = s.executeQuery("select * from RESERVER where YEAR(jmahms) = " + dateR.get(Calendar.YEAR) + " and  MONTH(jmahms) =" + dateR.get(Calendar.MONTH)+1 +" and DAY(jmahms) =" + dateR.get(Calendar.DAY_OF_MONTH) + " and  hour(jmahms) = " + dateR.get(Calendar.HOUR) + " and minute(jmahms) = " + dateR.get(Calendar.MINUTE) + " and second(jmahms) = " + dateR.get(Calendar.SECOND)+  " and idp = " + idClient + " and idpo = " + idPoney + ";");
+            res.next();
+            Time heure = res.getTime(1);
+            Time temps = res.getTime(5);
+            String a_paye;
+            if(res.getBoolean(5)){
+                a_paye = "payé";
             }
-
-        } catch (SQLException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
-        
-
-    }
-
+            else{
+                a_paye = "n'est pas payé";
+            }
+            System.out.println("\nReservation du " + dateR.getTime() + " " + heure +" " + a_paye + " par " + Executable.clients.get(res.getInt(2)).getNom() + " avec le poney " + Executable.poneys.get(res.getInt(4)).getNom() + " au cours " + Executable.cours.get(res.getInt(3)).getNomCours() + " qui dure " + temps +"h");
     
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        
+
+    }   
 
 
     public static Map<Integer,Client> chargerClient(ConnectionDB bd){
@@ -115,12 +111,14 @@ public class Requete {
             ResultSet clients;
             clients = s.executeQuery("select * from CLIENT natural join PERSONNE");
             while(clients.next()){
-                res.put(clients.getInt(1),new Client(clients.getInt(1), clients.getString(3), clients.getString(4), clients.getDate(5),clients.getInt(6), clients.getString(7), clients.getString(8), clients.getInt(9), clients.getString(10), clients.getString(11),clients.getString(12), clients.getBoolean(2)));
+                Calendar calendrier = Calendar.getInstance();
+                calendrier.setTime(clients.getDate(5));
+                Client c = new Client(clients.getInt(1),  clients.getString(3), clients.getString(4), calendrier, clients.getInt(6), clients.getString(7), clients.getString(8), clients.getInt(9),  clients.getString(10),  clients.getString(11), clients.getString(12), clients.getBoolean(2));
+                res.put(clients.getInt(1),c);
             }
 
             return res;
         } catch (SQLException e1) {
-            // TODO Auto-generated catch block
             e1.printStackTrace();
         }
         
@@ -150,7 +148,10 @@ public class Requete {
         Statement s = bd.getConnection().createStatement();
         ResultSet moniteurs = s.executeQuery("select * from MONITEUR natural join PERSONNE");
         while(moniteurs.next()){
-            res.put(moniteurs.getInt(1),new Moniteur(moniteurs.getInt(1), moniteurs.getString(2), moniteurs.getString(3), moniteurs.getDate(4),moniteurs.getInt(5), moniteurs.getString(6), moniteurs.getString(7), moniteurs.getInt(8), moniteurs.getString(9), moniteurs.getString(10), moniteurs.getString(11)));
+            Calendar calendrier = Calendar.getInstance();
+            calendrier.setTime(moniteurs.getDate(4));
+            Moniteur moniteur = new Moniteur(moniteurs.getInt(1), moniteurs.getString(2), moniteurs.getString(3), calendrier,moniteurs.getInt(5), moniteurs.getString(6), moniteurs.getString(7), moniteurs.getInt(8), moniteurs.getString(9), moniteurs.getString(10), moniteurs.getString(11));
+            res.put(moniteurs.getInt(1),moniteur);
             }
 
             return res;
@@ -159,9 +160,7 @@ public class Requete {
         }
         return null;
         }
-    
-
-        
+      
     public static Map<Integer,Cours> chargerCours(ConnectionDB bd){
         try{
         Map<Integer, Cours> res = new HashMap<>();
@@ -179,71 +178,58 @@ public class Requete {
         return null;
         }
 
-    public static boolean insererReservations(ConnectionDB bd, Calendar calendrier, int idP, int idC, int idPo, Time duree, boolean a_paye){
+    public static boolean insererReservations(ConnectionDB bd, Reservation uneReservation){
         PreparedStatement ps;
         try {
             ps = bd.getConnection().prepareStatement("insert into RESERVER values (?, ?, ?, ?, ?, ?);");
-            String mois = ""+calendrier.get(Calendar.MONTH);
-            String jours = ""+calendrier.get(Calendar.DATE);
-            if(mois.length() == 1){
-                mois = "0" + mois;
-            }
-
-            if(jours.length() == 1){
-                jours = "0" + jours;
-            }
-            java.util.Date utilDate = calendrier.getTime();
+            java.util.Date utilDate = uneReservation.getDate().getTime();
             java.sql.Date sqlDate = new java.sql.Date(utilDate.getTime());
             ps.setDate(1, sqlDate);
-            ps.setInt(2, idP);
-            ps.setInt(3, idC);
-            ps.setInt(4, idPo);
-            ps.setTime(5, duree);
-            ps.setBoolean(6, a_paye);
+            ps.setInt(2, uneReservation.getIdPersonne());
+            ps.setInt(3, uneReservation.getIdCours());
+            ps.setInt(4, uneReservation.getIdPoney());
+            ps.setTime(5, uneReservation.getDuree());
+            ps.setBoolean(6, uneReservation.getAPaye());
 
             ps.executeUpdate();
             return true;
         }catch (SQLException e) {
-            // TODO Auto-generated catch block
+
             e.printStackTrace();
             return false;
         }
     }
     
-    public static boolean insererClient(ConnectionDB bd, String nom, String prenom, Calendar ddn, float poids, String adresseEmail,
-    String adresse, int codePostal, String ville, String numTel, String motDePasse, boolean cotisation){
-        PreparedStatement ps;
+    public static boolean insererClient(ConnectionDB bd, Client unClient){
+        PreparedStatement psClient;
+        PreparedStatement psPersonne;
         try {
-            ps = bd.getConnection().prepareStatement("insert into CLIENT values(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);");
-            
-            ps.setInt(1, maxIDPersonne(bd));
-            ps.setString(2, nom);
-            ps.setString(3, prenom);
 
-            String mois = ""+ddn.get(Calendar.MONTH);
-            String jours = ""+ddn.get(Calendar.DATE);
-            if(mois.length() == 1){
-                mois = "0" + mois;
-    
-            }
-    
-            if(jours.length() == 1){
-                jours = "0" + jours;
-            }
-            java.util.Date utilDate = ddn.getTime();
-            java.sql.Date sqlDate = new java.sql.Date(utilDate.getTime());
-
-            ps.setDate(4, sqlDate);
-            ps.setFloat(5, poids);
-            ps.setString(6, adresseEmail);
-            ps.setString(7, adresse);
-            ps.setInt(8, codePostal);
-            ps.setString(9, ville);
-            ps.setString(10, numTel);
-            ps.setString(11, motDePasse);
-            ps.setBoolean(12, cotisation);
+            psPersonne = bd.getConnection().prepareStatement("INSERT INTO PERSONNE values(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);");
+            psClient = bd.getConnection().prepareStatement("insert into CLIENT values(?,?);");
             
-            ps.executeUpdate();
+            
+            psPersonne.setInt(1, unClient.getId());
+            psPersonne.setString(2, unClient.getNom());
+            psPersonne.setString(3, unClient.getPrenom());
+            Date date = unClient.getDateDeNaissance().getTime();
+            java.sql.Date sqlDate = new java.sql.Date(date.getTime());
+
+            psPersonne.setDate(4, sqlDate);
+            psPersonne.setFloat(5, unClient.getPoids());
+            psPersonne.setString(6, unClient.getAdresseEmail());
+            psPersonne.setString(7, unClient.getAdresse());
+            psPersonne.setInt(8, unClient.getCodePostal());
+            psPersonne.setString(9, unClient.getVille());
+            psPersonne.setString(10, unClient.getNumTel());
+            psPersonne.setString(11, unClient.getMotdepasse());
+            psPersonne.executeUpdate();
+
+            psClient.setInt(1, unClient.getId());
+            psClient.setBoolean(2, unClient.getCotisation());
+            psClient.executeUpdate();
+
+            
             return true;
         }
         catch (SQLException e) {
@@ -251,39 +237,35 @@ public class Requete {
             return false;
         }
     }
-    public static boolean insererMoniteur(ConnectionDB bd, String nom, String prenom, Calendar ddn, float poids, String adresseEmail,
-    String adresse, int codePostal, String ville, String numTel, String motDePasse){
-        PreparedStatement ps;
+    
+    public static boolean insererMoniteur(ConnectionDB bd, Moniteur unMoniteur){
+        PreparedStatement psPersonne;
+        PreparedStatement psMoniteur;
         try {
-            ps = bd.getConnection().prepareStatement("insert into MONITEUR values(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);");
-            
-            ps.setInt(1, maxIDPersonne(bd));
-            ps.setString(2, nom);
-            ps.setString(3, prenom);
+            psPersonne = bd.getConnection().prepareStatement("insert into PERSONNE values(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);");
+            psMoniteur = bd.getConnection().prepareStatement("INSERT INTO MONITEUR values(?);");
 
-            String mois = ""+ddn.get(Calendar.MONTH);
-            String jours = ""+ddn.get(Calendar.DATE);
-            if(mois.length() == 1){
-                mois = "0" + mois;
-    
-            }
-    
-            if(jours.length() == 1){
-                jours = "0" + jours;
-            }
-            java.util.Date utilDate = ddn.getTime();
+
+            psPersonne.setInt(1,unMoniteur.getId());
+            psPersonne.setString(2, unMoniteur.getNom());
+            psPersonne.setString(3, unMoniteur.getPrenom());
+
+            java.util.Date utilDate = unMoniteur.getDateDeNaissance().getTime();
             java.sql.Date sqlDate = new java.sql.Date(utilDate.getTime());
 
-            ps.setDate(4, sqlDate);
-            ps.setFloat(5, poids);
-            ps.setString(6, adresseEmail);
-            ps.setString(7, adresse);
-            ps.setInt(8, codePostal);
-            ps.setString(9, ville);
-            ps.setString(10, numTel);
-            ps.setString(11, motDePasse);
+            psPersonne.setDate(4, sqlDate);
+            psPersonne.setFloat(5, unMoniteur.getPoids());
+            psPersonne.setString(6, unMoniteur.getAdresseEmail());
+            psPersonne.setString(7, unMoniteur.getAdresse());
+            psPersonne.setInt(8, unMoniteur.getCodePostal());
+            psPersonne.setString(9, unMoniteur.getVille());
+            psPersonne.setString(10, unMoniteur.getNumTel());
+            psPersonne.setString(11, unMoniteur.getMotdepasse());
             
-            ps.executeUpdate();
+            psPersonne.executeUpdate();
+
+            psMoniteur.setInt(1, unMoniteur.getId());
+            psMoniteur.executeUpdate();
             return true;
         }
         catch (SQLException e) {
@@ -292,16 +274,16 @@ public class Requete {
         }
     }
 
-    public static boolean insererCours(ConnectionDB bd, String nomc, String desc, String typec, Float prix){
+    public static boolean insererCours(ConnectionDB bd, Cours unCours){
         PreparedStatement ps;
         try {
             ps = bd.getConnection().prepareStatement("insert into COURS values(?, ?, ?, ?, ?);");
 
-            ps.setInt(1, maxIDCours(bd));
-            ps.setString(2, nomc);
-            ps.setString(3, desc);
-            ps.setString(4, typec);
-            ps.setFloat(5, prix);
+            ps.setInt(1, unCours.getId());
+            ps.setString(2, unCours.getNomCours());
+            ps.setString(3, unCours.getDescription());
+            ps.setString(4, unCours.getTypeCours());
+            ps.setFloat(5, unCours.getPrix());
 
             ps.executeUpdate();
             return true;
@@ -312,14 +294,14 @@ public class Requete {
         }
     }
 
-    public static boolean insererPoney(ConnectionDB bd, String nomp, Float poidssup){
+    public static boolean insererPoney(ConnectionDB bd, Poney poney){
         PreparedStatement ps;
         try{
-            ps = bd.getConnection().prepareStatement("insert into PONEY values(?, ?, ?);");
+            ps = bd.getConnection().prepareStatement("insert into PONEYS values(?, ?, ?);");
 
-            ps.setInt(1, maxIDPoney(bd));
-            ps.setString(2, nomp);
-            ps.setFloat(3, poidssup);
+            ps.setInt(1, poney.getId());
+            ps.setString(2, poney.getNom());
+            ps.setFloat(3, poney.getPoidsSupporte());
 
             ps.executeUpdate();
             return true;
