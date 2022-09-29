@@ -103,6 +103,26 @@ public class Requete {
 
     }   
 
+    public static Map<Integer, Personne> chargerPersonne(ConnectionDB bd){
+        try{
+        Map<Integer,Personne> res = new HashMap<>();
+        Statement s = bd.getConnection().createStatement();
+        ResultSet personnes = s.executeQuery("select * from PERSONNE");
+        while(personnes.next()){
+            Calendar c = Calendar.getInstance();
+            
+            c.setTime(personnes.getDate(4));
+
+            res.put(personnes.getInt(1), new Personne(personnes.getInt(1), personnes.getString(2), personnes.getString(3), c, personnes.getInt(5), personnes.getString(6), personnes.getString(7), personnes.getInt(8), personnes.getString(9), personnes.getString(10),personnes.getString(11)));
+        
+        }
+
+        return res;
+    } catch(SQLException e1){
+        e1.printStackTrace();
+    }
+    return null;
+    }
 
     public static Map<Integer,Client> chargerClient(ConnectionDB bd){
         try {
@@ -202,34 +222,11 @@ public class Requete {
     
     public static boolean insererClient(ConnectionDB bd, Client unClient){
         PreparedStatement psClient;
-        PreparedStatement psPersonne;
         try {
-
-            psPersonne = bd.getConnection().prepareStatement("INSERT INTO PERSONNE values(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);");
             psClient = bd.getConnection().prepareStatement("insert into CLIENT values(?,?);");
-            
-            
-            psPersonne.setInt(1, unClient.getId());
-            psPersonne.setString(2, unClient.getNom());
-            psPersonne.setString(3, unClient.getPrenom());
-            Date date = unClient.getDateDeNaissance().getTime();
-            java.sql.Date sqlDate = new java.sql.Date(date.getTime());
-
-            psPersonne.setDate(4, sqlDate);
-            psPersonne.setFloat(5, unClient.getPoids());
-            psPersonne.setString(6, unClient.getAdresseEmail());
-            psPersonne.setString(7, unClient.getAdresse());
-            psPersonne.setInt(8, unClient.getCodePostal());
-            psPersonne.setString(9, unClient.getVille());
-            psPersonne.setString(10, unClient.getNumTel());
-            psPersonne.setString(11, unClient.getMotdepasse());
-            psPersonne.executeUpdate();
-
             psClient.setInt(1, unClient.getId());
             psClient.setBoolean(2, unClient.getCotisation());
-            psClient.executeUpdate();
-
-            
+            psClient.executeUpdate();            
             return true;
         }
         catch (SQLException e) {
@@ -239,37 +236,14 @@ public class Requete {
     }
     
     public static boolean insererMoniteur(ConnectionDB bd, Moniteur unMoniteur){
-        PreparedStatement psPersonne;
         PreparedStatement psMoniteur;
         try {
-            psPersonne = bd.getConnection().prepareStatement("insert into PERSONNE values(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);");
             psMoniteur = bd.getConnection().prepareStatement("INSERT INTO MONITEUR values(?);");
-
-
-            psPersonne.setInt(1,unMoniteur.getId());
-            psPersonne.setString(2, unMoniteur.getNom());
-            psPersonne.setString(3, unMoniteur.getPrenom());
-
-            java.util.Date utilDate = unMoniteur.getDateDeNaissance().getTime();
-            java.sql.Date sqlDate = new java.sql.Date(utilDate.getTime());
-
-            psPersonne.setDate(4, sqlDate);
-            psPersonne.setFloat(5, unMoniteur.getPoids());
-            psPersonne.setString(6, unMoniteur.getAdresseEmail());
-            psPersonne.setString(7, unMoniteur.getAdresse());
-            psPersonne.setInt(8, unMoniteur.getCodePostal());
-            psPersonne.setString(9, unMoniteur.getVille());
-            psPersonne.setString(10, unMoniteur.getNumTel());
-            psPersonne.setString(11, unMoniteur.getMotdepasse());
-            
-            psPersonne.executeUpdate();
-
             psMoniteur.setInt(1, unMoniteur.getId());
             psMoniteur.executeUpdate();
             return true;
         }
         catch (SQLException e) {
-            e.printStackTrace();
             return false;
         }
     }
@@ -312,4 +286,36 @@ public class Requete {
             return false;
         }
     }
+
+    public static boolean insererPersonne(ConnectionDB bd, Personne personne) {
+        PreparedStatement psPersonne;
+        try {
+            psPersonne = bd.getConnection().prepareStatement("insert into PERSONNE values(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);");
+
+
+            psPersonne.setInt(1,personne.getId());
+            psPersonne.setString(2, personne.getNom());
+            psPersonne.setString(3, personne.getPrenom());
+
+            java.util.Date utilDate = personne.getDateDeNaissance().getTime();
+            java.sql.Date sqlDate = new java.sql.Date(utilDate.getTime());
+
+            psPersonne.setDate(4, sqlDate);
+            psPersonne.setFloat(5, personne.getPoids());
+            psPersonne.setString(6, personne.getAdresseEmail());
+            psPersonne.setString(7, personne.getAdresse());
+            psPersonne.setInt(8, personne.getCodePostal());
+            psPersonne.setString(9, personne.getVille());
+            psPersonne.setString(10, personne.getNumTel());
+            psPersonne.setString(11, personne.getMotdepasse());
+            
+            psPersonne.executeUpdate();
+            return true;
+        }
+        catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
 }

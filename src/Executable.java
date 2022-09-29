@@ -30,12 +30,13 @@ public class Executable {
         "3- Exit"
         };
     static String[] sousMenuInsertion =
-            {"1- Inserér un Clients",
-            "2- Inserér un Moniteur",
-            "3- Inserér un Poney",
-            "4- Inserér un Cours",
-            "5- Inserér une Réservation",    
-            "6- Exit"
+            {"1- Inserér une Personne",
+            "2- Inserér un Clients",
+            "3- Inserér un Moniteur",
+            "4- Inserér un Poney",
+            "5- Inserér un Cours",
+            "6- Inserér une Réservation",    
+            "7- Exit"
         };
 
         private static void printMenu(String[] options){
@@ -63,6 +64,7 @@ public class Executable {
         
         }
     
+        static Map<Integer,Personne> personnes;
         static Map<Integer,Client> clients ;
         static Map<Integer,Cours> cours;
         static Map<Integer,Moniteur> moniteurs;
@@ -79,6 +81,7 @@ public class Executable {
                 clients = Requete.chargerClient(bd);
                 poneys = Requete.chargerPoney(bd);
                 cours = Requete.chargerCours(bd);
+                personnes = Requete.chargerPersonne(bd);
                 moniteurs = Requete.chargerMoniteur(bd);
             } 
             catch (SQLException e) {
@@ -256,22 +259,25 @@ public class Executable {
             String choix = myObj.nextLine();
             Integer numchoix = Integer.parseInt(choix);
             switch(numchoix){
-                case 1:
-                    insererClient(bd, myObj);
+                case 1: 
+                    insererUnePersonne(bd,myObj);
                     break;
                 case 2:
-                    insererMoniteur(bd, myObj);
+                    insererClient(bd, myObj);
                     break;
                 case 3:
-                    insererPoney(bd,myObj);
+                    insererMoniteur(bd, myObj);
                     break;
                 case 4:
-                    insererCours(bd,myObj);
+                    insererPoney(bd,myObj);
                     break;
                 case 5:
-                    Executable.insererReservations(bd, myObj);
+                    insererCours(bd,myObj);
                     break;
                 case 6:
+                    Executable.insererReservations(bd, myObj);
+                    break;
+                case 7:
                     fini = true;
                     break;
                 
@@ -286,6 +292,8 @@ public class Executable {
 
     
 
+
+   
 
     private static void afficheUnClient(ConnectionDB bd,Scanner myObj) {
         System.out.println("Veuillez rentrer l'id de la personne recherchée");
@@ -470,9 +478,7 @@ public class Executable {
 
     }
 
-
-    private static void insererClient(ConnectionDB bd, Scanner scanner){
-
+    private static void insererUnePersonne(ConnectionDB bd, Scanner scanner) {
         boolean ok =false;
         Calendar calendrier = Calendar.getInstance();
         System.out.println("Veuillez entrer le NOM prenom du client ");
@@ -481,7 +487,7 @@ public class Executable {
         while(!ok){
 
             
-            System.out.println("Veuillez entrer la date de naissance du client sous la forme XX/XX/XXXX ");
+            System.out.println("Veuillez entrer la date de naissance de la personne sous la forme XX/XX/XXXX ");
             String date_brute = scanner.nextLine();
             SimpleDateFormat formatDate = new SimpleDateFormat("dd/MM/yyyy");
             formatDate.setLenient(false);
@@ -497,96 +503,94 @@ public class Executable {
                 System.out.println(date_brute +" est une date invalide");
             }
         }
-        System.out.println("Veuillez entrer le poids du client ");
+        System.out.println("Veuillez entrer le poids de la personne ");
         Float poids = Float.parseFloat(scanner.nextLine());
 
 
-        System.out.println("Veuillez entrer l'adresse email du client");
+        System.out.println("Veuillez entrer l'adresse email de la personne");
         String email = scanner.nextLine();
 
-        System.out.println("Veuillez entrer la mot de passe du client");
+        System.out.println("Veuillez entrer la mot de passe de la personne");
         String password = scanner.nextLine();
         
-        System.out.println("Veuillez entrer l'adresse du client ");
+        System.out.println("Veuillez entrer l'adresse de la personne");
         String adresse_postal = scanner.nextLine();
         
-        System.out.println("Veuillez entrer le code postal du client");
+        System.out.println("Veuillez entrer le code postal de la personne");
         Integer code_postal = Integer.parseInt(scanner.nextLine());
         
-        System.out.println("Veuillez entrer la ville du client");
+        System.out.println("Veuillez entrer la ville de la personne");
         String ville = scanner.nextLine();
 
-        System.out.println("Veuillez entrer le numéro de téléphone du client");
+        System.out.println("Veuillez entrer le numéro de téléphone de la personne");
         String numTel = scanner.nextLine();
 
-        System.out.println("Veuillez entrer Si oui ou non le client a cotisé O/N");
-        String cotisation_brute = scanner.nextLine();
-        boolean cotisation;
-
-        if(cotisation_brute.equalsIgnoreCase("O")){
-            cotisation = true;
-        }
-        else{
-            cotisation = false;
+        Personne personne = new Personne(Requete.maxIDPersonne(bd)+1, nomPrenom[0], nomPrenom[1], calendrier, poids, email, adresse_postal, code_postal, ville, numTel, password);
+        if(Requete.insererPersonne(bd, personne)){
+            System.out.println("Insertion efféctuée ");
+            pressEnter(scanner);
+        
         }
 
-        Client c = new Client(Requete.maxIDPersonne(bd)+1, nomPrenom[0], nomPrenom[1], calendrier, poids, email, adresse_postal, code_postal, ville, numTel, password, cotisation);
+    }
+    
+    private static void insererClient(ConnectionDB bd, Scanner scanner){
+        boolean ok = false;
+        Boolean cotisation = null;
+        Personne p  = null;
+        while(!ok){
+            System.out.println("Veuillez entrer l'id du client");
+            Integer idC = Integer.parseInt(scanner.nextLine());
+            if(personnes.get(idC) instanceof Personne){
+                ok = true;
+                p = personnes.get(idC);
+            }
+            else{
+                System.out.println("l'id du client est inconnu (Veuillez créer la personne)");
+                pressEnter(scanner);
+            }
+        }
+        ok = false;
+        while(!ok){
+            System.out.println("Veuillez entrer si le client à déjà cotisé O/N ");
+            String reponse = scanner.nextLine();
+            if(reponse.equalsIgnoreCase("O") || reponse.equalsIgnoreCase("N")){
+                ok = true;
+                if(reponse.equalsIgnoreCase("O")) cotisation = true;
+                else cotisation = false;
+            }
+            else{
+                System.out.println("Reponse invalide ! ");
+                pressEnter(scanner);
+            }
+        }
+
+        Client c = new Client(p.getId(), p.getNom(), p.getPrenom(), p.getDateDeNaissance(), p.getPoids(),p.getAdresseEmail(),p.getAdresse(),p.getCodePostal(), p.getVille(),p.getNumTel(), p.getMotdepasse(), cotisation);
         if(Requete.insererClient(bd, c)){
             System.out.println("Insertion efféctuée ");
+            clients.put(p.getId(), c);
             pressEnter(scanner);
         }
 
     }
 
     private static void insererMoniteur(ConnectionDB bd, Scanner scanner){
-        boolean ok =false;
-        Calendar calendrier = Calendar.getInstance();
-        System.out.println("Veuillez entrer le NOM prenom du client ");
-        String nomPrenom_brute = scanner.nextLine();
-        String [] nomPrenom = nomPrenom_brute.split(" ");
+        boolean ok = false;
+        Personne p = null;
         while(!ok){
-
-            
-            System.out.println("Veuillez entrer la date de naissance du client sous la forme XX/XX/XXXX ");
-            String date_brute = scanner.nextLine();
-            SimpleDateFormat formatDate = new SimpleDateFormat("dd/MM/yyyy");
-            formatDate.setLenient(false);
-            try{
-                Date d = formatDate.parse(date_brute);
-                calendrier.setTime(d);
+            System.out.println("Veuillez entrer l'id du client");
+            Integer idM = Integer.parseInt(scanner.nextLine());
+            if(personnes.get(idM) instanceof Personne){
                 ok = true;
+                p = personnes.get(idM);
             }
-            // Date invalide
-            catch (ParseException e)
-            {
-                e.printStackTrace();
-                System.out.println(date_brute +" est une date invalide");
+            else{
+                System.out.println("l'id du moniteur est inconnu (Veuillez créer la personne)");
+                pressEnter(scanner);
             }
         }
-        System.out.println("Veuillez entrer le poids du client ");
-        Float poids = Float.parseFloat(scanner.nextLine());
-
-
-        System.out.println("Veuillez entrer l'adresse email du client");
-        String email = scanner.nextLine();
-
-        System.out.println("Veuillez entrer la mot de passe du client");
-        String password = scanner.nextLine();
-        
-        System.out.println("Veuillez entrer l'adresse du client ");
-        String adresse_postal = scanner.nextLine();
-        
-        System.out.println("Veuillez entrer le code postal du client");
-        Integer code_postal = Integer.parseInt(scanner.nextLine());
-        
-        System.out.println("Veuillez entrer la ville du client");
-        String ville = scanner.nextLine();
-
-        System.out.println("Veuillez entrer le numéro de téléphone du client");
-        String numTel = scanner.nextLine();
-
-        Moniteur c = new Moniteur(Requete.maxIDPersonne(bd)+1, nomPrenom[0], nomPrenom[1], calendrier, poids, email, adresse_postal, code_postal, ville, numTel, password);
-        if(Requete.insererMoniteur(bd, c)){
+        Moniteur m = new Moniteur(p.getId(), p.getNom(), p.getPrenom(), p.getDateDeNaissance(), p.getPoids(),p.getAdresseEmail(),p.getAdresse(),p.getCodePostal(), p.getVille(),p.getNumTel(), p.getMotdepasse());
+        if(Requete.insererMoniteur(bd, m)){
             System.out.println("Insertion efféctuée ");
             pressEnter(scanner);
         
