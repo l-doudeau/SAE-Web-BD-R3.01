@@ -481,7 +481,7 @@ public class Executable {
     private static void insererUnePersonne(ConnectionDB bd, Scanner scanner) {
         boolean ok =false;
         Calendar calendrier = Calendar.getInstance();
-        System.out.println("Veuillez entrer le NOM prenom du client ");
+        System.out.println("Veuillez entrer le 'NOM prenom' de la personne ");
         String nomPrenom_brute = scanner.nextLine();
         String [] nomPrenom = nomPrenom_brute.split(" ");
         while(!ok){
@@ -600,7 +600,7 @@ public class Executable {
 
     private static void insererPoney(ConnectionDB bd,Scanner scanner){
 
-        System.out.println("Veuillez entrer le NOM du poney ");
+        System.out.println("Veuillez entrer le nom du poney ");
         String nomPo = scanner.nextLine();
 
         System.out.println("Veuillez entrer le poids max du poney");

@@ -230,7 +230,7 @@ public class Requete {
             return true;
         }
         catch (SQLException e) {
-            e.printStackTrace();
+            System.out.println("L'id de la personne est déjà cliente");
             return false;
         }
     }
@@ -244,6 +244,7 @@ public class Requete {
             return true;
         }
         catch (SQLException e) {
+            System.out.println("L'id de cette personne est déjà dans la table Moniteur");
             return false;
         }
     }
