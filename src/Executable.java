@@ -12,7 +12,8 @@ import java.util.Scanner;
 public class Executable {
     static String[] options = {"1- Afficher les résultats",
         "2- Insérer des données",
-        "3- Exit",
+        "3- Supprimer des données",
+        "4- Exit",
         };
 
     static String[] sousMenuAffichage =
@@ -23,6 +24,7 @@ public class Executable {
         "5- Réservations",    
         "6- Exit"
         };
+
 
     static String[] sousSousMenuAffichage =
         {"1- Afficher un(e)",
@@ -36,6 +38,15 @@ public class Executable {
             "4- Inserér un Poney",
             "5- Inserér un Cours",
             "6- Inserér une Réservation",    
+            "7- Exit"
+        };
+     static String[] sousMenuSuppresion =
+            {"1- Supprimer une Personne",
+            "2- Supprimer un Clients",
+            "3- Supprimer un Moniteur",
+            "4- Supprimer un Poney",
+            "5- Supprimer un Cours",
+            "6- Supprimer une Réservation",    
             "7- Exit"
         };
 
@@ -130,6 +141,8 @@ public class Executable {
                             Executable.menuInsertion(sousMenuInsertion,bd);
                             break;
                         case 3:
+                            Executable.menuSuppresion(sousMenuSuppresion,bd);
+                        case 4:
                             arret = true;
                             System.out.println("Merci d'avoir utilisé notre application");
                             break;
@@ -143,6 +156,173 @@ public class Executable {
         }
     }
 
+    private static void menuSuppresion(String[] sousMenuSuppresion2, ConnectionDB bd) {
+
+        Scanner myObj = new Scanner(System.in);
+        boolean fini = false;
+        while(!fini){
+            Executable.printMenu(sousMenuInsertion);
+            String choix = myObj.nextLine();
+            Integer numchoix = Integer.parseInt(choix);
+            switch(numchoix){
+                case 1: 
+                    supprimerUnePersonne(bd,myObj);
+                    break;
+                case 4:
+                    supprimerPoney(bd,myObj);
+                    break;
+                case 5:
+                    supprimerCours(bd,myObj);
+                    break;
+                case 6:
+                    supprimerReservations(bd, myObj);
+                    break;
+                case 7:
+                    fini = true;
+                    break;
+                
+                default:
+                    System.out.println("Saisie incorect ! \nAppuyer sur entrée pour continuer");
+                    myObj.nextLine();
+                    break;
+            }
+        }
+    }
+   
+
+    private static void supprimerReservations(ConnectionDB bd, Scanner myObj) {
+        boolean ok = false;
+        Integer idCours = -1;
+        Integer idPersonne = -1;
+        Calendar calendrier = Calendar.getInstance();
+        while(!ok){
+            System.out.println("Veuillez entrer la date de la reservation sous la forme XX/XX/XXXX ");
+            String date_brute = myObj.nextLine();
+            SimpleDateFormat formatDate = new SimpleDateFormat("dd/MM/yyyy");
+            formatDate.setLenient(false);
+            try{
+                Date d = formatDate.parse(date_brute);
+                calendrier.setTime(d);
+                ok = true;
+            }
+            // Date invalide
+            catch (ParseException e)
+            {
+                e.printStackTrace();
+                System.out.println(date_brute +" est une date invalide");
+            }
+        }
+        while(!personnes.keySet().contains(idPersonne)){
+            System.out.println("Veuillez entrer l'id de la personne qui a réservé le cours à supprimer'");
+            try{
+                int id = Integer.parseInt(myObj.nextLine());
+                if(!cours.keySet().contains(id)){
+                    System.out.println("ID introuvable \nAppuyer sur entrée pour continuer");
+                myObj.nextLine();
+                }
+
+            }
+            catch(NumberFormatException e){
+                System.out.println("Saisie incorect ! \nAppuyer sur entrée pour continuer");
+                myObj.nextLine();
+            }
+        }
+        while(!cours.keySet().contains(idCours)){
+            System.out.println("Veuillez entrer l'id du cours réservé à supprimer'");
+            try{
+                int id = Integer.parseInt(myObj.nextLine());
+                if(!cours.keySet().contains(id)){
+                    System.out.println("ID introuvable \nAppuyer sur entrée pour continuer");
+                myObj.nextLine();
+                }
+
+            }
+            catch(NumberFormatException e){
+                System.out.println("Saisie incorect ! \nAppuyer sur entrée pour continuer");
+                myObj.nextLine();
+            }
+        }
+        Requete.supprimerReservations(bd,calendrier,idPersonne,idCours);
+    }
+
+    private static void supprimerCours(ConnectionDB bd, Scanner myObj) {
+        System.out.println("Veuillez entrer l'id du cours à supprimer'");
+        try{
+            int id = Integer.parseInt(myObj.nextLine());
+            if(!cours.keySet().contains(id)){
+                System.out.println("ID introuvable \nAppuyer sur entrée pour continuer");
+            myObj.nextLine();
+            }
+            System.out.println(cours.get(id));
+            System.out.println("Etes-vous sur de vouloir supprimer ce cours O/N");
+            if(myObj.nextLine().equalsIgnoreCase("O")){
+                Requete.supprimerUnCours(bd,id);
+            }
+            else if(myObj.nextLine().equalsIgnoreCase("N")){
+                System.out.println("Suppresion annulée\nAppuyer sur entrée pour continuer");
+                myObj.nextLine();
+            }
+
+        }
+        catch(NumberFormatException e){
+            System.out.println("Saisie incorect ! \nAppuyer sur entrée pour continuer");
+            myObj.nextLine();
+        }
+    }
+    
+
+    private static void supprimerPoney(ConnectionDB bd, Scanner myObj) {
+        System.out.println("Veuillez entrer l'id du poney à supprimer'");
+        try{
+            int id = Integer.parseInt(myObj.nextLine());
+            if(!poneys.keySet().contains(id)){
+                System.out.println("ID introuvable \nAppuyer sur entrée pour continuer");
+            myObj.nextLine();
+            }
+            System.out.println(poneys.get(id));
+            System.out.println("Etes-vous sur de vouloir supprimer ce poney O/N");
+            if(myObj.nextLine().equalsIgnoreCase("O")){
+                Requete.supprimerUnPoney(bd,id);
+            }
+            else if(myObj.nextLine().equalsIgnoreCase("N")){
+                System.out.println("Suppresion annulée\nAppuyer sur entrée pour continuer");
+                myObj.nextLine();
+            }
+
+        }
+        catch(NumberFormatException e){
+            System.out.println("Saisie incorect ! \nAppuyer sur entrée pour continuer");
+            myObj.nextLine();
+        }
+    }
+    
+
+    private static void supprimerUnePersonne(ConnectionDB bd, Scanner myObj) {
+        System.out.println("Veuillez entrer l'id de la personne à supprimer'");
+        try{
+            int id = Integer.parseInt(myObj.nextLine());
+            if(!personnes.keySet().contains(id)){
+                System.out.println("ID introuvable \nAppuyer sur entrée pour continuer");
+            myObj.nextLine();
+            }
+            System.out.println(personnes.get(id));
+            System.out.println("Etes-vous sur de vouloir supprimer cette personne O/N");
+            if(myObj.nextLine().equalsIgnoreCase("O")){
+                Requete.supprimerUnePersonne(bd,id);
+            }
+            else if(myObj.nextLine().equalsIgnoreCase("N")){
+                System.out.println("Suppresion annulée\nAppuyer sur entrée pour continuer");
+                myObj.nextLine();
+            }
+
+        }
+        catch(NumberFormatException e){
+            System.out.println("Saisie incorect ! \nAppuyer sur entrée pour continuer");
+            myObj.nextLine();
+        }
+    }
+            
+    
     private static void menuAffichage(String[] sousMenuAffichage,ConnectionDB bd) {
         Scanner myObj = new Scanner(System.in);
         boolean fini = false;
@@ -288,12 +468,7 @@ public class Executable {
             }
         }
     }
-   
-
-    
-
-
-   
+ 
 
     private static void afficheUnClient(ConnectionDB bd,Scanner myObj) {
         System.out.println("Veuillez rentrer l'id de la personne recherchée");
@@ -386,8 +561,6 @@ public class Executable {
             System.out.println(moniteurs.get(id));
     }
     
-
-
     private static void afficherLesClients() {
 
         for(Client c : clients.values()){
