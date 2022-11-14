@@ -23,7 +23,7 @@ public class Executable {
         try {
             bd = new ConnectionDB();
             try {
-                bd.connecter("DBfaucher", "faucher", "Thierry45.");
+                bd.connecter("DBdoudeau", "doudeau", "doudeau");
                 clients = Requete.chargerClient(bd);
                 poneys = Requete.chargerPoney(bd);
                 cours = Requete.chargerCours(bd);
