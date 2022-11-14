@@ -1,18 +1,16 @@
-import java.time.LocalTime;
+import java.sql.Time;
 import java.util.Calendar;
-import java.util.Date;
-
 public class Reservation {
     
     private Calendar date;
     private int idPersonne;
     private int idCours;
     private int idPoney;
-    private LocalTime duree;
+    private Time duree;
     private boolean aPaye;
     
 
-    public Reservation(Calendar date, int idPersonne, int idCours, int idPoney, LocalTime duree, boolean aPaye){
+    public Reservation(Calendar date, int idPersonne, int idCours, int idPoney, Time duree, boolean aPaye){
         this.date = date;
         this.idPersonne = idPersonne;
         this.idCours = idCours;
@@ -52,11 +50,11 @@ public class Reservation {
         this.idPoney = idPoney;
     }
 
-    public LocalTime getDuree() {
+    public Time getDuree() {
         return this.duree;
     }
 
-    public void setDuree(LocalTime duree) {
+    public void setDuree(Time duree) {
         this.duree = duree;
     }
 

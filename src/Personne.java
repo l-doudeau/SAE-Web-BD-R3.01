@@ -1,21 +1,21 @@
-import java.util.Date;
+import java.util.Calendar;
 
 public class Personne {
     
     private int id;
     private String nom;
     private String prenom;
-    private Date dateDeNaissance;
+    private Calendar dateDeNaissance;
     private float poids;
     private String adresseEmail;
     private String adresse;
     private int codePostal;
     private String ville;
-    private int numTel;
+    private String numTel;
     private String motdepasse;
 
 
-    public Personne(int id, String nom, String prenom, Date dateDeNaissance, float poids, String adresseEmail, String adresse, int codePostal, String ville, int numTel, String motDePasse){
+    public Personne(int id, String nom, String prenom, Calendar dateDeNaissance, float poids, String adresseEmail, String adresse, int codePostal, String ville, String numTel, String motDePasse){
         this.id = id;
         this.nom = nom;
         this.prenom = prenom;
@@ -53,11 +53,11 @@ public class Personne {
         this.prenom = prenom;
     }
 
-    public Date getDateDeNaissance() {
+    public Calendar getDateDeNaissance() {
         return this.dateDeNaissance;
     }
 
-    public void setDateDeNaissance(Date dateDeNaissance) {
+    public void setDateDeNaissance(Calendar dateDeNaissance) {
         this.dateDeNaissance = dateDeNaissance;
     }
 
@@ -101,11 +101,11 @@ public class Personne {
         this.ville = ville;
     }
 
-    public int getNumTel() {
+    public String getNumTel() {
         return this.numTel;
     }
 
-    public void setNumTel(int numTel) {
+    public void setNumTel(String numTel) {
         this.numTel = numTel;
     }
 
@@ -120,7 +120,7 @@ public class Personne {
 
     @Override
     public String toString(){
-        return this.nom + " " + this.prenom + " habite à : " + this.ville + " au " + this.adresse + " " + this.codePostal + ". Il est joignable au " + this.numTel + " ou par mail au " + this.adresseEmail; 
+        return "Le client d'ID = " + this.id + ", s'appelle " + this.nom + " " + this.prenom + ", habite à : " + this.ville + " au " + this.adresse + " " + this.codePostal + ". Il est joignable au " + this.numTel + " ou par mail au " + this.adresseEmail + "\n"; 
     }
     @Override
     public boolean equals(Object obj){

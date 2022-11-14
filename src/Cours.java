@@ -56,7 +56,7 @@ public class Cours {
 
     @Override
     public String toString(){
-        return this.nomCours + " : \n" + this.description + "\n" + "Il coûte " + this.prix + " et est de type " + this.typeCours;
+        return "\n"+this.nomCours + " : \n" + this.description + "\n" + "Il coûte " + this.prix + " et est de type " + this.typeCours  ;
     }
 
     @Override
