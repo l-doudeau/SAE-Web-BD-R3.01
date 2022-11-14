@@ -319,4 +319,21 @@ public class Requete {
         }
     }
 
+    public static boolean supprimerReservations(ConnectionDB bd, Calendar calendrier, Integer idPersonne,
+            Integer idCours) {
+        return true;
+    }
+
+    public static boolean supprimerUnCours(ConnectionDB bd, int id) {
+        return true;
+    }
+
+    public static boolean supprimerUnPoney(ConnectionDB bd, int id) {
+        return true;
+    }
+
+    public static boolean supprimerUnePersonne(ConnectionDB bd, int id) {
+        return true;
+    }
+
 }

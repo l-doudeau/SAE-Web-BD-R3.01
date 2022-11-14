@@ -42,12 +42,10 @@ public class Executable {
         };
      static String[] sousMenuSuppresion =
             {"1- Supprimer une Personne",
-            "2- Supprimer un Clients",
-            "3- Supprimer un Moniteur",
-            "4- Supprimer un Poney",
-            "5- Supprimer un Cours",
-            "6- Supprimer une Réservation",    
-            "7- Exit"
+            "2- Supprimer un Poney",
+            "3- Supprimer un Cours",
+            "4- Supprimer une Réservation",    
+            "5- Exit"
         };
 
         private static void printMenu(String[] options){
@@ -142,6 +140,7 @@ public class Executable {
                             break;
                         case 3:
                             Executable.menuSuppresion(sousMenuSuppresion,bd);
+                            break;
                         case 4:
                             arret = true;
                             System.out.println("Merci d'avoir utilisé notre application");
@@ -161,23 +160,23 @@ public class Executable {
         Scanner myObj = new Scanner(System.in);
         boolean fini = false;
         while(!fini){
-            Executable.printMenu(sousMenuInsertion);
+            Executable.printMenu(sousMenuSuppresion2);
             String choix = myObj.nextLine();
             Integer numchoix = Integer.parseInt(choix);
             switch(numchoix){
                 case 1: 
                     supprimerUnePersonne(bd,myObj);
                     break;
-                case 4:
+                case 2:
                     supprimerPoney(bd,myObj);
                     break;
-                case 5:
+                case 3:
                     supprimerCours(bd,myObj);
                     break;
-                case 6:
+                case 4:
                     supprimerReservations(bd, myObj);
                     break;
-                case 7:
+                case 5:
                     fini = true;
                     break;
                 
@@ -213,12 +212,14 @@ public class Executable {
             }
         }
         while(!personnes.keySet().contains(idPersonne)){
-            System.out.println("Veuillez entrer l'id de la personne qui a réservé le cours à supprimer'");
+            System.out.println("Veuillez entrer l'id de la personne qui a réservé le cours à supprimer");
             try{
                 int id = Integer.parseInt(myObj.nextLine());
-                if(!cours.keySet().contains(id)){
+                if(!personnes.keySet().contains(id)){
                     System.out.println("ID introuvable \nAppuyer sur entrée pour continuer");
-                myObj.nextLine();
+                    myObj.nextLine();
+                }else{
+                    idPersonne = id;
                 }
 
             }
@@ -228,12 +229,14 @@ public class Executable {
             }
         }
         while(!cours.keySet().contains(idCours)){
-            System.out.println("Veuillez entrer l'id du cours réservé à supprimer'");
+            System.out.println("Veuillez entrer l'id du cours réservé à supprimer");
             try{
                 int id = Integer.parseInt(myObj.nextLine());
                 if(!cours.keySet().contains(id)){
                     System.out.println("ID introuvable \nAppuyer sur entrée pour continuer");
-                myObj.nextLine();
+                    myObj.nextLine();
+                }else{
+                    idCours = id;
                 }
 
             }
@@ -242,11 +245,21 @@ public class Executable {
                 myObj.nextLine();
             }
         }
-        Requete.supprimerReservations(bd,calendrier,idPersonne,idCours);
+        Requete.afficheUneReservation(bd, idCours, idPersonne, calendrier);
+        System.out.println("Etes-vous sur de vouloir supprimer ce cours O/N");
+            String choix = myObj.nextLine();
+            if(choix.equalsIgnoreCase("O")){
+                Requete.supprimerReservations(bd,calendrier,idPersonne,idCours);
+            }
+            else if(choix.equalsIgnoreCase("N")){
+                System.out.println("Suppresion annulée\nAppuyer sur entrée pour continuer");
+                myObj.nextLine();
+            }
+        
     }
 
     private static void supprimerCours(ConnectionDB bd, Scanner myObj) {
-        System.out.println("Veuillez entrer l'id du cours à supprimer'");
+        System.out.println("Veuillez entrer l'id du cours à supprimer");
         try{
             int id = Integer.parseInt(myObj.nextLine());
             if(!cours.keySet().contains(id)){
@@ -255,10 +268,11 @@ public class Executable {
             }
             System.out.println(cours.get(id));
             System.out.println("Etes-vous sur de vouloir supprimer ce cours O/N");
-            if(myObj.nextLine().equalsIgnoreCase("O")){
+            String choix = myObj.nextLine();
+            if(choix.equalsIgnoreCase("O")){
                 Requete.supprimerUnCours(bd,id);
             }
-            else if(myObj.nextLine().equalsIgnoreCase("N")){
+            else if(choix.equalsIgnoreCase("N")){
                 System.out.println("Suppresion annulée\nAppuyer sur entrée pour continuer");
                 myObj.nextLine();
             }
@@ -272,7 +286,7 @@ public class Executable {
     
 
     private static void supprimerPoney(ConnectionDB bd, Scanner myObj) {
-        System.out.println("Veuillez entrer l'id du poney à supprimer'");
+        System.out.println("Veuillez entrer l'id du poney à supprimer");
         try{
             int id = Integer.parseInt(myObj.nextLine());
             if(!poneys.keySet().contains(id)){
@@ -281,10 +295,11 @@ public class Executable {
             }
             System.out.println(poneys.get(id));
             System.out.println("Etes-vous sur de vouloir supprimer ce poney O/N");
-            if(myObj.nextLine().equalsIgnoreCase("O")){
+            String choix = myObj.nextLine();
+            if(choix.equalsIgnoreCase("O")){
                 Requete.supprimerUnPoney(bd,id);
             }
-            else if(myObj.nextLine().equalsIgnoreCase("N")){
+            else if(choix.equalsIgnoreCase("N")){
                 System.out.println("Suppresion annulée\nAppuyer sur entrée pour continuer");
                 myObj.nextLine();
             }
@@ -307,10 +322,18 @@ public class Executable {
             }
             System.out.println(personnes.get(id));
             System.out.println("Etes-vous sur de vouloir supprimer cette personne O/N");
-            if(myObj.nextLine().equalsIgnoreCase("O")){
-                Requete.supprimerUnePersonne(bd,id);
+            String choix = myObj.nextLine();
+            if(choix.equalsIgnoreCase("O")){
+                if(Requete.supprimerUnePersonne(bd,id)){
+                    System.out.println("Suppresion effectuée\nAppuyer sur entrée pour continuer");
+                    myObj.nextLine();
+                }
+                else{
+                    System.out.println("Erreur lors de la suppression !\nAppuyer sur entrée pour continuer");
+                    myObj.nextLine();
+                }
             }
-            else if(myObj.nextLine().equalsIgnoreCase("N")){
+            else if(choix.equalsIgnoreCase("N")){
                 System.out.println("Suppresion annulée\nAppuyer sur entrée pour continuer");
                 myObj.nextLine();
             }
