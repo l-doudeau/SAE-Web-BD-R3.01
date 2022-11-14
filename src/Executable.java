@@ -5,6 +5,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.Map;
 import java.util.Scanner;
 
@@ -191,24 +192,34 @@ public class Executable {
 
     private static void supprimerReservations(ConnectionDB bd, Scanner myObj) {
         boolean ok = false;
-        Integer idCours = -1;
+        Integer idPoney = -1;
         Integer idPersonne = -1;
         Calendar calendrier = Calendar.getInstance();
-        while(!ok){
+        calendrier.set(Calendar.HOUR_OF_DAY, 0);
+        calendrier.set(Calendar.MINUTE, 0);
+        calendrier.set(Calendar.SECOND, 1);
+        calendrier.set(Calendar.MILLISECOND, 0); 
+        while (!ok){
             System.out.println("Veuillez entrer la date de la reservation sous la forme XX/XX/XXXX ");
             String date_brute = myObj.nextLine();
-            SimpleDateFormat formatDate = new SimpleDateFormat("dd/MM/yyyy");
+            System.out.println("Veuillez entrer l'heure reservation sous la forme XX:XX:XX ");
+            String temps_brute = myObj.nextLine();
+            SimpleDateFormat formatDate =  new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
             formatDate.setLenient(false);
-            try{
-                Date d = formatDate.parse(date_brute);
-                calendrier.setTime(d);
+            try
+            {
+                Date d = formatDate.parse(date_brute +" " +temps_brute);
+                String[] date = date_brute.split("/");
+                String[] horraire = temps_brute.split(":");
+                System.out.println(date_brute+" est une date valide");
+                calendrier = new GregorianCalendar(Integer.parseInt(date[2]),Integer.parseInt(date[1]),Integer.parseInt(date[0]),Integer.parseInt(horraire[0]),59,59);
                 ok = true;
             }
             // Date invalide
             catch (ParseException e)
             {
                 e.printStackTrace();
-                System.out.println(date_brute +" est une date invalide");
+                System.out.println(date_brute + " a " + temps_brute +" est une date invalide");
             }
         }
         while(!personnes.keySet().contains(idPersonne)){
@@ -228,15 +239,15 @@ public class Executable {
                 myObj.nextLine();
             }
         }
-        while(!cours.keySet().contains(idCours)){
-            System.out.println("Veuillez entrer l'id du cours réservé à supprimer");
+        while(!poneys.keySet().contains(idPoney)){
+            System.out.println("Veuillez entrer l'id du poney réservé à supprimer");
             try{
                 int id = Integer.parseInt(myObj.nextLine());
-                if(!cours.keySet().contains(id)){
+                if(!poneys.keySet().contains(id)){
                     System.out.println("ID introuvable \nAppuyer sur entrée pour continuer");
                     myObj.nextLine();
                 }else{
-                    idCours = id;
+                    idPoney = id;
                 }
 
             }
@@ -245,11 +256,19 @@ public class Executable {
                 myObj.nextLine();
             }
         }
-        Requete.afficheUneReservation(bd, idCours, idPersonne, calendrier);
+        Requete.afficheUneReservation(bd, idPoney, idPersonne, calendrier);
+
+
         System.out.println("Etes-vous sur de vouloir supprimer ce cours O/N");
             String choix = myObj.nextLine();
             if(choix.equalsIgnoreCase("O")){
-                Requete.supprimerReservations(bd,calendrier,idPersonne,idCours);
+                if(Requete.supprimerReservations(bd,calendrier,idPersonne,idPoney)){
+                    System.out.println("Suppresion effectuée\nAppuyer sur entrée pour continuer");
+                    myObj.nextLine();
+                }else{
+                    System.out.println("Erreur lors de la suppression !\nAppuyer sur entrée pour continuer");
+                    myObj.nextLine();
+                }
             }
             else if(choix.equalsIgnoreCase("N")){
                 System.out.println("Suppresion annulée\nAppuyer sur entrée pour continuer");
@@ -265,18 +284,26 @@ public class Executable {
             if(!cours.keySet().contains(id)){
                 System.out.println("ID introuvable \nAppuyer sur entrée pour continuer");
             myObj.nextLine();
-            }
-            System.out.println(cours.get(id));
-            System.out.println("Etes-vous sur de vouloir supprimer ce cours O/N");
-            String choix = myObj.nextLine();
-            if(choix.equalsIgnoreCase("O")){
-                Requete.supprimerUnCours(bd,id);
-            }
-            else if(choix.equalsIgnoreCase("N")){
-                System.out.println("Suppresion annulée\nAppuyer sur entrée pour continuer");
-                myObj.nextLine();
-            }
+            }else{
+                System.out.println(cours.get(id));
+                System.out.println("Etes-vous sur de vouloir supprimer ce cours O/N");
+                String choix = myObj.nextLine();
+                if(choix.equalsIgnoreCase("O")){
+                    if(Requete.supprimerUnCours(bd,id)){
+                        System.out.println("Suppresion effectuée\nAppuyer sur entrée pour continuer");
+                        myObj.nextLine();
+                        cours.remove(id);
+                    }else{
+                        System.out.println("Erreur lors de la suppression !\nAppuyer sur entrée pour continuer");
+                        myObj.nextLine();
+                    }
+                }
+                else if(choix.equalsIgnoreCase("N")){
+                    System.out.println("Suppresion annulée\nAppuyer sur entrée pour continuer");
+                    myObj.nextLine();
+                }
 
+            }
         }
         catch(NumberFormatException e){
             System.out.println("Saisie incorect ! \nAppuyer sur entrée pour continuer");
@@ -292,18 +319,28 @@ public class Executable {
             if(!poneys.keySet().contains(id)){
                 System.out.println("ID introuvable \nAppuyer sur entrée pour continuer");
             myObj.nextLine();
-            }
-            System.out.println(poneys.get(id));
-            System.out.println("Etes-vous sur de vouloir supprimer ce poney O/N");
-            String choix = myObj.nextLine();
-            if(choix.equalsIgnoreCase("O")){
-                Requete.supprimerUnPoney(bd,id);
-            }
-            else if(choix.equalsIgnoreCase("N")){
-                System.out.println("Suppresion annulée\nAppuyer sur entrée pour continuer");
-                myObj.nextLine();
-            }
+            }else{
 
+                System.out.println(poneys.get(id));
+                System.out.println("Etes-vous sur de vouloir supprimer ce poney O/N");
+                String choix = myObj.nextLine();
+                if(choix.equalsIgnoreCase("O")){
+                    if(Requete.supprimerUnPoney(bd,id)){
+                        System.out.println("Suppresion effectuée\nAppuyer sur entrée pour continuer");
+                        myObj.nextLine();
+                        poneys.remove(id);
+                    }
+                    else{
+                        System.out.println("Erreur lors de la suppression !\nAppuyer sur entrée pour continuer");
+                        myObj.nextLine();
+                    }
+                }
+                else if(choix.equalsIgnoreCase("N")){
+                    System.out.println("Suppresion annulée\nAppuyer sur entrée pour continuer");
+                    myObj.nextLine();
+                }
+
+            }
         }
         catch(NumberFormatException e){
             System.out.println("Saisie incorect ! \nAppuyer sur entrée pour continuer");
@@ -313,31 +350,32 @@ public class Executable {
     
 
     private static void supprimerUnePersonne(ConnectionDB bd, Scanner myObj) {
-        System.out.println("Veuillez entrer l'id de la personne à supprimer'");
+        System.out.println("Veuillez entrer l'id de la personne à supprimer");
         try{
             int id = Integer.parseInt(myObj.nextLine());
             if(!personnes.keySet().contains(id)){
                 System.out.println("ID introuvable \nAppuyer sur entrée pour continuer");
             myObj.nextLine();
-            }
-            System.out.println(personnes.get(id));
-            System.out.println("Etes-vous sur de vouloir supprimer cette personne O/N");
-            String choix = myObj.nextLine();
-            if(choix.equalsIgnoreCase("O")){
-                if(Requete.supprimerUnePersonne(bd,id)){
-                    System.out.println("Suppresion effectuée\nAppuyer sur entrée pour continuer");
+            }else{           
+                System.out.println(personnes.get(id));
+                System.out.println("Etes-vous sur de vouloir supprimer cette personne O/N");
+                String choix = myObj.nextLine();
+                if(choix.equalsIgnoreCase("O")){
+                    if(Requete.supprimerUnePersonne(bd,id)){
+                        System.out.println("Suppresion effectuée\nAppuyer sur entrée pour continuer");
+                        myObj.nextLine();
+                        personnes.remove(id);
+                    }
+                    else{
+                        System.out.println("Erreur lors de la suppression !\nAppuyer sur entrée pour continuer");
+                        myObj.nextLine();
+                    }
+                }
+                else if(choix.equalsIgnoreCase("N")){
+                    System.out.println("Suppresion annulée\nAppuyer sur entrée pour continuer");
                     myObj.nextLine();
                 }
-                else{
-                    System.out.println("Erreur lors de la suppression !\nAppuyer sur entrée pour continuer");
-                    myObj.nextLine();
-                }
             }
-            else if(choix.equalsIgnoreCase("N")){
-                System.out.println("Suppresion annulée\nAppuyer sur entrée pour continuer");
-                myObj.nextLine();
-            }
-
         }
         catch(NumberFormatException e){
             System.out.println("Saisie incorect ! \nAppuyer sur entrée pour continuer");
