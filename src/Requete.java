@@ -79,14 +79,18 @@ public class Requete {
 
 
     public static void afficheUneReservation(ConnectionDB bd,Integer idClient, Integer idPoney, Calendar dateR){
-        Statement s;
+        PreparedStatement s;
         try {
-            s = bd.getConnection().createStatement();
-
-            ResultSet res = s.executeQuery("select * from RESERVER where YEAR(jmahms) = " + dateR.get(Calendar.YEAR) + " and  MONTH(jmahms) =" + dateR.get(Calendar.MONTH)+1 +" and DAY(jmahms) =" + dateR.get(Calendar.DAY_OF_MONTH) + " and  hour(jmahms) = " + dateR.get(Calendar.HOUR) + " and minute(jmahms) = " + dateR.get(Calendar.MINUTE) + " and second(jmahms) = " + dateR.get(Calendar.SECOND)+  " and idp = " + idClient + " and idpo = " + idPoney + ";");
+            s = bd.getConnection().prepareStatement("select * from RESERVER where jmahms= ? and idpo = ? and idp = ?");
+            java.sql.Timestamp timestamp = new java.sql.Timestamp(dateR.getTimeInMillis());
+            s.setTimestamp(1, timestamp);
+            s.setInt(2, idPoney);
+            s.setInt(3, idClient);
+        
+            ResultSet res = s.executeQuery();
             res.next();
-            Time heure = res.getTime(1);
-            Time temps = res.getTime(5);
+            java.sql.Date heure = res.getDate(1);
+            java.sql.Time temps = res.getTime(5);
             String a_paye;
             if(res.getBoolean(5)){
                 a_paye = "payé";
@@ -98,6 +102,7 @@ public class Requete {
     
         } catch (SQLException e) {
             e.printStackTrace();
+            System.out.println("Il n'y a aucune ligne correspondante aux données données");
         }
         
 
@@ -321,19 +326,81 @@ public class Requete {
 
     public static boolean supprimerReservations(ConnectionDB bd, Calendar calendrier, Integer idPersonne,
             Integer idCours) {
-        return true;
+        PreparedStatement psReserver;
+        try {
+            psReserver = bd.getConnection().prepareStatement("DELETE from RESERVER where jmahms=? and idp =? and idpo=?");
+            java.sql.Timestamp timestamp = new java.sql.Timestamp(calendrier.getTimeInMillis());
+            psReserver.setTimestamp(1, timestamp);
+            psReserver.setInt(2, idPersonne);
+            psReserver.setInt(3, idCours);
+            psReserver.executeUpdate();
+            return true;
+        }
+
+        catch(SQLException e){
+            e.printStackTrace();
+            return false;
+        }
     }
 
     public static boolean supprimerUnCours(ConnectionDB bd, int id) {
-        return true;
+        PreparedStatement psCours;
+        try {
+            if(bd.getConnection().createStatement().executeQuery("select * from RESERVER where idc = " + id).next()){
+                bd.getConnection().createStatement().executeUpdate("DELETE from RESERVER where idc = " + id);
+            }
+            psCours = bd.getConnection().prepareStatement("DELETE from COURS where idc=?");
+            psCours.setInt(1, id);
+            psCours.executeUpdate();
+            return true;
+        }
+
+        catch(SQLException e){
+            e.printStackTrace();
+            return false;
+        }
     }
 
     public static boolean supprimerUnPoney(ConnectionDB bd, int id) {
-        return true;
+        PreparedStatement psPoney;
+        try {
+            if(bd.getConnection().createStatement().executeQuery("select * from RESERVER where idpo = " + id).next()){
+                bd.getConnection().createStatement().executeUpdate("DELETE from RESERVER where idpo = " + id);
+            }
+            psPoney = bd.getConnection().prepareStatement("DELETE from PONEYS where idpo=?");
+            psPoney.setInt(1, id);
+            psPoney.executeUpdate();
+            return true;
+        }
+
+        catch(SQLException e){
+            e.printStackTrace();
+            return false;
+        }
     }
 
     public static boolean supprimerUnePersonne(ConnectionDB bd, int id) {
-        return true;
+        PreparedStatement psPersonne;
+        try {
+            if(bd.getConnection().createStatement().executeQuery("select * from RESERVER where idp = " + id).next()){
+                bd.getConnection().createStatement().executeUpdate("DELETE from RESERVER where idp= " + id);
+            }
+            if(bd.getConnection().createStatement().executeQuery("select * from MONITEUR where idp = " + id).next()){
+                bd.getConnection().createStatement().executeUpdate("DELETE from MONITEUR where idp= " + id);
+            }
+            if(bd.getConnection().createStatement().executeQuery("select * from CLIENT where idp = " + id).next()){
+                bd.getConnection().createStatement().executeUpdate("DELETE from CLIENT where idp= " + id);
+            }
+            psPersonne = bd.getConnection().prepareStatement("DELETE from PERSONNE where idp=?");
+            psPersonne.setInt(1, id);
+            psPersonne.executeUpdate();
+            return true;
+        }
+
+        catch(SQLException e){
+            e.printStackTrace();
+            return false;
+        }
     }
 
 }
