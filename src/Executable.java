@@ -3,11 +3,16 @@ import java.sql.SQLException;
 import java.sql.Time;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.Map;
 import java.util.Scanner;
+
+import javax.swing.JSpinner.DateEditor;
 
 
 public class Executable {
@@ -195,33 +200,30 @@ public class Executable {
         Integer idPoney = -1;
         Integer idPersonne = -1;
         Calendar calendrier = Calendar.getInstance();
-        calendrier.set(Calendar.HOUR_OF_DAY, 0);
-        calendrier.set(Calendar.MINUTE, 0);
-        calendrier.set(Calendar.SECOND, 1);
-        calendrier.set(Calendar.MILLISECOND, 0); 
-        while (!ok){
-            System.out.println("Veuillez entrer la date de la reservation sous la forme XX/XX/XXXX ");
+
+        ok=false;
+        while(!ok){            
+            System.out.println("Veuillez entrer la date de la réservation XX/XX/XXXX HH:mm:ss ");
             String date_brute = myObj.nextLine();
-            System.out.println("Veuillez entrer l'heure reservation sous la forme XX:XX:XX ");
-            String temps_brute = myObj.nextLine();
-            SimpleDateFormat formatDate =  new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
+            SimpleDateFormat formatDate = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
             formatDate.setLenient(false);
-            try
-            {
-                Date d = formatDate.parse(date_brute +" " +temps_brute);
-                String[] date = date_brute.split("/");
-                String[] horraire = temps_brute.split(":");
-                System.out.println(date_brute+" est une date valide");
-                calendrier = new GregorianCalendar(Integer.parseInt(date[2]),Integer.parseInt(date[1]),Integer.parseInt(date[0]),Integer.parseInt(horraire[0]),59,59);
+            try{
+                String[] date_time = date_brute.split(" ");
+                String[] date_brute_tableau = date_time[0].split("/");
+                String[] time_brute_tableau = date_time[1].split(":");
+                LocalDateTime localDateTime = LocalDateTime.of(Integer.parseInt(date_brute_tableau[2]), Integer.parseInt(date_brute_tableau[1]), Integer.parseInt(date_brute_tableau[0]), Integer.parseInt(time_brute_tableau[0]), Integer.parseInt(time_brute_tableau[1]), Integer.parseInt(time_brute_tableau[2]));
+                Instant instant = localDateTime.atZone(ZoneId.systemDefault()).toInstant();
+                Date date = Date.from(instant);
+                calendrier.setTime(date);
                 ok = true;
             }
-            // Date invalide
-            catch (ParseException e)
-            {
-                e.printStackTrace();
-                System.out.println(date_brute + " a " + temps_brute +" est une date invalide");
+            catch(Exception e){
+                System.out.println("Saisie incorrecte !");
+                Executable.pressEnter(myObj);
             }
+
         }
+
         while(!personnes.keySet().contains(idPersonne)){
             System.out.println("Veuillez entrer l'id de la personne qui a réservé le cours à supprimer");
             try{
@@ -256,10 +258,8 @@ public class Executable {
                 myObj.nextLine();
             }
         }
-        Requete.afficheUneReservation(bd, idPoney, idPersonne, calendrier);
-
-
-        System.out.println("Etes-vous sur de vouloir supprimer ce cours O/N");
+        Requete.afficheUneReservation(bd, idPersonne,idPoney, calendrier);
+        System.out.println("Etes-vous sur de vouloir supprimer cette reservation ? O/N");
             String choix = myObj.nextLine();
             if(choix.equalsIgnoreCase("O")){
                 if(Requete.supprimerReservations(bd,calendrier,idPersonne,idPoney)){
@@ -546,7 +546,6 @@ public class Executable {
         Integer idPoney = null;
         Calendar calendrier = Calendar.getInstance();
         boolean ok = false;
-
         //Demander l'id du client
         while(!ok){
         System.out.println("Veuillez rentrer l'id du client de la réservation recherchée");
@@ -576,15 +575,20 @@ public class Executable {
             SimpleDateFormat formatDate = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
             formatDate.setLenient(false);
             try{
-                Date d = formatDate.parse(date_brute);
-                calendrier.setTime(d);
+                String[] date_time = date_brute.split(" ");
+                String[] date_brute_tableau = date_time[0].split("/");
+                String[] time_brute_tableau = date_time[1].split(":");
+                LocalDateTime localDateTime = LocalDateTime.of(Integer.parseInt(date_brute_tableau[2]), Integer.parseInt(date_brute_tableau[1]), Integer.parseInt(date_brute_tableau[0]), Integer.parseInt(time_brute_tableau[0]), Integer.parseInt(time_brute_tableau[1]), Integer.parseInt(time_brute_tableau[2]));
+                Instant instant = localDateTime.atZone(ZoneId.systemDefault()).toInstant();
+                Date date = Date.from(instant);
+                calendrier.setTime(date);
                 ok = true;
             }
-            // Date invalide
-            catch (ParseException e)
-            {
-                System.out.println(date_brute +" est une date invalide");
+            catch(Exception e){
+                System.out.println("Saisie incorrecte !");
+                Executable.pressEnter(myObj);
             }
+
         }
         Requete.afficheUneReservation(bd, idClient, idPoney, calendrier);
         

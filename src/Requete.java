@@ -102,6 +102,7 @@ public class Requete {
     
         } catch (SQLException e) {
             e.printStackTrace();
+            System.out.println("Il n'y a aucune ligne correspondante aux données données");
         }
         
 
