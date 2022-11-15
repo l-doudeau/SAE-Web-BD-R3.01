@@ -252,3 +252,24 @@ create trigger ajouteTableAncienMoniteur before delete on MONITEUR for each row
       INSERT INTO ANCIEN_MONITEUR(idp) VALUES(old.idp);
   END |
 delimiter ;
+
+delimiter |
+create trigger ajouteTableAncienCours before delete on COURS for each row
+  begin
+      INSERT INTO ANCIEN_COURS(idc, nomc, descc, typec, prix) VALUES(old.idc, old.nomc, odl.descc, old.typec, old.prix);
+  END |
+delimiter ;
+
+delimiter |
+create trigger ajouteTableAncienPoney before delete on PONEYS for each row
+  begin
+      INSERT INTO ANCIEN_PONEYS(idpo, nomp, poidssup) VALUES(old.idpo, old.nomp, old.poidssup);
+  END |
+delimiter ;
+
+delimiter |
+create trigger ajouteTableAncienReserver before delete on RESERVER for each row
+  begin
+      INSERT INTO ANCIEN_RESERVER(jmahms, idp, idc, idpo, duree, a_paye) VALUES(old.jmahms, old.idp, old.idc, old.idpo, old.duree, old.a_paye);
+  END |
+delimiter ;
