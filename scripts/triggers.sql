@@ -111,8 +111,7 @@ end |
 
 -- permet de vérifier que le client n'a pas déja un cours au horaire de sa nouvelle réservation
 
-CREATE TRIGGER ajoutPersonneHoraire BEFORE INSERT ON RESERVER
-FOR EACH ROW
+CREATE TRIGGER ajoutPersonneHoraire BEFORE INSERT ON RESERVER FOR EACH ROW
 BEGIN
     DECLARE done INT DEFAULT FALSE;
     declare msg VARCHAR(300);
@@ -232,4 +231,24 @@ create trigger verifPersonneReserveDansClient before insert on RESERVER for each
     end if; 
   end |
 
+delimiter |
+create trigger ajouteTableAncienPersonne before delete on PERSONNE for each row
+  begin
+    INSERT INTO ANCIEN_PERSONNE(idp, nomp, prenomp, ddn, poids, adressemail, adresse, code_postal, ville, numerotel, mdp)
+    VALUES (old.idp, old.nomp, old.prenomp, old.ddn, old.poids, old.adressemail, old.adresse, old.code_postal, old.ville, old.numerotel, old.mdp);
+  END |
+delimiter ;
+
+delimiter |
+create trigger ajouteTableAncienClient before delete on CLIENT for each row
+  begin
+      INSERT INTO ANCIEN_CLIENT(idp, cotisationA) VALUES(old.idp, old.cotisationA);
+  END |
+delimiter ;
+
+delimiter |
+create trigger ajouteTableAncienMoniteur before delete on MONITEUR for each row
+  begin
+      INSERT INTO ANCIEN_MONITEUR(idp) VALUES(old.idp);
+  END |
 delimiter ;
