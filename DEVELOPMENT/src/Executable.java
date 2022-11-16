@@ -92,7 +92,7 @@ public class Executable {
         try {
             bd = new ConnectionDB();
             try {
-                bd.connecter("DBdoudeau", "doudeau", "doudeau");
+                bd.connecter("GRAND_GALOP", "root", "root");
                 clients = Requete.chargerClient(bd);
                 poneys = Requete.chargerPoney(bd);
                 cours = Requete.chargerCours(bd);
