@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Clients - Grand Galop</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap.min.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/dataTables.bootstrap5.min.css') }}">
+    <script src="{{ url_for('static', filename='js/jquery-3.6.1.min.js') }}" type="text/javascript"></script>
+    <script src="{{ url_for('static', filename='js/bootstrap.min.js') }}" type="text/javascript"></script>
+    <script src="{{ url_for('static', filename='js/datatables.min.js') }}" type="text/javascript"></script>
+    <script src="{{ url_for('static', filename='js/jquery.dataTables.min.js') }}" type="text/javascript"></script>
+    <script src="{{ url_for('static', filename='js/dataTables.bootstrap5.min.js') }}" type="text/javascript"></script>
+    <script src="{{ url_for('static', filename='js/moment.js') }}" type="text/javascript"></script>
+    <script src="{{ url_for('static', filename='js/datetime.js') }}" type="text/javascript"></script>
+    
+</head>
+<body>
+    <div class="container">
+        <div class="row">
+            <div class="row">
+                <div class="col-12 col-md-8"></div>
+                <div class="col-6 col-md-4">
+                    <button id="ajouterClient" type="button" class="btn btn-success">Ajouter</button>
+                    <button id="deleteClient" type="button" class="btn btn-danger">Supprimer</button>
+                </div>
+              </div>
+        </div>
+        <table id="clients" class="table table-striped"">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Nom</th>
+                    <th>Prenom</th>
+                    <th>Date de naissance</th>
+                    <th>Adresse Email</th>
+                    <th>Numero de téléphone</th>
+                    <th>A cotisé</th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+    </div>
+</body>
+<script>
+    var row = null;
+    $(document).ready( function () {
+        var table = $('#clients').DataTable({
+            ajax: '/api/dataclients',
+            columns: [
+                {data: 'idp',className: "dt-center"},
+                {data: 'nomp',className: "dt-center"},
+                {data: 'prenomp',className: "dt-center"},
+                {data: 'ddn',className: "dt-center",orderable:false,"render" : function (data) { 
+    
+                    let m = new Date(data);
+                    return moment(m).format("M/D/YYYY");}},
+                {data: 'adressemail',orderable:false,className: "dt-center"},
+                {data: 'numerotel',orderable:false,className: "dt-center"},
+                {data: 'cotisation',orderable:false,className: "dt-center", "render":function (data, type, row) {
+                          return (data === true) ? '<input class="form-check-input" type="checkbox" value="" id="flexCheckChecked" checked disabled>':'<input class="form-check-input" type="checkbox" value="" id="flexCheckChecked" disabled>'}
+           },
+            ],
+            info:true,
+            scroller:true,
+            scrollY:500,
+            paging: false,
+            info: false,
+            "searching": false,
+      });
+
+      $("#clients").on("click", "tr", function() {
+            if(row ==null){
+                $(this).css('background-color', "#AFE1AF");
+                row = this;
+            }
+            else{
+                $(row).css('background-color', "");
+                $(this).css('background-color', "#AFE1AF");
+                row = this;
+            }
+        });
+        $("#ajouterClient").on("click",function(){
+            document.href = "/addClient/"
+        });
+
+        $("#deleteClient").on("click",function(){
+            if(row == null){
+                alert("Veuillez selectionner un client")
+            }
+            else{
+                debugger;
+                console.log($(row))
+                if(confirm("Etes vous sur de vouloir supprimer ce client : " + $(row)[0].childNodes[1].innerHTML+ " " + $(row)[0].childNodes[2].innerHTML)){
+                    $.ajax({
+                        url:'{{url_for("DeleteClient")}}',
+                        type:'POST',
+                        data:{id:$(row)[0].childNodes[0].innerHTML},
+                    success: function(){ 
+                        debugger;
+                        table.ajax.reload();
+                        } 
+                    });
+                }
+                
+            }
+        })
+        });
+
+</script>
+</html>
