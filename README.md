@@ -21,7 +21,7 @@ Lancer le projet :
 
     1/ Placer vous dans le repertoire 'scripts' qui se trouve dans le dossier DEVELOPMENT à la racine du projet : 
     chemin : /DEVELOPMENT/scripts
-    2/ Entrer la commande suivante : 'sudo mysql -u root -p' ou 'mysql -u votre_nom_user -p'
+    2/ Entrer la commande suivante : 'sudo mysql -u votre_nom_user -p' ou 'mysql -h servinfo-mariadb -u votre_user -p'
     3/ Entre le mot de passe de votre machine ou 'root'
     4/ Une fois connecter sur MySQL, entrer les commandes suivante : 
       4A/ D'abord : 'source script.sql'
