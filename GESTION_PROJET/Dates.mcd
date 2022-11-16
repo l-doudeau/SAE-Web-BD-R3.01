@@ -1,0 +1,19 @@
+DATE: jma
+HEURE: hh:mm:ss
+:
+:
+
+PONEYS : idP, nomP, poidsSup
+RESERVER, 0N HEURE, 0N DATE , ON> COURS, ON PONEYS, ON CLIENT: duree, a_paye
+CLIENT: _cotisationA
+:
+
+:
+COURS : idC, nomC, descC, typeC, prix
+IS_A, TO PERSONNE, XX> CLIENT, XX> MONITEUR
+PERSONNE : idP, nomP, prenomP, ddn, poids, adresseMail, adresse, numeroTel, mdp
+
+:
+ETRE_RESPONSABLE, 0N> MONITEUR, 11 COURS
+MONITEUR:
+:
