@@ -1,10 +1,13 @@
 from sqlalchemy import Integer, Boolean,Text,Column,Date,DECIMAL
 from sqlalchemy.orm import declarative_base,relationship
+from flask_login import UserMixin
+
+
 Base = declarative_base()
 
-class Personne(Base):
+class Personne(Base,UserMixin):
     __tablename__ = "PERSONNE"
-    idp = Column(Integer, primary_key = True)
+    id = Column(Integer, primary_key = True)
     nomp = Column(Text)
     prenomp = Column(Text)
     ddn = Column(Date)
@@ -15,9 +18,10 @@ class Personne(Base):
     ville = Column(Text)
     numerotel = Column(Text)
     mdp = Column(Text)
-    
+
+  
     def __init__(self, idp, nomp,prenomp,ddn,poids,adressemail,adresse,code_postal,ville,numerotel,mdp) -> None:
-        self.idp = idp
+        self.id = idp
         self.nomp = nomp
         self.prenomp = prenomp
         self.ddn = ddn
@@ -30,5 +34,5 @@ class Personne(Base):
         self.mdp = mdp
     
     def __repr__(self) -> str:
-        return str(self.idp) + " " + self.nomp + " " + self.prenomp+ " " + str(self.ddn)+ " " + str(self.poids)+ " " + self.adressemail + " " + self.adresse+ " " + str(self.code_postal)+ " " + self.ville+ " " + self.numerotel+ " " + self.mdp
+        return str(self.id) + " " + self.nomp + " " + self.prenomp+ " " + str(self.ddn)+ " " + str(self.poids)+ " " + self.adressemail + " " + self.adresse+ " " + str(self.code_postal)+ " " + self.ville+ " " + self.numerotel+ " " + self.mdp
     
