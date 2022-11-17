@@ -28,7 +28,8 @@ def ouvrir_connexion(user,passwd,host,database):
         raise err
     print("connexion réussie")
     return cnx,engine
-connexion ,engine = ouvrir_connexion("root","root","localhost", "GRAND_GALOP")
+#connexion ,engine = ouvrir_connexion("root","root","localhost", "GRAND_GALOP")
+connexion ,engine = ouvrir_connexion("faucher","Thierry45.","servinfo-mariadb", "DBfaucher")
 Session = sessionmaker(bind=engine)
 session = Session()
 

@@ -16,7 +16,9 @@ Installation des différent composites necessaire au fonctionnement de l'applica
     1/ Ouvrez un terminale sur votre machine et entrer la commande suivante : 'sudo apt install default-jdk'
     2/ sudo apt install mysql-server
     3/ sudo systemctl start mysql.service
-
+    4/ pip install flask
+    5/ pip3 install mysql-connector-python
+    6/ pip install flask_login
 Lancer le projet :
 
     1/ Placer vous dans le repertoire 'scripts' qui se trouve dans le dossier DEVELOPMENT à la racine du projet : 
