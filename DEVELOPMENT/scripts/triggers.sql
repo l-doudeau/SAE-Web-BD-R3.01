@@ -132,7 +132,7 @@ BEGIN
       END IF;
 
       IF dureeNew < TIME("00:30:00") or dureeNew > TIME("02:00:00") then
-        set msg = concat("Réservation impossible car un cours dure entre 30min et 2 heures.", new.idp, new.idpo);
+        set msg = concat("Réservation impossible car un cours dure entre 30min et 2 heures.", new.id, new.idpo);
         signal SQLSTATE '45000' set MESSAGE_TEXT = msg;
       end if;
     end LOOP;
@@ -160,7 +160,7 @@ BEGIN
       END IF;
 
       IF dureeNew < TIME("00:30:00") or dureeNew > TIME("02:00:00") then
-        set msg = concat("Réservation impossible car un cours dure entre 30min et 2 heures.", new.idp, new.idpo);
+        set msg = concat("Réservation impossible car un cours dure entre 30min et 2 heures.", new.id, new.idpo);
         signal SQLSTATE '45000' set MESSAGE_TEXT = msg;
       end if;
     end LOOP;
@@ -176,7 +176,7 @@ begin
   declare nbPersonnes int;
   declare typeCours VARCHAR(42);
   declare mes VARCHAR(100);
-  select IFNULL(count(idp),0) into nbPersonnes from RESERVER where idc = new.idc and jmahms = new.jmahms;
+  select IFNULL(count(id),0) into nbPersonnes from RESERVER where idc = new.idc and jmahms = new.jmahms;
   select typec into typeCours from COURS where idc = new.idc;
   if typeCours = "Collectif" then
     if nbPersonnes + 1 > nbmax then
@@ -201,7 +201,7 @@ begin
   declare nbPersonnes int;
   declare typeCours VARCHAR(42);
   declare mes VARCHAR(100);
-  select IFNULL(count(idp),0) into nbPersonnes from RESERVER where idc = new.idc and jmahms = new.jmahms;
+  select IFNULL(count(id),0) into nbPersonnes from RESERVER where idc = new.idc and jmahms = new.jmahms;
   select typec into typeCours from COURS where idc = new.idc;
   if typeCours = "Collectif" then
     if nbPersonnes + 1 > nbmax then
@@ -228,7 +228,7 @@ BEGIN
     declare dureeAncien time;
     declare debutNew time;
     declare dureeNew time;
-    DECLARE lesReservations CURSOR FOR select TIME(jmahms) as debutAncien, TIME(duree) as dureeAncien, TIME(new.jmahms) as debutNew, TIME(new.duree) as dureeNew from RESERVER where idp = new.idp and year(jmahms) = year(new.jmahms) and month(jmahms) = month(new.jmahms) and day(jmahms) = day(new.jmahms);
+    DECLARE lesReservations CURSOR FOR select TIME(jmahms) as debutAncien, TIME(duree) as dureeAncien, TIME(new.jmahms) as debutNew, TIME(new.duree) as dureeNew from RESERVER where id = new.id and year(jmahms) = year(new.jmahms) and month(jmahms) = month(new.jmahms) and day(jmahms) = day(new.jmahms);
     DECLARE CONTINUE HANDLER FOR NOT FOUND SET done = TRUE;
 
     OPEN lesReservations;
@@ -256,7 +256,7 @@ BEGIN
     declare dureeAncien time;
     declare debutNew time;
     declare dureeNew time;
-    DECLARE lesReservations CURSOR FOR select TIME(jmahms) as debutAncien, TIME(duree) as dureeAncien, TIME(new.jmahms) as debutNew, TIME(new.duree) as dureeNew from RESERVER where idp = new.idp and year(jmahms) = year(new.jmahms) and month(jmahms) = month(new.jmahms) and day(jmahms) = day(new.jmahms);
+    DECLARE lesReservations CURSOR FOR select TIME(jmahms) as debutAncien, TIME(duree) as dureeAncien, TIME(new.jmahms) as debutNew, TIME(new.duree) as dureeNew from RESERVER where id = new.id and year(jmahms) = year(new.jmahms) and month(jmahms) = month(new.jmahms) and day(jmahms) = day(new.jmahms);
     DECLARE CONTINUE HANDLER FOR NOT FOUND SET done = TRUE;
 
     OPEN lesReservations;
@@ -379,7 +379,7 @@ begin
   declare lesReservations cursor for 
   select cotisationA as cotistationAnnuelle, new.a_paye as payementCours
   from CLIENT
-  where idp = new.idp;
+  where id = new.id;
 
   DECLARE CONTINUE HANDLER FOR NOT FOUND SET fini = TRUE;
 
@@ -417,7 +417,7 @@ begin
   declare lesReservations cursor for 
   select cotisationA as cotistationAnnuelle, new.a_paye as payementCours
   from CLIENT
-  where idp = new.idp;
+  where id = new.id;
 
   DECLARE CONTINUE HANDLER FOR NOT FOUND SET fini = TRUE;
 
@@ -451,10 +451,10 @@ create trigger verifPersonneReserveDansClient before insert on RESERVER for each
     declare msg VARCHAR(300);
     declare dansClient int;
     declare pasDansClient int default 0;
-    select ifnull(count(new.idp), 0) as dansClient into dansClient from CLIENT where new.idp = idp;
+    select ifnull(count(new.id), 0) as dansClient into dansClient from CLIENT where new.id = id;
 
     if pasDansClient = dansClient then
-      set msg = concat ("Inscription impossible à l'activité car la personne : ", new.idp, " n'est pas inscrite en tant que cliente");
+      set msg = concat ("Inscription impossible à l'activité car la personne : ", new.id, " n'est pas inscrite en tant que cliente");
       signal SQLSTATE '45000' set MESSAGE_TEXT = msg;
     end if; 
   end |
@@ -467,10 +467,10 @@ create trigger verifPersonneReserveDansClientUpdate before update on RESERVER fo
     declare msg VARCHAR(300);
     declare dansClient int;
     declare pasDansClient int default 0;
-    select ifnull(count(new.idp), 0) as dansClient into dansClient from CLIENT where new.idp = idp;
+    select ifnull(count(new.id), 0) as dansClient into dansClient from CLIENT where new.id = id;
 
     if pasDansClient = dansClient then
-      set msg = concat ("Inscription impossible à l'activité car la personne : ", new.idp, " n'est pas inscrite en tant que cliente");
+      set msg = concat ("Inscription impossible à l'activité car la personne : ", new.id, " n'est pas inscrite en tant que cliente");
       signal SQLSTATE '45000' set MESSAGE_TEXT = msg;
     end if; 
   end |
@@ -488,13 +488,13 @@ create trigger ajouteTableAncienPersonne before delete on PERSONNE for each row
 
 create trigger ajouteTableAncienClient before delete on CLIENT for each row
   begin
-      INSERT INTO ANCIEN_CLIENT(idp, cotisationA) VALUES(old.idp, old.cotisationA);
+      INSERT INTO ANCIEN_CLIENT(id, cotisationA) VALUES(old.id, old.cotisationA);
   END |
 
 
 create trigger ajouteTableAncienMoniteur before delete on MONITEUR for each row
   begin
-      INSERT INTO ANCIEN_MONITEUR(idp) VALUES(old.idp);
+      INSERT INTO ANCIEN_MONITEUR(id) VALUES(old.id);
   END |
 
 
@@ -512,7 +512,7 @@ create trigger ajouteTableAncienPoney before delete on PONEYS for each row
 
 create trigger ajouteTableAncienReserver before delete on RESERVER for each row
   begin
-      INSERT INTO ANCIEN_RESERVER(jmahms, idp, idc, idpo, duree, a_paye) VALUES(old.jmahms, old.idp, old.idc, old.idpo, old.duree, old.a_paye);
+      INSERT INTO ANCIEN_RESERVER(jmahms, id, idc, idpo, duree, a_paye) VALUES(old.jmahms, old.id, old.idc, old.idpo, old.duree, old.a_paye);
   END |
 
 delimiter ;

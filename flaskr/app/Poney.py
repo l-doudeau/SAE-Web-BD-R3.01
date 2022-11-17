@@ -7,12 +7,12 @@ class Poney(Base):
     __tablename__ = "PONEYS"
     idpo = Column(Integer, primary_key = True)
     nomp = Column(Text)
-    poidsup = Column(DECIMAL)
+    poidssup = Column(DECIMAL)
     
-    def __init__(self, idpo,nomp,poidsup) -> None:
+    def __init__(self, idpo,nomp,poidssup) -> None:
         self.idpo = idpo
         self.nomp = nomp
-        self.poidsup = poidsup
+        self.poidssup = poidssup
     def __repr__(self) -> str:
-        return str(self.idpo) + " " + self.nomp + " " + self.poidsup
+        return str(self.idpo) + " " + self.nomp + " " + str(self.poidssup)
     
