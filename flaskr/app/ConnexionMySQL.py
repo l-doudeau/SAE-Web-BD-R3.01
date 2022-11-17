@@ -3,8 +3,11 @@ from sqlalchemy.sql.expression import func
 from sqlalchemy.orm import sessionmaker
 from .Personne import Personne
 from .Client import  Client
+from .Cours import Cours
 from .Personne import Personne
 from .Moniteur import Moniteur
+from .Reserver import Reserver
+from .Poney import Poney
 from secrets import token_urlsafe
 import datetime
 
@@ -39,20 +42,56 @@ def get_personne(session,id):
 def get_personne_email(session,email):
     return session.query(Personne).filter(Personne.adressemail == email).first()
 def get_info_all_clients(session):
-    return session.query(Personne.id,Personne.nomp,Personne.prenomp,Personne.ddn,Personne.adressemail,Personne.numerotel,Client.cotisationa).join(Client, Personne.id == Client.idP)
+    return session.query(Personne.id,Personne.nomp,Personne.prenomp,Personne.ddn,Personne.adressemail,Personne.numerotel,Client.cotisationa).join(Client, Personne.id == Client.id)
+def get_info_all_poney(session):
+    return session.query(Poney)
+def get_info_all_cours(session):
+    return session.query(Cours)
+def get_info_all_reservations(session):
+    return session.query(Reserver.jmahms,Reserver.id,Reserver.idpo,Personne.nomp,Personne.prenomp,Cours.nomc,Poney.nomp,Reserver.duree,Reserver.a_paye).join(Client, Reserver.id == Client.id).join(Cours, Reserver.idc == Cours.idc).join(Poney, Reserver.idpo == Poney.idpo).join(Personne, Personne.id == Client.id).all()
 def get_moniteur(session,id):
-    return session.query(Moniteur).filter(Moniteur.idP == id).first()
+    return session.query(Moniteur).filter(Moniteur.id == id).first()
 def get_client(session,id):
-    return session.query(Client).filter(Client.idP == id).first()
+    return session.query(Client).filter(Client.id == id).first()
 def deleteclient(session,id):
     user = session.query(Client).get(id)
     session.delete(user)
-    session.commit()
+    if(session.commit()):
+        session.rollback()
+        return False
     return True
-def get_max_id_personne(session):
+def deletePoney(session,id):
+    poney = session.query(Poney).get(id)
+    session.delete(poney)
+    if(not session.commit()):
+        session.rollback()
+        return False
+    return True
+def deletereservation(session,date,id,idpo):
+    print(date,id,idpo+"\n\n\n")
+    liste_date_time = date.split(" ")
+    liste_date = liste_date_time[0].split("/")
+    liste_time = liste_date_time[1].split(":")
 
+    jmahms = datetime.datetime(int(liste_date[2]),int(liste_date[1]),int(liste_date[0]),int(liste_time[0]),int(liste_time[1]),int(liste_time[2]))
+    print(jmahms)
+    print(session.query(Reserver).filter(Reserver.jmahms == jmahms).filter(Reserver.id == id).filter(Reserver.idpo == idpo).all())
+    reservation = session.query(Reserver).filter(Reserver.jmahms == jmahms).filter(Reserver.id == id).filter(Reserver.idpo == idpo).first()
+    print(reservation)
+    session.delete(reservation)
+    if(session.commit()):
+        session.rollback()
+        return False
+    return True
+
+def get_max_id_personne(session):
     return session.query(func.max(Personne.id)).first()[0]
+def get_max_id_poney(session):
+    return session.query(func.max(Poney.idpo)).first()[0]
+def rollback(session):
+    session.rollback()
 def ajout_client(session,prenom,nom,ddn,poids,adresseemail,adresse,code_postal,ville,numerotel,cotise):
+
     idp = get_max_id_personne(session) +1
     mdp = token_urlsafe(6)
     liste = ddn.split("/")
@@ -68,5 +107,22 @@ def ajout_client(session,prenom,nom,ddn,poids,adresseemail,adresse,code_postal,v
     if(not session.commit()):
         session.rollback()
     session.add(client)
+    if(not session.commit()):
+        session.rollback()
+
+def ajout_poney(session,nom,poids):
+    idpo = get_max_id_poney(session) + 1
+    poney = Poney(idpo,nom,poids)
+    session.add(poney)
+    if(not session.commit()):
+        session.rollback()
+
+def ajout_reservation(session,date,id,idpo,idc,duree,a_paye):
+    liste_datetime = date.split(" ")
+    liste = liste_datetime[0].split("/")
+    liste_time = liste_datetime[1].split(":")
+    date_Reservation = datetime.datetime(int(liste[2]),int(liste[1]),int(liste[0]),int(liste_time[0],int(liste_time[1]),int(liste_time[2])))
+    reservation = Reserver(date_Reservation,id,idpo,idc,duree,a_paye)
+    session.add(reservation)
     if(not session.commit()):
         session.rollback()

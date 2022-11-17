@@ -5,11 +5,11 @@ Base = declarative_base()
 
 class Moniteur(Base):
     __tablename__ = "MONITEUR"
-    idP = Column(Integer, primary_key = True)
+    id = Column(Integer, primary_key = True)
     
     def __init__(self, idp) -> None:
-        self.idP = idp
+        self.id = idp
     
     def __repr__(self) -> str:
-        return str(self.idP)
+        return str(self.id)
     

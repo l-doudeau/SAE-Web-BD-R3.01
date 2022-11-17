@@ -1,0 +1,213 @@
+
+{% include 'banner.html' %}
+<style>
+    .row{
+        margin: 1em;
+    }
+</style>
+<body>
+    <section>
+        <div class="container">
+            <div class="row">
+                <div class="row">
+                    <div class="col-12 col-md-8"></div>
+                    <div class="col-6 col-md-4">
+                        <button id="ajouterClient" type="button" class="btn btn-success">Ajouter</button>
+                        <button id="buttonmodalSupr" type="button" class="btn btn-danger" data-toggle="modal" data-target="#modalSupprimer">Supprimer</button>
+                    </div>
+                </div>
+            </div>
+            <table id="Poney" class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Nom</th>
+                        <th>Poids supporté</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>
+
+        <div class="modal fade" id="modalSupprimer" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered" role="document">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h5 class="modal-title" id="exampleModalLabel">Supprimer</h5>
+                  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                  </button>
+                </div>
+                <div class="modal-body">
+                  <p>Etes-vous sur de vouloir supprimer ce poney ?</p>
+                  <span id="poneysupprimer"></span>
+                </div>
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-secondary" data-dismiss="modal">Fermer</button>
+                  <button type="button" class="btn btn-danger" id="deletePoney" data-dismiss="modal">Supprimer</button>
+                </div>
+              </div>
+            </div>
+        </div>
+        <form method="POST">
+            <div class="modal fade" id="modalAjouterClient" tabindex="2" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Nouveau Poney</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                    </div>
+                    <div class="modal-body">
+
+                        <div class="row">
+                            <div class="col-4 d-flex align-items-center">
+                                <label for="NomPoney" class="label label-primary " style="margin-bottom: 0;">Nom</label>
+                            </div>
+                            <div class="col-8">
+                                <input required id="NomPoney">
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-4 d-flex align-items-center">
+                                <label for="PoidsPoney" class="label label-primary" style="margin-bottom: 0;">Poids supporté</label>
+                            </div>
+                            <div class="col-8">
+                                <input required  id="PoidsPoney">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Fermer</button>
+                    <button type="button" class="btn btn-success" id="addPoney">Créer</button>
+                    </div>
+                </div>
+                </div>
+            </div>
+        </form>
+    </section>
+    <div></div>
+</body>
+<script>
+    function isNumeric(str) {
+        if (typeof str != "string") return false // we only process strings!  
+        return !isNaN(str) && // use type coercion to parse the _entirety_ of the string (`parseFloat` alone does not do this)...
+                !isNaN(parseFloat(str)) // ...and ensure strings of whitespace fail
+}
+    var row = null;
+    
+        
+
+        $("#buttonmodalSupr").prop("disabled",true)
+
+        $(document).ready(function() {
+ 
+        var table = $('#Poney').DataTable({
+            ajax: '/api/dataponeys',
+            columns: [
+                {data: 'idpo',className: "dt-center"},
+                {data: 'nomp',className: "dt-center"},
+                {data: 'poidssup',className: "dt-center"},
+        ],
+            info:true,
+            scroller:true,
+            scrollY:500,
+            paging: false,
+            info: false,
+            "searching": false,
+      });
+
+        const container = document.getElementById("modalAjouterClient");
+        const modal = new bootstrap.Modal(container);
+
+        document.getElementById("ajouterClient").addEventListener("click", function () {
+            modal.show();
+        });
+
+        document.getElementById("addPoney").addEventListener("click", function () {
+            var nom = $("#NomPoney").val()
+            var poids = $("#PoidsPoney").val()
+
+            if(nom != "" && poids != "" && isNumeric(poids)){
+                modal.hide();
+            }
+      });
+  
+        
+        $("#addPoney").on("click",function(){
+            var nom = $("#NomPoney").val()
+            var poids = $("#PoidsPoney").val()
+            nom == ""?$("#NomPoney").css("border","1px solid red"):$("#NomPoney").css("border","");
+            poids == ""  || !isNumeric(poids)?$("#PoidsPoney").css("border","1px solid red"):$("#PoidsPoney").css("border","");
+
+            if(nom != "" &&poids != ""&& isNumeric(poids)){
+                $.ajax({
+                url:'{{url_for("AddPoney")}}',
+                type:'POST',
+                data:{
+                    nom : nom,
+                    poids : poids,
+                    },
+            success: function(){ 
+                table.ajax.reload();
+
+                } 
+            });
+        }     
+        });
+
+        $("#NomPoney").kendoTextBox({
+            placeholder: "Nom",
+            fillMode: "solid",
+            size:"large"
+        });
+
+        $("#PoidsPoney").kendoTextBox({
+            placeholder: "Poids",
+            fillMode: "solid",
+            size:"large"
+        });
+
+        $("#Poney").on("click", "tr", function() {
+            if(row !=null){
+                $(row).css('background-color', "");     
+            }
+            $("#buttonmodalSupr").prop("disabled",false)
+            row = this;
+            $(this).css('background-color', "#AFE1AF");
+            $("#clientsupprimer").html($(row)[0].childNodes[1].innerHTML+ " " + $(row)[0].childNodes[2].innerHTML)
+        });
+        
+
+        $("#Poney").on("dblclick", "tr", function() {
+            const id = $(row)[0].childNodes[0].innerHTML
+            const url = '{{url_for("Poney",id="idPoney")}}'.replace("idPoney",id)
+            $.ajax({
+                type:"POST",
+                data:{"id":id},
+                url:url,
+                success:function(response){ window.location.href = "/Poney/"+id;
+} 
+               
+
+            });
+        });
+                
+        $("#deletePoney").on("click",function(){
+            $.ajax({
+                url:'{{url_for("DeletePoney")}}',
+                type:'POST',
+                data:{id:$(row)[0].childNodes[0].innerHTML},
+            success: function(){
+                table.ajax.reload();
+                } 
+            });       
+        });
+
+        });
+
+</script>
+</html>

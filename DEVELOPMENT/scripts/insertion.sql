@@ -21,7 +21,7 @@ insert into PERSONNE (id, nomp, prenomp, ddn, poids, adressemail, adresse, code_
             (20, "Retour", "Erve", STR_TO_DATE('2010-10-10', '%Y-%m-%d'), 30,"roides10@icloud.com", "10 rue des dix", 10000, "Troyes", "0710101010", "troyesmais10:p");
 
 
-insert into CLIENT (idp, cotisationA) values  (2, true),
+insert into CLIENT (id, cotisationA) values  (2, true),
                                               (3, true),
                                               (4, true),
                                               (5, true),
@@ -59,7 +59,7 @@ insert into COURS (idc, nomc, descc, typec, prix) values
             (14, 'Cours de saut', "Ce cours portera sur la technique de saut d'obstacle pour les débutants", "Individuel", 100);
 
 
-insert into MONITEUR (idp) values (1), 
+insert into MONITEUR (id) values (1), 
                                 (5),
                                 (12),
                                 (17),
@@ -81,7 +81,7 @@ insert into PONEYS (idpo, nomp, poidssup) values (1, "Chacha", 180),
                                                 (13, "Victoria", 120);
 
                             
-insert into RESERVER (jmahms, idp, idc, idpo, duree, a_paye) values
+insert into RESERVER (jmahms, id, idc, idpo, duree, a_paye) values
     (STR_TO_DATE("13-01-2014 08:30:00", "%d-%m-%Y %H:%i:%s"), 6, 1, 1, STR_TO_DATE("02:00:00", "%H:%i:%s"), true),
     (STR_TO_DATE('07-06-2015 08:59:59',"%d-%m-%Y %H:%i:%s"), 5, 14, 6, STR_TO_DATE('00:30:00', "%H:%i:%s"), true),
     (STR_TO_DATE('24-01-2022 16:00:00',"%d-%m-%Y %H:%i:%s"), 20, 10, 1, STR_TO_DATE('00:30:00', "%H:%i:%s"), true),

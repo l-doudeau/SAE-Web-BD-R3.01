@@ -37,15 +37,15 @@ CREATE TABLE PERSONNE (
 
 
 CREATE TABLE MONITEUR (
-  idp int,
-  PRIMARY KEY (idp)
+  id int,
+  PRIMARY KEY (id)
 ) ENGINE=InnoDB DEFAULT CHARSET=UTF8MB4;
 
 
 CREATE TABLE CLIENT (
-  idp int,
+  id int,
   cotisationA boolean,
-  PRIMARY KEY (idp)
+  PRIMARY KEY (id)
 ) ENGINE=InnoDB DEFAULT CHARSET=UTF8MB4;  
 
 
@@ -69,12 +69,12 @@ CREATE TABLE PONEYS (
 
 CREATE TABLE RESERVER (
   jmahms datetime,
-  idp int,
+  id int,
   idc int,
   idpo int,
   duree time,
   a_paye boolean,
-  PRIMARY KEY (jmahms, idp, idpo)
+  PRIMARY KEY (jmahms, id, idpo)
 ) ENGINE=InnoDB DEFAULT CHARSET=UTF8MB4;
 
 CREATE TABLE ANCIEN_PERSONNE (
@@ -94,15 +94,15 @@ CREATE TABLE ANCIEN_PERSONNE (
 
 
 CREATE TABLE ANCIEN_MONITEUR (
-  idp int,
-  PRIMARY KEY (idp)
+  id int,
+  PRIMARY KEY (id)
 ) ENGINE=InnoDB DEFAULT CHARSET=UTF8MB4;
 
 
 CREATE TABLE ANCIEN_CLIENT (
-  idp int,
+  id int,
   cotisationA boolean,
-  PRIMARY KEY (idp)
+  PRIMARY KEY (id)
 ) ENGINE=InnoDB DEFAULT CHARSET=UTF8MB4;  
 
 
@@ -127,18 +127,18 @@ CREATE TABLE ANCIEN_PONEYS (
 CREATE TABLE ANCIEN_RESERVER (
 
   jmahms datetime,
-  idp int,
+  id int,
   idc int,
   idpo int,
   duree time,
   a_paye boolean,
-  PRIMARY KEY (jmahms, idp, idpo)
+  PRIMARY KEY (jmahms, id, idpo)
 ) ENGINE=InnoDB DEFAULT CHARSET=UTF8MB4;
 
 -- les contraintes
 
-ALTER TABLE MONITEUR ADD FOREIGN KEY (idp) REFERENCES PERSONNE (id);
-ALTER TABLE CLIENT ADD FOREIGN KEY (idp) REFERENCES PERSONNE (id);
+ALTER TABLE MONITEUR ADD FOREIGN KEY (id) REFERENCES PERSONNE (id);
+ALTER TABLE CLIENT ADD FOREIGN KEY (id) REFERENCES PERSONNE (id);
 
 ALTER TABLE RESERVER ADD FOREIGN KEY (idpo) REFERENCES PONEYS (idpo);
 ALTER TABLE RESERVER ADD FOREIGN KEY (idc) REFERENCES COURS (idc);

@@ -1,0 +1,349 @@
+
+{% include 'banner.html' %}
+<style>
+    .row{
+        margin: 1em;
+    }
+.a{
+        display: none;
+    }
+</style>
+<body>
+    <section>
+        <div class="container">
+            <div class="row">
+                <div class="row">
+                    <div class="col-12 col-md-8"></div>
+                    <div class="col-6 col-md-4">
+                        <button id="ajouterReservation" type="button" class="btn btn-success">Ajouter</button>
+                        <button id="buttonmodalSupr" type="button" class="btn btn-danger" data-toggle="modal" data-target="#modalSupprimer">Supprimer</button>
+                    </div>
+                </div>
+            </div>
+            <table id="reservations" class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>Date de reservation</th>
+                        <th>Nom</th>
+                        <th>Prenom</th>
+                        <th>Cours</th>
+                        <th>Poney</th>
+                        <th>Durée</th>
+                        <th>Est payé</th>
+                        <th>ID</th>
+                        <th>IDPO</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>
+        <div class="modal fade" id="modalSupprimer" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered" role="document">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h5 class="modal-title" id="exampleModalLabel">Supprimer</h5>
+                  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                  </button>
+                </div>
+                <div class="modal-body">
+                  <p>Etes-vous sur de vouloir supprimer cette Reservation ?</p>
+                  <span id="reservationsupprimer"></span>
+                </div>
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-secondary" data-dismiss="modal">Fermer</button>
+                  <button type="button" class="btn btn-danger" id="deleteReservation" data-dismiss="modal">Supprimer</button>
+                </div>
+              </div>
+            </div>
+        </div>
+        <form method="POST">
+            <div class="modal fade" id="modalAjouterReservation" tabindex="2" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Nouvelle Reservation<h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="row">
+                            <div class="col-4">
+                                <label for="DateReservation" class="label label-primary">Date de reservation</label>
+                            </div>
+                            <div class="col-8">
+                                <input required id="DateReservation" value="01/01/2022">
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-4">
+                                <label for="PersonneReservation" class="label label-primary">Personne</label>
+                            </div>
+                            <div class="col-8">
+                                <input required id="PersonneReservation">
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-4">
+                                <label for="CoursReservation" class="label label-primary">Cours</label>
+                            </div>
+                            <div class="col-8">
+                                <input required  id="CoursReservation">
+                            </div>
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-4">
+                                <label for="PoneyReservation" class="label label-primary">Poney</label>
+                            </div>
+                            <div class="col-8">
+                                <input required id="PoneyReservation">
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-4">
+                                <label for="DuréeReservation" class="label label-primary">Durée</label>
+                            </div>
+                            <div class="col-8">
+                                <input required  id="DuréeReservation">
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-4">
+                                <label for="CotiseReservation" class="label label-primary">Déjà cotisé ?</label>
+                            </div>
+                            <div class="col-8">
+                                <input required id="CotiseReservation">
+                            </div>
+                        </div>
+
+                    </div>
+                    <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Fermer</button>
+                    <button type="button" class="btn btn-success" id="addReservation">Créer</button>
+                    </div>
+                </div>
+                </div>
+            </div>
+        </form>
+    </section>
+    <div></div>
+</body>
+<script>
+    function isNumeric(str) {
+        if (typeof str != "string") return false // we only process strings!  
+        return !isNaN(str) && // use type coercion to parse the _entirety_ of the string (`parseFloat` alone does not do this)...
+                !isNaN(parseFloat(str)) // ...and ensure strings of whitespace fail
+}
+    var row = null;
+    
+        $("#buttonmodalSupr").prop("disabled",true)
+
+        $(document).ready(function() {
+ 
+        var table = $('#reservations').DataTable({
+            ajax: '/api/datareservation',
+            columns: [
+                {data: 'jmahms',className: "dt-center",orderable:false,"render" : function (data) { 
+                    let m = new Date(data);
+                    var date = moment.utc(m).format('DD/MM/YYYY HH:mm:ss');
+                    return date
+                }},
+                {data: 'nomp',orderable:false,className: "dt-center",id : {data:"id"}},
+                {data: 'prenomp',orderable:false,className: "dt-center"},
+                {data: 'nomc',orderable:false,className: "dt-center"},
+                {data: 'nompo',orderable:false,className: "dt-center"},
+                {data: 'duree',orderable:false,className: "dt-center"},
+                {data: 'a_paye',orderable:false,className: "dt-center", "render":function (data, type, row) {
+                          return (data === true) ? '<input class="form-check-input" type="checkbox" value="" id="flexCheckChecked" checked disabled>':'<input class="form-check-input" type="checkbox" value="" id="flexCheckChecked" disabled>'}},
+                {data: "id",className:"a"},
+                {data:"idpo",className:"a"}
+        
+
+           
+            
+           
+           ,
+        ],
+            info:true,
+            scroller:true,
+            scrollY:500,
+            paging: false,
+            info: false,
+            "searching": false,
+      });
+        const container = document.getElementById("modalAjouterReservation");
+        const modal = new bootstrap.Modal(container);
+        document.getElementById("ajouterReservation").addEventListener("click", function () {
+            modal.show();
+        });
+        document.getElementById("addReservation").addEventListener("click", function () {
+            var prenom = $("#PersonneReservation").val()
+            var nom = $("#CoursReservation").val()
+            var poids = $("#PoneyReservation").val()
+            var adresseemail = $("#DuréeReservation").val()
+            var adresse = $("#AdresseClient").val()
+            var codepostal = $("#CodePostalClient").val()
+            var ville = $("#VilleClient").val()
+            var tel = $("#TelClient").val()
+            var datepicker = $("#DateReservation").data("kendoDatePicker");
+
+            if(prenom != "" && nom != "" && poids != ""&& isNumeric(poids) && adresseemail != "" && adresse != "" && codepostal != ""&& isNumeric(codepostal) && ville != "" && tel != ""&& isNumeric(tel)&& datepicker._value != null){
+
+                modal.hide();
+            }
+      });
+  
+        
+        $("#addReservation").on("click",function(){
+            var datepicker = $("#DateReservation").data("kendoDatePicker");
+            var personne = $("#PersonneReservation").val()
+            var cours = $("#CoursReservation").val()
+            var poney = $("#PoneyReservation").val()
+            var duree = $("#DuréeReservation").val()
+            var cotise = $("#CotiseReservation").val() == "Oui"?true:false;
+            
+            personne == ""?$("#PersonneReservation").css("border","1px solid red"):$("#PersonneReservation").css("border","");
+            cours == ""?$("#CoursReservation").css("border","1px solid red"):$("#CoursReservation").css("border","");
+            datepicker._value == null?$('#DateReservation').css("border","1px solid red"):$("#DateReservation").css("border","");
+            poney == ""  || !isNumeric(poids)?$("#PoneyReservation").css("border","1px solid red"):$("#PoneyReservation").css("border","");
+            duree == ""?$("#DuréeReservation").css("border","1px solid red"):$("#DuréeReservation").css("border","");
+
+            if(personne != "" && cours != "" && poney != ""&& duree != "" && cotise != "" && datepicker._value != null){
+                $.ajax({
+                url:'{{url_for("AddReservation")}}',
+                type:'POST',
+                data:{
+                    dateReservation : datepicker._value.toLocaleDateString(),
+                    personne : personne,
+                    cours : cours,
+                    poney : poney,
+                    duree : duree,
+                    cotise:cotise
+                    },
+            success: function(){ 
+                console.log("reussi")
+                table.ajax.reload();
+
+                } 
+            });
+        }     
+        });
+
+
+        var dataSource = new kendo.data.DataSource({
+                transport: {
+                    read: {
+                    url: "/api/datareservation",
+                    dataType: "json"
+                    }
+                }
+            });
+        var personnes = $("#PersonneReservation").kendoComboBox({
+            dataSource: dataSource,
+            dataTextField: "nomp",
+            dataValueField: "id"
+});
+
+
+
+
+        $("#CoursReservation").kendoComboBox({
+            dataTextField: "text",
+                        dataValueField: "value",
+                        dataSource: {transport: {
+                                    read: {
+                                    url: "/api/datacours",
+                                    dataType: "json"
+                                    }
+                                }
+                            },
+                        filter: "contains",
+                        suggest: true,
+                        clearButton: false,
+                        index: 1
+                    });
+
+        $("#DateReservation").kendoDateTimePicker({
+            value: new Date(),
+                dateInput: true
+        });
+
+        $("#PoneyReservation").kendoComboBox({
+            dataTextField: "text",
+                        dataValueField: "value",
+                        dataSource: {transport: {
+                                    read: {
+                                    url: "/api/dataponeys",
+                                    dataType: "json"
+                                    }
+                                }
+                            },
+                        filter: "contains",
+                        suggest: true,
+                        clearButton: false,
+                        index: 1
+                    });
+
+        $("#DuréeReservation").kendoTimePicker({
+                        dateInput: true
+                    });
+        $("#CotiseReservation").kendoComboBox({
+                        dataTextField: "text",
+                        dataValueField: "value",
+                        dataSource: [
+                            { text: "Oui", value: "1" },
+                            { text: "Non", value: "2" },
+                        ],
+                        filter: "contains",
+                        suggest: true,
+                        clearButton: false,
+                        index: 1
+                    });
+
+
+        $("#reservations").on("click", "tr", function() {
+            if(row !=null){
+                $(row).css('background-color', "");     
+            }
+            $("#buttonmodalSupr").prop("disabled",false)
+            row = this;
+            $(this).css('background-color', "#AFE1AF");
+            $("#reservationsupprimer").html("Le " +$(row)[0].childNodes[0].innerHTML+ " avec " + $(row)[0].childNodes[1].innerHTML + " " + $(row)[0].childNodes[2].innerHTML)
+        });
+        
+
+        $("#reservations").on("dblclick", "tr", function() {
+            const id = $(row)[0].childNodes[0].innerHTML
+            const url = '{{url_for("Client",id="idClient")}}'.replace("idClient",id)
+            $.ajax({
+                type:"POST",
+                data:{"id":id},
+                url:url,
+                success:function(response){ window.location.href = "/Client/"+id;
+} 
+               
+
+            });
+        });
+                
+        $("#deleteReservation").on("click",function(){
+            $.ajax({
+                url:'{{url_for("DeleteReservation")}}',
+                type:'POST',
+                data:{jmahms:$(row)[0].childNodes[0].innerHTML,
+                    id:$(row)[0].childNodes[7].innerHTML,
+                    idpo:$(row)[0].childNodes[8].innerHTML},
+            success: function(){
+                table.ajax.reload();
+                } 
+            });       
+        });
+
+        });
+
+</script>
+</html>
