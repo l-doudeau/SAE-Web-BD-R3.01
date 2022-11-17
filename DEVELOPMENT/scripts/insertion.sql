@@ -1,4 +1,4 @@
-insert into PERSONNE (idp, nomp, prenomp, ddn, poids, adressemail, adresse, code_postal, ville, numerotel, mdp) values
+insert into PERSONNE (id, nomp, prenomp, ddn, poids, adressemail, adresse, code_postal, ville, numerotel, mdp) values
             (1, "Doudeau", "Luis", STR_TO_DATE('2003-10-03', '%Y-%m-%d'), 70, "luis.doudeau@gmail.com", "17 route de la forêt", 45260, "Lorris", "0607080910", "chèvre123!"), 
             (2, "Faucher", "Thomas", STR_TO_DATE('2003-07-06', '%Y-%m-%d'), 55, "thelendpvp@icloud.com", "10 chemin du tron", 45000, "Orléans", "0610141820", "TfaucherLMaO@a1"),
             (3, "De nardi", "Lenny", STR_TO_DATE('2003-11-16', '%Y-%m-%d'), 55, "lenny.denardi@gmail.com", "49 rue de la biche", 45380, "Chaingy", "0708090506", "1!Y!o!Y!o!2"),

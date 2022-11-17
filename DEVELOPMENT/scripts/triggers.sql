@@ -35,10 +35,10 @@ create trigger verifPoids before insert on RESERVER for each row
         declare poidsup decimal(3.3);
         declare poidsPersonne decimal(3.3);
         declare msg VARCHAR(300);
-        select poids into poidsPersonne from PERSONNE where idp = new.idp;
+        select poids into poidsPersonne from PERSONNE where id = new.id;
         select poidssup into poidsup from PONEYS where idpo = new.idpo;
         if poidsup < poidsPersonne then
-            set msg = concat(" Réservation impossible car le poids supporté par le poney d'id : ", new.idpo," est inférieur au poids de la personne d'id : ", new.idp);
+            set msg = concat(" Réservation impossible car le poids supporté par le poney d'id : ", new.idpo," est inférieur au poids de la personne d'id : ", new.id);
             signal SQLSTATE '45000' set MESSAGE_TEXT = msg;
         end if;
     end |
@@ -51,10 +51,10 @@ create trigger verifPoidsUpdate before update on RESERVER for each row
         declare poidsup decimal(3.3);
         declare poidsPersonne decimal(3.3);
         declare msg VARCHAR(300);
-        select poids into poidsPersonne from PERSONNE where idp = new.idp;
+        select poids into poidsPersonne from PERSONNE where id = new.id;
         select poidssup into poidsup from PONEYS where idpo = new.idpo;
         if poidsup < poidsPersonne then
-            set msg = concat(" Réservation impossible car le poids supporté par le poney d'id : ", new.idpo," est inférieur au poids de la personne d'id : ", new.idp);
+            set msg = concat(" Réservation impossible car le poids supporté par le poney d'id : ", new.idpo," est inférieur au poids de la personne d'id : ", new.id);
             signal SQLSTATE '45000' set MESSAGE_TEXT = msg;
         end if;
     end |
@@ -78,7 +78,7 @@ begin
         LEAVE boucle_reservations;
       END IF;
       if heureNew < TIME("08:00:00") or heureNew > TIME("20:00:00") then
-        set msg = concat("Réservation impossible car les cours n'ont lieux qu'entre 8 heures et 20 heures. ", "ID Personne : ", new.idp,  ", ID Cours : ", new.idc);
+        set msg = concat("Réservation impossible car les cours n'ont lieux qu'entre 8 heures et 20 heures. ", "ID Personne : ", new.id,  ", ID Cours : ", new.idc);
         signal SQLSTATE '45000' set MESSAGE_TEXT = msg;
       end if;
     end LOOP;
@@ -104,7 +104,7 @@ begin
         LEAVE boucle_reservations;
       END IF;
       if heureNew < TIME("08:00:00") or heureNew > TIME("20:00:00") then
-        set msg = concat("Réservation impossible car les cours n'ont lieux qu'entre 8 heures et 20 heures. ", "ID Personne : ", new.idp,  ", ID Cours : ", new.idc);
+        set msg = concat("Réservation impossible car les cours n'ont lieux qu'entre 8 heures et 20 heures. ", "ID Personne : ", new.id,  ", ID Cours : ", new.idc);
         signal SQLSTATE '45000' set MESSAGE_TEXT = msg;
       end if;
     end LOOP;
@@ -481,8 +481,8 @@ create trigger verifPersonneReserveDansClientUpdate before update on RESERVER fo
 
 create trigger ajouteTableAncienPersonne before delete on PERSONNE for each row
   begin
-    INSERT INTO ANCIEN_PERSONNE(idp, nomp, prenomp, ddn, poids, adressemail, adresse, code_postal, ville, numerotel, mdp)
-    VALUES (old.idp, old.nomp, old.prenomp, old.ddn, old.poids, old.adressemail, old.adresse, old.code_postal, old.ville, old.numerotel, old.mdp);
+    INSERT INTO ANCIEN_PERSONNE(id, nomp, prenomp, ddn, poids, adressemail, adresse, code_postal, ville, numerotel, mdp)
+    VALUES (old.id, old.nomp, old.prenomp, old.ddn, old.poids, old.adressemail, old.adresse, old.code_postal, old.ville, old.numerotel, old.mdp);
   END |
 
 
