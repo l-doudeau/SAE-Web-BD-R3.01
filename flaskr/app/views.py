@@ -1,7 +1,7 @@
 from flask import Flask, render_template, request,redirect,url_for
 from .ConnexionMySQL import get_personne,session,get_moniteur,get_client,get_personne_email,\
     get_info_all_clients,deleteclient,ajout_client,ajout_poney,deletePoney,get_info_all_poney,\
-        get_info_all_cours,get_info_all_reservations,deletereservation,ajout_reservation,rollback
+        get_info_all_cours,get_info_all_reservations,deletereservation,ajout_reservation,rollback, ajouteCours
 
 from sqlalchemy.orm import sessionmaker
 from flask_login import LoginManager,login_user,login_required,logout_user,current_user
@@ -75,6 +75,11 @@ def Poneys():
 @login_required
 def Reservations():
     return render_template("gerer_reservations.html")
+
+@app.route('/Cours')
+@login_required
+def Cours():
+    return render_template('gerer_cours.html')
 
 @app.route('/api/dataclients')
 def data_client():
@@ -185,6 +190,15 @@ def AddReservation():
     ajout_reservation(session,jmahms,id,idpo,idc,duree,a_paye)
     return ""
 
+@app.route('/AddCours',methods=['POST'])
+def AddCours():
+    nom = request.form["nom"]
+    descc = request.form["descc"]
+    prix = request.form["prix"]
+    type = request.form["type"]
+    ajouteCours(session, nom,)
+    return ""
+
 @app.route('/DeletePoney',methods=['POST'])
 def DeletePoney():
     deletePoney(session,int(request.form["id"]))
@@ -200,4 +214,9 @@ def DeleteClient():
 @app.route('/DeleteReservation',methods=['POST'])
 def DeleteReservation():
     deletereservation(session,request.form["jmahms"],request.form["id"],request.form["idpo"])
+    return ""
+
+@app.route('/deleteCours',methods=['POST'])
+def deleteCours():
+    deleteCours(session,request.form["id"])
     return ""

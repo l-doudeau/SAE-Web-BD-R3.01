@@ -90,8 +90,18 @@ def deletereservation(session,date,id,idpo):
         return False
     return True
 
+def deleteCours(session, idc):
+    cours = session.query(Cours).get(idc)
+    session.delete(cours)
+    if(session.commit()):
+        session.rollback()
+        return False
+    return True
+
 def get_max_id_personne(session):
     return session.query(func.max(Personne.id)).first()[0]
+def get_max_id_cours(session):
+    return session.query(func.max(Cours.idc)).first()[0]
 def get_max_id_poney(session):
     return session.query(func.max(Poney.idpo)).first()[0]
 def rollback(session):
@@ -132,3 +142,13 @@ def ajout_reservation(session,date,id,idpo,idc,duree,a_paye):
     session.add(reservation)
     if(not session.commit()):
         session.rollback()
+    
+def ajouteCours(session, idc, nomc, descc, typec, prix):
+    cours = Cours(get_max_id_cours(session)+1, nomc, descc, typec, prix)
+    session.add(cours)
+    try:
+        session.commit()
+        return True
+    except:
+        session.rollback()
+        return False
