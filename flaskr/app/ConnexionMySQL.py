@@ -143,7 +143,7 @@ def ajout_reservation(session,date,id,idpo,idc,duree,a_paye):
     if(not session.commit()):
         session.rollback()
     
-def ajouteCours(session, idc, nomc, descc, typec, prix):
+def ajouteCours(session, nomc, descc, typec, prix):
     cours = Cours(get_max_id_cours(session)+1, nomc, descc, typec, prix)
     session.add(cours)
     try:

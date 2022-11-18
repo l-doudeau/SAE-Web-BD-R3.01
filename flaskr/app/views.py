@@ -196,7 +196,7 @@ def AddCours():
     descc = request.form["descc"]
     prix = request.form["prix"]
     type = request.form["type"]
-    ajouteCours(session, nom,)
+    ajouteCours(session, nom, descc, prix, type)
     return ""
 
 @app.route('/DeletePoney',methods=['POST'])
