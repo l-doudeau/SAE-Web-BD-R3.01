@@ -90,7 +90,7 @@ def deletereservation(session,date,id,idpo):
         return False
     return True
 
-def deleteCours(session, idc):
+def deletecours(session, idc):
     cours = session.query(Cours).get(idc)
     session.delete(cours)
     if(session.commit()):

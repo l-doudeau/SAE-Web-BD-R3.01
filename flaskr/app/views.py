@@ -1,7 +1,7 @@
 from flask import Flask, render_template, request,redirect,url_for
 from .ConnexionMySQL import get_personne,session,get_moniteur,get_client,get_personne_email,\
     get_info_all_clients,deleteclient,ajout_client,ajout_poney,deletePoney,get_info_all_poney,\
-        get_info_all_cours,get_info_all_reservations,deletereservation,ajout_reservation,rollback, ajouteCours
+        get_info_all_cours,get_info_all_reservations,deletereservation,ajout_reservation,rollback, ajouteCours, deletecours
 
 from sqlalchemy.orm import sessionmaker
 from flask_login import LoginManager,login_user,login_required,logout_user,current_user
@@ -218,5 +218,5 @@ def DeleteReservation():
 
 @app.route('/deleteCours',methods=['POST'])
 def deleteCours():
-    deleteCours(session,request.form["id"])
+    deletecours(session,request.form["id"])
     return ""
