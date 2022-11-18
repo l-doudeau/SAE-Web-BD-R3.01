@@ -60,13 +60,19 @@ def deleteclient(session,id):
         session.rollback()
         return False
     return True
+
 def deletePoney(session,id):
     poney = session.query(Poney).get(id)
+    poney_reservation = session.query(Reserver).filter(Reserver.idpo == id).all()
+    for poney_reserv in poney_reservation:
+        session.delete(poney_reserv)
+        session.commit()
     session.delete(poney)
     if(not session.commit()):
         session.rollback()
         return False
     return True
+
 def deletereservation(session,date,id,idpo):
     print(date,id,idpo+"\n\n\n")
     liste_date_time = date.split(" ")
