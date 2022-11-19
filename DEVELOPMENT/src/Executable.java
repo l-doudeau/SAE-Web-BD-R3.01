@@ -390,32 +390,36 @@ public class Executable {
         while(!fini){
             Executable.printMenu(sousMenuAffichage);
             String choix = myObj.nextLine();
-            Integer numchoix = Integer.parseInt(choix);
-            switch(numchoix){
-                case 1:
-                    menuAffichageCarac(sousSousMenuAffichage, "Client(e)(s)", bd);
-                    break;
-                case 2:
-                    menuAffichageCarac(sousSousMenuAffichage, "Moniteur(s)/Monitrice(s)", bd);
-                    break;
-                case 3:
-                    menuAffichageCarac(sousSousMenuAffichage, "Poney(s)", bd);
-                    break;
-                case 4:
-                    menuAffichageCarac(sousSousMenuAffichage, "Cours", bd);
-                    break;
-                case 5:
-                    menuAffichageCarac(sousSousMenuAffichage, "Reservation(s)", bd);
-                    break;
-                case 6:
-                    fini = true;
-                    break;
-                default:
-                    System.out.println("Saisie incorect ! \nAppuyer sur entrée pour continuer");
-                    myObj.nextLine();
-                    break;
+            try{
+                Integer numchoix = Integer.parseInt(choix);
+                switch(numchoix){
+                    case 1:
+                        menuAffichageCarac(sousSousMenuAffichage, "Client(e)(s)", bd);
+                        break;
+                    case 2:
+                        menuAffichageCarac(sousSousMenuAffichage, "Moniteur(s)/Monitrice(s)", bd);
+                        break;
+                    case 3:
+                        menuAffichageCarac(sousSousMenuAffichage, "Poney(s)", bd);
+                        break;
+                    case 4:
+                        menuAffichageCarac(sousSousMenuAffichage, "Cours", bd);
+                        break;
+                    case 5:
+                        menuAffichageCarac(sousSousMenuAffichage, "Reservation(s)", bd);
+                        break;
+                    case 6:
+                        fini = true;
+                        break;
+                    default:
+                        System.out.println("Saisie incorect ! \nAppuyer sur entrée pour continuer");
+                        myObj.nextLine();
+                        break;
+                }
+                
+            }catch(NumberFormatException e){
+                System.out.println("Saisie incorrecte !");
             }
-            
         }
     }
 
@@ -426,69 +430,74 @@ public class Executable {
         while(!fini){
             Executable.printMenu(sousMenuAffichage,arg);
             String choix = myObj.nextLine();
-            Integer numchoix = Integer.parseInt(choix);
-            switch(numchoix){
-                case 1:
-                    switch(arg){
-                        case "Client(e)(s)":
-                            afficheUnClient(bd,myObj);
-                            pressEnter(myObj);
-                            break;
+            try{
+                Integer numchoix = Integer.parseInt(choix);
+                switch(numchoix){
+                    case 1:
+                        switch(arg){
+                            case "Client(e)(s)":
+                                afficheUnClient(bd,myObj);
+                                pressEnter(myObj);
+                                break;
 
-                        case "Moniteur(s)/Monitrice(s)":
-                            afficheUnMoniteur(bd,myObj);
-                            pressEnter(myObj);
-                            break;
-                        
-                        case "Poney(s)":
-                            afficheUnPoney(bd,myObj);
-                            pressEnter(myObj);
-                            break;
+                            case "Moniteur(s)/Monitrice(s)":
+                                afficheUnMoniteur(bd,myObj);
+                                pressEnter(myObj);
+                                break;
+                            
+                            case "Poney(s)":
+                                afficheUnPoney(bd,myObj);
+                                pressEnter(myObj);
+                                break;
 
-                        case "Cours":
-                            afficheUnCours(bd,myObj);
-                            pressEnter(myObj);
-                            break;
-                        case "Reservation(s)":
-                            afficheUneReservation(bd,myObj);
-                            pressEnter(myObj);
-                            break;
-                    }
+                            case "Cours":
+                                afficheUnCours(bd,myObj);
+                                pressEnter(myObj);
+                                break;
+                            case "Reservation(s)":
+                                afficheUneReservation(bd,myObj);
+                                pressEnter(myObj);
+                                break;
+                        }
 
-                    break;
-                case 2:
-                    switch(arg){
-                        case "Client(e)(s)":
-                            afficherLesClients();
-                            pressEnter(myObj);
-                            break;
+                        break;
+                    case 2:
+                        switch(arg){
+                            case "Client(e)(s)":
+                                afficherLesClients();
+                                pressEnter(myObj);
+                                break;
 
-                        case "Moniteur(s)/Monitrice(s)":
-                            afficherLesMoniteurs();
-                            pressEnter(myObj);
-                            break;
-                        
-                        case "Poney(s)":
-                            afficherLesPoneys();
-                            pressEnter(myObj);
-                            break;
+                            case "Moniteur(s)/Monitrice(s)":
+                                afficherLesMoniteurs();
+                                pressEnter(myObj);
+                                break;
+                            
+                            case "Poney(s)":
+                                afficherLesPoneys();
+                                pressEnter(myObj);
+                                break;
 
-                        case "Cours":
-                            afficherLesCours();
-                            pressEnter(myObj);
-                            break;
-                        case "Reservation(s)":
-                            Requete.afficheReservation(bd);
-                            pressEnter(myObj);
-                            break;
-                    }
+                            case "Cours":
+                                afficherLesCours();
+                                pressEnter(myObj);
+                                break;
+                            case "Reservation(s)":
+                                Requete.afficheReservation(bd);
+                                pressEnter(myObj);
+                                break;
+                        }
 
-                    break;
-                case 3:
-                    fini = true;
-                    break;
-            }
+                        break;
+                    case 3:
+                        fini = true;
+                        break;
+                }
+            
+        }catch(NumberFormatException e){
+            System.out.println("Saisie incorrecte ! ");
         }
+    }
         System.out.println("");
     }
 
@@ -498,34 +507,38 @@ public class Executable {
         while(!fini){
             Executable.printMenu(sousMenuInsertion);
             String choix = myObj.nextLine();
-            Integer numchoix = Integer.parseInt(choix);
-            switch(numchoix){
-                case 1: 
-                    insererUnePersonne(bd,myObj);
-                    break;
-                case 2:
-                    insererClient(bd, myObj);
-                    break;
-                case 3:
-                    insererMoniteur(bd, myObj);
-                    break;
-                case 4:
-                    insererPoney(bd,myObj);
-                    break;
-                case 5:
-                    insererCours(bd,myObj);
-                    break;
-                case 6:
-                    Executable.insererReservations(bd, myObj);
-                    break;
-                case 7:
-                    fini = true;
-                    break;
-                
-                default:
-                    System.out.println("Saisie incorect ! \nAppuyer sur entrée pour continuer");
-                    myObj.nextLine();
-                    break;
+            try{
+                Integer numchoix = Integer.parseInt(choix);
+                switch(numchoix){
+                    case 1: 
+                        insererUnePersonne(bd,myObj);
+                        break;
+                    case 2:
+                        insererClient(bd, myObj);
+                        break;
+                    case 3:
+                        insererMoniteur(bd, myObj);
+                        break;
+                    case 4:
+                        insererPoney(bd,myObj);
+                        break;
+                    case 5:
+                        insererCours(bd,myObj);
+                        break;
+                    case 6:
+                        Executable.insererReservations(bd, myObj);
+                        break;
+                    case 7:
+                        fini = true;
+                        break;
+                    
+                    default:
+                        System.out.println("Saisie incorect ! \nAppuyer sur entrée pour continuer");
+                        myObj.nextLine();
+                        break;
+                }
+            }catch(NumberFormatException e){
+                System.out.println("Saisie incorrecte !");
             }
         }
     }
@@ -548,6 +561,7 @@ public class Executable {
         boolean ok = false;
         //Demander l'id du client
         while(!ok){
+            afficherLesClients();
         System.out.println("Veuillez rentrer l'id du client de la réservation recherchée");
         idClient = Integer.parseInt(myObj.nextLine());
         if(clients.get(idClient) == null)
@@ -559,12 +573,17 @@ public class Executable {
         //Demander l'id du poney
         ok = false;
         while(!ok){
+            afficherLesPoneys();
             System.out.println("Veuillez rentrer l'id du poney de la réservation recherchée");
-            idPoney = Integer.parseInt(myObj.nextLine());
-            if(poneys.get(idPoney) == null)
-                System.out.println("Cette id ne correspond à aucun poney !");
-            else
-                ok = true;
+            try{
+                idPoney = Integer.parseInt(myObj.nextLine());
+                if(poneys.get(idPoney) == null)
+                    System.out.println("Cette id ne correspond à aucun poney !");
+                else
+                    ok = true;
+            }catch(NumberFormatException e){
+                System.out.println("Saisie incorrecte !");
+            }
         }
 
         //Demander la date de la réservation
@@ -598,34 +617,46 @@ public class Executable {
     private static void afficheUnCours(ConnectionDB bd,Scanner myObj) {
         System.out.println("Veuillez rentrer l'id du cours recherché");
         String id_brute = myObj.nextLine();
-        Integer id = Integer.parseInt(id_brute);
-        if(cours.get(id) == null)
-            System.out.println("Cette id ne correspond à aucun cours !");
-        else
-            System.out.println(cours.get(id));
+        try{
+            Integer id = Integer.parseInt(id_brute);
+            if(cours.get(id) == null)
+                System.out.println("Cette id ne correspond à aucun cours !");
+            else
+                System.out.println(cours.get(id));
+        
+        }catch(NumberFormatException e){
+            System.out.println("Saisie incorrecte !");
+        }
     }
-    
+        
     private static void afficheUnPoney(ConnectionDB bd,Scanner myObj) {
         System.out.println("Veuillez rentrer l'id du poney recherché");
         String id_brute = myObj.nextLine();
-        Integer id = Integer.parseInt(id_brute);
-        if(poneys.get(id) == null)
-            System.out.println("Cette id ne correspond à aucun poney !");
-        else
-            System.out.println(poneys.get(id));
-    
+        try{
+            Integer id = Integer.parseInt(id_brute);
+            if(poneys.get(id) == null)
+                System.out.println("Cette id ne correspond à aucun poney !");
+            else
+                System.out.println(poneys.get(id));
+        }catch(NumberFormatException e){
+                System.out.println("Saisie incorrecte !");
+        }
     }
 
     private static void afficheUnMoniteur(ConnectionDB bd,Scanner myObj) {
         System.out.println("Veuillez rentrer l'id de la personne recherchée");
-        String id_brute = myObj.nextLine();
-        Integer id = Integer.parseInt(id_brute);
-        if(moniteurs.get(id) == null)
-            System.out.println("Cette id ne correspond pas à un moniteur !");
-        else
-            System.out.println(moniteurs.get(id));
+        try{
+            String id_brute = myObj.nextLine();
+            Integer id = Integer.parseInt(id_brute);
+            if(moniteurs.get(id) == null)
+                System.out.println("Cette id ne correspond pas à un moniteur !");
+            else
+                System.out.println(moniteurs.get(id));
+            
+        }catch(NumberFormatException e){
+            System.out.println("Saisie incorrecte !");
+        }
     }
-    
     private static void afficherLesClients() {
 
         for(Client c : clients.values()){
@@ -675,43 +706,45 @@ public class Executable {
             // Date invalide
             catch (ParseException e)
             {
-                e.printStackTrace();
                 System.out.println(date_brute + " a " + temps_brute +" est une date invalide");
             }
         }
  
+            try{
+            System.out.println("Veuillez entrer l'id de la personne qui réserve le cours");
+            Integer idP = Integer.parseInt(scanner.nextLine());
         
-        System.out.println("Veuillez entrer l'id de la personne qui réserve le cours");
-        Integer idP = Integer.parseInt(scanner.nextLine());
-    
-        System.out.println("Veuillez entrer l'id du cours qui est réservé le cours");
-        Integer idC = Integer.parseInt(scanner.nextLine());
+            System.out.println("Veuillez entrer l'id du cours qui est réservé le cours");
+            Integer idC = Integer.parseInt(scanner.nextLine());
 
 
-        System.out.println("Veuillez entrer l'id du poney qui est réservé pour le cours");
-        Integer idPo = Integer.parseInt(scanner.nextLine());
+            System.out.println("Veuillez entrer l'id du poney qui est réservé pour le cours");
+            Integer idPo = Integer.parseInt(scanner.nextLine());
 
 
-        System.out.println("Veuillez entrer le temps du cours sous la forme XX:XX:XX ");
-        String time_brute = scanner.nextLine(); 
-        Time duree = Time.valueOf(time_brute);
+            System.out.println("Veuillez entrer le temps du cours sous la forme XX:XX:XX ");
+            String time_brute = scanner.nextLine(); 
+            Time duree = Time.valueOf(time_brute);
 
 
-        System.out.println("Veuillez entrer si oui ou non, le client à payé : O/N ");
-        String reponse = scanner.nextLine();
-        boolean a_paye;
-        if(reponse == "O"){
-            a_paye = true;
-        }
-        else{
-            a_paye = false;
-        }
-        Reservation reservation = new Reservation(calendrier, idP, idC, idPo, duree, a_paye);
-        if(Requete.insererReservations(bd, reservation)){
-            System.out.println("L'inserstion s'est bien déroulé");
-        }
-        else{
-            System.out.println("Erreur dans l'insertion ! ");
+            System.out.println("Veuillez entrer si oui ou non, le client à payé : O/N ");
+            String reponse = scanner.nextLine();
+            boolean a_paye;
+            if(reponse == "O"){
+                a_paye = true;
+            }
+            else{
+                a_paye = false;
+            }
+            Reservation reservation = new Reservation(calendrier, idP, idC, idPo, duree, a_paye);
+            if(Requete.insererReservations(bd, reservation)){
+                System.out.println("L'inserstion s'est bien déroulé");
+            }
+            else{
+                System.out.println("Erreur dans l'insertion ! ");
+            }
+        }catch(NumberFormatException e){
+            System.out.println("Saisie incorrecte !");
         }
 
     }
@@ -737,37 +770,42 @@ public class Executable {
             // Date invalide
             catch (ParseException e)
             {
-                e.printStackTrace();
                 System.out.println(date_brute +" est une date invalide");
             }
         }
-        System.out.println("Veuillez entrer le poids de la personne ");
-        Float poids = Float.parseFloat(scanner.nextLine());
+            try{
+            System.out.println("Veuillez entrer le poids de la personne ");
+            Float poids = Float.parseFloat(scanner.nextLine());
 
 
-        System.out.println("Veuillez entrer l'adresse email de la personne");
-        String email = scanner.nextLine();
+            System.out.println("Veuillez entrer l'adresse email de la personne");
+            String email = scanner.nextLine();
 
-        System.out.println("Veuillez entrer la mot de passe de la personne");
-        String password = scanner.nextLine();
-        
-        System.out.println("Veuillez entrer l'adresse de la personne");
-        String adresse_postal = scanner.nextLine();
-        
-        System.out.println("Veuillez entrer le code postal de la personne");
-        Integer code_postal = Integer.parseInt(scanner.nextLine());
-        
-        System.out.println("Veuillez entrer la ville de la personne");
-        String ville = scanner.nextLine();
+            System.out.println("Veuillez entrer la mot de passe de la personne");
+            String password = scanner.nextLine();
+            
+            System.out.println("Veuillez entrer l'adresse de la personne");
+            String adresse_postal = scanner.nextLine();
+            
+            System.out.println("Veuillez entrer le code postal de la personne");
+            Integer code_postal = Integer.parseInt(scanner.nextLine());
+            
+            System.out.println("Veuillez entrer la ville de la personne");
+            String ville = scanner.nextLine();
 
-        System.out.println("Veuillez entrer le numéro de téléphone de la personne");
-        String numTel = scanner.nextLine();
+            System.out.println("Veuillez entrer le numéro de téléphone de la personne");
+            String numTel = scanner.nextLine();
 
-        Personne personne = new Personne(Requete.maxIDPersonne(bd)+1, nomPrenom[0], nomPrenom[1], calendrier, poids, email, adresse_postal, code_postal, ville, numTel, password);
-        if(Requete.insererPersonne(bd, personne)){
-            System.out.println("Insertion efféctuée ");
-            pressEnter(scanner);
-        
+            Personne personne = new Personne(Requete.maxIDPersonne(bd)+1, nomPrenom[0], nomPrenom[1], calendrier, poids, email, adresse_postal, code_postal, ville, numTel, password);
+            if(Requete.insererPersonne(bd, personne)){
+                System.out.println("Insertion efféctuée ");
+                pressEnter(scanner);
+            
+            }else{
+                System.out.println("Insertion impossible");
+            }
+        }catch(NumberFormatException e){
+            System.out.println("Saisie incorrecte !");
         }
 
     }
@@ -778,14 +816,18 @@ public class Executable {
         Personne p  = null;
         while(!ok){
             System.out.println("Veuillez entrer l'id du client");
-            Integer idC = Integer.parseInt(scanner.nextLine());
-            if(personnes.get(idC) instanceof Personne){
-                ok = true;
-                p = personnes.get(idC);
-            }
-            else{
-                System.out.println("l'id du client est inconnu (Veuillez créer la personne)");
-                pressEnter(scanner);
+            try{
+                Integer idC = Integer.parseInt(scanner.nextLine());
+                if(personnes.get(idC) instanceof Personne){
+                    ok = true;
+                    p = personnes.get(idC);
+                }
+                else{
+                    System.out.println("l'id du client est inconnu (Veuillez créer la personne)");
+                    pressEnter(scanner);
+                }
+            }catch(NumberFormatException e){
+                System.out.println("Saisie incorrecte !");
             }
         }
         ok = false;
@@ -840,15 +882,18 @@ public class Executable {
 
         System.out.println("Veuillez entrer le nom du poney ");
         String nomPo = scanner.nextLine();
-
-        System.out.println("Veuillez entrer le poids max du poney");
-        Integer poidsMax = Integer.parseInt(scanner.nextLine());
-
-        Poney poney = new Poney(Requete.maxIDPoney(bd)+1, nomPo, poidsMax);
-        if(Requete.insererPoney(bd,poney)){
-            System.out.println("Insertion efféctuée");
-            pressEnter(scanner);
-        }
+        try{
+            System.out.println("Veuillez entrer le poids max du poney");
+            Integer poidsMax = Integer.parseInt(scanner.nextLine());
+            
+            Poney poney = new Poney(Requete.maxIDPoney(bd)+1, nomPo, poidsMax);
+            if(Requete.insererPoney(bd,poney)){
+                System.out.println("Insertion efféctuée");
+                pressEnter(scanner);
+            }
+        }catch(NumberFormatException e){
+                System.out.println("Saisie incorrecte !");
+            }
         
 
 
@@ -861,6 +906,7 @@ public class Executable {
         String description = "";
         String typeCours = "";
         Integer prix = null;
+        Integer id = null;
 
         System.out.println("Veuillez entrer le nom du cours");
         nomCours = myObj.nextLine();
@@ -880,15 +926,21 @@ public class Executable {
                 pressEnter(myObj);
             }
         }
+        try{
+            System.out.println("Veuillez entrer le prix du cours");
+            prix  = Integer.parseInt(myObj.nextLine());
 
-        System.out.println("Veuillez entrer le prix du cours");
-        prix  = Integer.parseInt(myObj.nextLine());
+            afficherLesMoniteurs();
+            System.out.println("Veuillez entrer l'id du moniteur");
+            id  = Integer.parseInt(myObj.nextLine());
 
-
-        Cours cours = new Cours(Requete.maxIDCours(bd)+1, nomCours, description, typeCours, prix);
-        if(Requete.insererCours(bd, cours)){
-            System.out.println("Insertion efféctué ");
-            pressEnter(myObj);
+            Cours cours = new Cours(Requete.maxIDCours(bd)+1, nomCours, description, typeCours, prix,id);
+            if(Requete.insererCours(bd, cours)){
+                System.out.println("Insertion efféctué ");
+                pressEnter(myObj);
+            }
+        }catch(NumberFormatException e){
+            System.out.println("Saisie incorrecte !");
         }
         
     }

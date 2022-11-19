@@ -42,21 +42,7 @@ insert into CLIENT (id, cotisationA) values  (2, true),
                                               (20, true);
 
     
-insert into COURS (idc, nomc, descc, typec, prix) values
-            (1, 'Cours de saut', "Ce cours portera sur la technique de saut d'obstacle pour les débutants", "Collectif", 45), 
-            (2, 'Cours de saut', "Ce cours portera sur la technique de saut d'obstacle pour les débutants", "Individuel", 80),
-            (3, 'Initiation', "Cours d'initiation au poney ", "Individuel", 65),
-            (4, 'Initiation', "Cours d'initiation au poney ", "Collectif", 25),
-            (5, 'Cours de course', "Ce cours portera sur la course à poney", "Individuel", 65),
-            (6, 'Cours poussin', "Ce cours sera un entraînement pour la catégorie poussin", "Collectif", 35),
-            (7, 'Cours de saut', "Ce cours portera sur la technique de saut d'obstacle pour les débutants", "Collectif", 45),
-            (8, 'Cours de vitesse', "Ce cours portera sur la technique de saut d'obstacle pour les débutants", "Individuel", 45),
-            (9, 'Cours de saut', "Ce cours portera sur la technique de saut d'obstacle pour les débutants", "Individuel", 45),
-            (10, 'Cours de saut', "Ce cours portera sur la technique de saut d'obstacle pour les débutants", "Collectif", 45),
-            (11, 'Cours de saut', "Ce cours portera sur la technique de saut d'obstacle pour les débutants", "Individuel", 45),
-            (12, 'Cours de saut', "Ce cours portera sur la technique de saut d'obstacle pour les débutants", "Collectif", 45),
-            (13, 'Cours de saut', "Ce cours portera sur la technique de saut d'obstacle pour les débutants", "Collectif", 45),
-            (14, 'Cours de saut', "Ce cours portera sur la technique de saut d'obstacle pour les débutants", "Individuel", 100);
+
 
 
 insert into MONITEUR (id) values (1), 
@@ -65,7 +51,23 @@ insert into MONITEUR (id) values (1),
                                 (17),
                                 (18);
 
+insert into COURS (idc, nomc, descc, typec, prix,id) values
+            (1, 'Cours de saut', "Ce cours portera sur la technique de saut d'obstacle pour les débutants", "Collectif", 45,1), 
+            (2, 'Cours de saut', "Ce cours portera sur la technique de saut d'obstacle pour les débutants", "Individuel", 80,1),
+            (3, 'Initiation', "Cours d'initiation au poney ", "Individuel", 65,1),
+            (4, 'Initiation', "Cours d'initiation au poney ", "Collectif", 25,1),
+            (5, 'Cours de course', "Ce cours portera sur la course à poney", "Individuel", 65,1),
+            (6, 'Cours poussin', "Ce cours sera un entraînement pour la catégorie poussin", "Collectif", 35,1),
+            (7, 'Cours de saut', "Ce cours portera sur la technique de saut d'obstacle pour les débutants", "Collectif", 45,1),
+            (8, 'Cours de vitesse', "Ce cours portera sur la technique de saut d'obstacle pour les débutants", "Individuel", 45,1),
+            (9, 'Cours de saut', "Ce cours portera sur la technique de saut d'obstacle pour les débutants", "Individuel", 45,1),
+            (10, 'Cours de saut', "Ce cours portera sur la technique de saut d'obstacle pour les débutants", "Collectif", 45,1),
+            (11, 'Cours de saut', "Ce cours portera sur la technique de saut d'obstacle pour les débutants", "Individuel", 45,1),
+            (12, 'Cours de saut', "Ce cours portera sur la technique de saut d'obstacle pour les débutants", "Collectif", 45,1),
+            (13, 'Cours de saut', "Ce cours portera sur la technique de saut d'obstacle pour les débutants", "Collectif", 45,1),
+            (14, 'Cours de saut', "Ce cours portera sur la technique de saut d'obstacle pour les débutants", "Individuel", 100,1);
 
+            
 insert into PONEYS (idpo, nomp, poidssup) values (1, "Chacha", 180),
                                                 (2, "Michella", 30),
                                                 (3, "Parapluie", 62),

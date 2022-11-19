@@ -14,14 +14,14 @@ public class Requete {
     public static Integer maxIDPersonne(ConnectionDB bd){
         try{
             Statement s = bd.getConnection().createStatement();
-            ResultSet res = s.executeQuery("select max(idp) from PERSONNE");
+            ResultSet res = s.executeQuery("select max(id) from PERSONNE");
             res.next();
             return res.getInt(1);
         }
         catch(SQLException e1){
-            e1.printStackTrace();
+            return 0;
         }
-        return null;
+
     }
 
     public static Integer maxIDCours(ConnectionDB bd){
@@ -32,9 +32,9 @@ public class Requete {
             return res.getInt(1);
         }
         catch(SQLException e1){
-            e1.printStackTrace();
+            return 0;
         }
-        return null;
+
     }
 
     public static Integer maxIDPoney(ConnectionDB bd){
@@ -45,9 +45,9 @@ public class Requete {
             return res.getInt(1);
         }
         catch(SQLException e1){
-            e1.printStackTrace();
+            return 0;
         }
-        return null;
+
     }
 
 
@@ -71,7 +71,7 @@ public class Requete {
             }
 
         } catch (SQLException e) {
-            e.printStackTrace();
+            System.out.println("Aucune connexion");
         }
         
 
@@ -81,7 +81,7 @@ public class Requete {
     public static void afficheUneReservation(ConnectionDB bd,Integer idClient, Integer idPoney, Calendar dateR){
         PreparedStatement s;
         try {
-            s = bd.getConnection().prepareStatement("select * from RESERVER where jmahms= ? and idpo = ? and idp = ?");
+            s = bd.getConnection().prepareStatement("select * from RESERVER where jmahms= ? and idpo = ? and id = ?");
             java.sql.Timestamp timestamp = new java.sql.Timestamp(dateR.getTimeInMillis());
             s.setTimestamp(1, timestamp);
             s.setInt(2, idPoney);
@@ -101,7 +101,7 @@ public class Requete {
             System.out.println("\nReservation du " + dateR.getTime() + " " + heure +" " + a_paye + " par " + Executable.clients.get(res.getInt(2)).getNom() + " avec le poney " + Executable.poneys.get(res.getInt(4)).getNom() + " au cours " + Executable.cours.get(res.getInt(3)).getNomCours() + " qui dure " + temps +"h");
     
         } catch (SQLException e) {
-            e.printStackTrace();
+            
             System.out.println("Il n'y a aucune ligne correspondante aux données données");
         }
         
@@ -124,7 +124,7 @@ public class Requete {
 
         return res;
     } catch(SQLException e1){
-        e1.printStackTrace();
+        System.out.println("Aucune connexion");
     }
     return null;
     }
@@ -144,7 +144,7 @@ public class Requete {
 
             return res;
         } catch (SQLException e1) {
-            e1.printStackTrace();
+            System.out.println("Aucune connexion");
         }
         
         return null;
@@ -162,7 +162,7 @@ public class Requete {
 
         return res;
     } catch(SQLException e1){
-        e1.printStackTrace();
+        System.out.println("Aucune connexion");
     }
     return null;
     }
@@ -181,7 +181,7 @@ public class Requete {
 
             return res;
         } catch(SQLException e1){
-            e1.printStackTrace();
+            System.out.println("Aucune connexion");
         }
         return null;
         }
@@ -192,13 +192,13 @@ public class Requete {
         Statement s = bd.getConnection().createStatement();
         ResultSet Courss = s.executeQuery("select * from COURS");
         while(Courss.next()){
-            res.put(Courss.getInt(1),new Cours(Courss.getInt(1), Courss.getString(2), Courss.getString(3), Courss.getString(4), (float) Courss.getDouble(5)));
+            res.put(Courss.getInt(1),new Cours(Courss.getInt(1), Courss.getString(2), Courss.getString(3), Courss.getString(4), (float) Courss.getDouble(5),Courss.getInt(6)));
             }
 
 
             return res;
         } catch(SQLException e1){
-            e1.printStackTrace();
+            System.out.println("Aucune connexion");
         }
         return null;
         }
@@ -220,7 +220,7 @@ public class Requete {
             return true;
         }catch (SQLException e) {
 
-            e.printStackTrace();
+            System.err.println("Il existe déjà une reservation avec cette date / ce client et ce poney");
             return false;
         }
     }
@@ -257,13 +257,14 @@ public class Requete {
     public static boolean insererCours(ConnectionDB bd, Cours unCours){
         PreparedStatement ps;
         try {
-            ps = bd.getConnection().prepareStatement("insert into COURS values(?, ?, ?, ?, ?);");
+            ps = bd.getConnection().prepareStatement("insert into COURS values(?, ?, ?, ?, ?,?);");
 
             ps.setInt(1, unCours.getId());
             ps.setString(2, unCours.getNomCours());
             ps.setString(3, unCours.getDescription());
             ps.setString(4, unCours.getTypeCours());
             ps.setFloat(5, unCours.getPrix());
+            ps.setFloat(6,unCours.getIdMoniteur());
 
             ps.executeUpdate();
             return true;
@@ -328,7 +329,7 @@ public class Requete {
             Integer idCours) {
         PreparedStatement psReserver;
         try {
-            psReserver = bd.getConnection().prepareStatement("DELETE from RESERVER where jmahms=? and idp =? and idpo=?");
+            psReserver = bd.getConnection().prepareStatement("DELETE from RESERVER where jmahms=? and id =? and idpo=?");
             java.sql.Timestamp timestamp = new java.sql.Timestamp(calendrier.getTimeInMillis());
             psReserver.setTimestamp(1, timestamp);
             psReserver.setInt(2, idPersonne);
@@ -349,6 +350,8 @@ public class Requete {
             if(bd.getConnection().createStatement().executeQuery("select * from RESERVER where idc = " + id).next()){
                 bd.getConnection().createStatement().executeUpdate("DELETE from RESERVER where idc = " + id);
             }
+
+            
             psCours = bd.getConnection().prepareStatement("DELETE from COURS where idc=?");
             psCours.setInt(1, id);
             psCours.executeUpdate();
@@ -382,16 +385,24 @@ public class Requete {
     public static boolean supprimerUnePersonne(ConnectionDB bd, int id) {
         PreparedStatement psPersonne;
         try {
-            if(bd.getConnection().createStatement().executeQuery("select * from RESERVER where idp = " + id).next()){
-                bd.getConnection().createStatement().executeUpdate("DELETE from RESERVER where idp= " + id);
+            if(bd.getConnection().createStatement().executeQuery("select * from RESERVER where id = " + id).next()){
+                bd.getConnection().createStatement().executeUpdate("DELETE from RESERVER where id= " + id);
             }
-            if(bd.getConnection().createStatement().executeQuery("select * from MONITEUR where idp = " + id).next()){
-                bd.getConnection().createStatement().executeUpdate("DELETE from MONITEUR where idp= " + id);
+            if(bd.getConnection().createStatement().executeQuery("select * from MONITEUR where id = " + id).next()){
+                if(bd.getConnection().createStatement().executeQuery("select * from COURS where id = " + id).next()){
+                    ResultSet coursss = bd.getConnection().createStatement().executeQuery("select * from COURS where id = " + id);
+                    while(coursss.next())
+                        if(bd.getConnection().createStatement().executeQuery("select * from RESERVER where idc = "+coursss.getInt(1)).next()){
+                            bd.getConnection().createStatement().executeUpdate("DELETE from RESERVER where idc = " + coursss.getInt(1));
+                        }
+                    bd.getConnection().createStatement().executeUpdate("DELETE from COURS where id = " + id);
+                }
+                bd.getConnection().createStatement().executeUpdate("DELETE from MONITEUR where id= " + id);
             }
-            if(bd.getConnection().createStatement().executeQuery("select * from CLIENT where idp = " + id).next()){
-                bd.getConnection().createStatement().executeUpdate("DELETE from CLIENT where idp= " + id);
+            if(bd.getConnection().createStatement().executeQuery("select * from CLIENT where id = " + id).next()){
+                bd.getConnection().createStatement().executeUpdate("DELETE from CLIENT where id= " + id);
             }
-            psPersonne = bd.getConnection().prepareStatement("DELETE from PERSONNE where idp=?");
+            psPersonne = bd.getConnection().prepareStatement("DELETE from PERSONNE where id=?");
             psPersonne.setInt(1, id);
             psPersonne.executeUpdate();
             return true;

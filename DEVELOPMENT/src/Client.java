@@ -21,6 +21,7 @@ public class Client extends Personne {
     
     @Override
     public String toString(){
-        return super.toString();
+        return this.cotisation?super.toString()+" il a cotisé": super.toString()+ "il n'a pas cosité";
+
     }
 }
