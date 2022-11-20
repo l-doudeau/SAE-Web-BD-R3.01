@@ -11,7 +11,14 @@ import java.util.Map;
 public class Requete {
     
 
+    
     public static Integer maxIDPersonne(ConnectionDB bd){
+        /**
+         * Il renvoie l'identifiant maximum de la table PERSONNE
+         * 
+         * @param bd la connexion à la base de données
+         * @return L'identifiant maximum de la personne dans la base de données.
+         */
         try{
             Statement s = bd.getConnection().createStatement();
             ResultSet res = s.executeQuery("select max(id) from PERSONNE");
@@ -24,7 +31,14 @@ public class Requete {
 
     }
 
+    
     public static Integer maxIDCours(ConnectionDB bd){
+        /**
+         * Il renvoie l'identifiant maximum des cours dans la base de données
+         * 
+         * @param bd la connexion à la base de données
+         * @return La valeur idc maximale dans la table COURS.
+         */
         try{
             Statement s = bd.getConnection().createStatement();
             ResultSet res = s.executeQuery("select max(idc) from COURS");
@@ -36,8 +50,14 @@ public class Requete {
         }
 
     }
-
+    
     public static Integer maxIDPoney(ConnectionDB bd){
+        /**
+         * Il renvoie l'ID maximum d'un poney dans la base de données
+         * 
+         * @param bd la connexion à la base de données
+         * @return L'ID maximum de la table Poney.
+         */
         try{
             Statement s = bd.getConnection().createStatement();
             ResultSet res = s.executeQuery("select max(idpo) from PONEYS");
@@ -51,7 +71,13 @@ public class Requete {
     }
 
 
+    
     public static void afficheReservation(ConnectionDB bd){
+        /**
+         * Il affiche toutes les réservations dans la base de données
+         * 
+         * @param bd la connexion à la base de données
+         */
         Statement s;
         try {
             s = bd.getConnection().createStatement();
@@ -78,7 +104,17 @@ public class Requete {
     }
 
 
+
     public static void afficheUneReservation(ConnectionDB bd,Integer idClient, Integer idPoney, Calendar dateR){
+        /**
+         * Il affiche une réservation compte tenu de l'identifiant du client, de l'identifiant du poney et
+         * de la date de la réservation
+         * 
+         * @param bd la connexion à la base de données
+         * @param idClient l'identifiant du client
+         * @param idPoney l'id du poney
+         * @param dateR la date de la réservation
+         */
         PreparedStatement s;
         try {
             s = bd.getConnection().prepareStatement("select * from RESERVER where jmahms= ? and idpo = ? and id = ?");
@@ -108,7 +144,14 @@ public class Requete {
 
     }   
 
+
     public static Map<Integer, Personne> chargerPersonne(ConnectionDB bd){
+        /**
+         * Elle prend un objet ConnectionDB en paramètre et retourne un objet Map<Integer, Personne>
+         * 
+         * @param bd la connexion à la base de données
+         * @return Une carte des objets Personne
+         */
         try{
         Map<Integer,Personne> res = new HashMap<>();
         Statement s = bd.getConnection().createStatement();
@@ -129,7 +172,15 @@ public class Requete {
     return null;
     }
 
+
     public static Map<Integer,Client> chargerClient(ConnectionDB bd){
+        /**
+         * Il prend une connexion à une base de données et renvoie une carte de tous les clients de la base
+         * de données
+         * 
+         * @param bd la connexion à la base de données
+         * @return Une carte des clients
+         */
         try {
             Map<Integer,Client> res = new HashMap<>();
             Statement s = bd.getConnection().createStatement();
@@ -151,7 +202,15 @@ public class Requete {
     }
 
 
+
     public static Map<Integer, Poney> chargerPoney(ConnectionDB bd){
+        /**
+         * Il prend une connexion à une base de données et renvoie une carte de tous les poneys de la base de
+         * données
+         * 
+         * @param bd la connexion à la base de données
+         * @return Une carte des poneys
+         */
         try{
         Map<Integer,Poney> res = new HashMap<>();
         Statement s = bd.getConnection().createStatement();
@@ -167,7 +226,14 @@ public class Requete {
     return null;
     }
 
+
     public static Map<Integer,Moniteur> chargerMoniteur(ConnectionDB bd){
+        /**
+         * Elle prend un objet ConnectionDB en paramètre et retourne un objet Map<Integer, Moniteur>
+         * 
+         * @param bd la connexion à la base de données
+         * @return Une carte des objets Moniteur
+         */
         try{
         Map<Integer, Moniteur> res = new HashMap<>();
         Statement s = bd.getConnection().createStatement();
@@ -184,9 +250,15 @@ public class Requete {
             System.out.println("Aucune connexion");
         }
         return null;
-        }
+    }
       
     public static Map<Integer,Cours> chargerCours(ConnectionDB bd){
+        /**
+         * Il prend un objet ConnectionDB en paramètre et renvoie un objet Map<Integer, Cours>
+         * 
+         * @param bd la connexion à la base de données
+         * @return Une carte des objets Cours
+         */
         try{
         Map<Integer, Cours> res = new HashMap<>();
         Statement s = bd.getConnection().createStatement();
@@ -201,9 +273,16 @@ public class Requete {
             System.out.println("Aucune connexion");
         }
         return null;
-        }
+    }
 
     public static boolean insererReservations(ConnectionDB bd, Reservation uneReservation){
+        /**
+         * Il insère une réservation dans la base de données
+         * 
+         * @param bd la connexion à la base de données
+         * @param uneReservation l'objet de réservation
+         * @return Un booléen
+         */
         PreparedStatement ps;
         try {
             ps = bd.getConnection().prepareStatement("insert into RESERVER values (?, ?, ?, ?, ?, ?);");
@@ -225,7 +304,15 @@ public class Requete {
         }
     }
     
+
     public static boolean insererClient(ConnectionDB bd, Client unClient){
+        /**
+         * Il insère un client dans la base de données
+         * 
+         * @param bd la connexion à la base de données
+         * @param unClient l'objet client que nous voulons insérer dans la base de données
+         * @return Une valeur booléenne.
+         */
         PreparedStatement psClient;
         try {
             psClient = bd.getConnection().prepareStatement("insert into CLIENT values(?,?);");
@@ -241,6 +328,13 @@ public class Requete {
     }
     
     public static boolean insererMoniteur(ConnectionDB bd, Moniteur unMoniteur){
+        /**
+         * Il insère une nouvelle ligne dans la table MONITEUR avec l'id de l'objet Moniteur passé en paramètre
+         * 
+         * @param bd la connexion à la base de données
+         * @param unMoniteur l'objet Moniteur que l'on souhaite insérer dans la base de données
+         * @return Une valeur booléenne.
+         */
         PreparedStatement psMoniteur;
         try {
             psMoniteur = bd.getConnection().prepareStatement("INSERT INTO MONITEUR values(?);");
@@ -254,7 +348,15 @@ public class Requete {
         }
     }
 
+
     public static boolean insererCours(ConnectionDB bd, Cours unCours){
+        /**
+         * Il insère un cours dans la base de données
+         * 
+         * @param bd la connexion à la base de données
+         * @param unCours L'objet de cours que nous voulons insérer dans la base de données.
+         * @return Une valeur booléenne.
+         */
         PreparedStatement ps;
         try {
             ps = bd.getConnection().prepareStatement("insert into COURS values(?, ?, ?, ?, ?,?);");
@@ -276,6 +378,13 @@ public class Requete {
     }
 
     public static boolean insererPoney(ConnectionDB bd, Poney poney){
+        /**
+         * Il insère un poney dans la base de données
+         * 
+         * @param bd la connexion à la base de données
+         * @param poney le poney à insérer
+         * @return Une valeur booléenne.
+         */
         PreparedStatement ps;
         try{
             ps = bd.getConnection().prepareStatement("insert into PONEYS values(?, ?, ?);");
@@ -294,7 +403,15 @@ public class Requete {
         }
     }
 
+
     public static boolean insererPersonne(ConnectionDB bd, Personne personne) {
+        /**
+         * Il insère une personne dans la base de données
+         * 
+         * @param bd la connexion à la base de données
+         * @param personne l'objet personne à insérer dans la base de données
+         * @return Une valeur booléenne.
+         */
         PreparedStatement psPersonne;
         try {
             psPersonne = bd.getConnection().prepareStatement("insert into PERSONNE values(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);");
@@ -325,8 +442,19 @@ public class Requete {
         }
     }
 
+
     public static boolean supprimerReservations(ConnectionDB bd, Calendar calendrier, Integer idPersonne,
-            Integer idCours) {
+            Integer idCours){
+        /**
+         * Il supprime une réservation de la base de données
+         * 
+         * @param bd la connexion à la base de données
+         * @param calendrier la date de la réservation
+         * @param idPersonne l'identifiant de la personne qui a effectué la réservation
+         * @param idCours l'identifiant du cours
+         * @return Une valeur booléenne.
+         */
+        
         PreparedStatement psReserver;
         try {
             psReserver = bd.getConnection().prepareStatement("DELETE from RESERVER where jmahms=? and id =? and idpo=?");
@@ -344,7 +472,15 @@ public class Requete {
         }
     }
 
+
     public static boolean supprimerUnCours(ConnectionDB bd, int id) {
+        /**
+         * Il supprime un cours de la base de données
+         * 
+         * @param bd la connexion à la base de données
+         * @param id l'id du cours à supprimer
+         * @return Une valeur booléenne.
+         */
         PreparedStatement psCours;
         try {
             if(bd.getConnection().createStatement().executeQuery("select * from RESERVER where idc = " + id).next()){
@@ -364,7 +500,15 @@ public class Requete {
         }
     }
 
+
     public static boolean supprimerUnPoney(ConnectionDB bd, int id) {
+        /**
+         * Il supprime un poney de la base de données
+         * 
+         * @param bd la connexion à la base de données
+         * @param id l'id du poney à supprimer
+         * @return Un booléen
+         */
         PreparedStatement psPoney;
         try {
             if(bd.getConnection().createStatement().executeQuery("select * from RESERVER where idpo = " + id).next()){
@@ -382,7 +526,15 @@ public class Requete {
         }
     }
 
+
     public static boolean supprimerUnePersonne(ConnectionDB bd, int id) {
+        /**
+         * Il supprime une personne de la base de données
+         * 
+         * @param bd Objet ConnectionDBConnectionDB object
+         * @param id l'id de la personne à supprimer
+         * @return Un booléen
+         */
         PreparedStatement psPersonne;
         try {
             if(bd.getConnection().createStatement().executeQuery("select * from RESERVER where id = " + id).next()){
