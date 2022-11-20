@@ -1,5 +1,6 @@
 from sqlalchemy import Integer, Boolean,Text,Column,Date,DECIMAL
-from sqlalchemy.orm import declarative_base,relationship
+from sqlalchemy.ext.declarative import declarative_base
+
 from flask_login import UserMixin
 
 

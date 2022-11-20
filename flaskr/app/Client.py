@@ -1,5 +1,5 @@
 from sqlalchemy import Integer, BOOLEAN,Column, ForeignKey
-from sqlalchemy.orm import declarative_base,relationship
+from sqlalchemy.ext.declarative import declarative_base
 Base = declarative_base()
 class Client(Base):
     __tablename__ = "CLIENT"
