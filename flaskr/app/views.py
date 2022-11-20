@@ -1,3 +1,7 @@
+"""
+    Fichier qui regroupe les différentes routes du site web avec leur utilité
+"""
+
 from flask import Flask, render_template, request,redirect,url_for
 from .ConnexionMySQL import get_personne,session,get_moniteur,get_client,get_personne_email,\
     get_info_all_clients,deleteclient,ajout_client,ajout_poney,deletePoney,get_info_all_poney,\
@@ -23,6 +27,12 @@ def load_user(user_id):
 @app.route("/")
 @login_required
 def index():
+    """
+    Si l'utilisateur est un moniteur, retourner la page d'index avec le rôle "Moniteur", si
+    l'utilisateur est un client, retourner la page d'index avec le rôle "Client", sinon retourner la
+    page d'index sans rôle
+    :return: La page d'index avec le rôle de l'utilisateur.
+    """
     if(get_moniteur(session,current_user.id)):
         return render_template("index.html",role="Moniteur")
     elif(get_client(session,current_user.id)):
@@ -42,6 +52,12 @@ def logout():
 
 @app.route('/login',methods=["POST","GET"])
 def login():
+    """
+    Si la méthode de demande est POST, essayez d'obtenir l'email et le mot de passe à partir du
+    formulaire de demande, si l'utilisateur existe, vérifiez si le mot de passe est correct, si c'est le
+    cas, connectez l'utilisateur et redirigez vers la page d'index, sinon, revenez un message d'erreur
+    :return: Une fonction qui ne prend aucun argument et renvoie une chaîne.
+    """
     if request.method == "POST":
         try:
             email = request.form["email"]
@@ -87,6 +103,10 @@ def Cours():
 
 @app.route('/api/dataclients')
 def data_client():
+    """
+    Il prend une liste de tuples et renvoie un dictionnaire avec une liste de dictionnaires
+    :return: Un dictionnaire avec une clé "data" et une valeur d'une liste de dictionnaires.
+    """
     data = {"data":[]}
     lignes = get_info_all_clients(session)
     for ligne in lignes:
@@ -104,6 +124,11 @@ def data_client():
 
 @app.route('/api/dataponeys')
 def data_poneys():
+    """
+    Il renvoie un dictionnaire avec une seule clé, "data", dont la valeur est une liste de
+    dictionnaires, chacun ayant trois clés, "idpo", "nomp" et "poidssup"
+    :return: Un dictionnaire avec une clé "data" et une valeur d'une liste de dictionnaires.
+    """
     data = {"data":[]}
     lignes = get_info_all_poney(session)
     for ligne in lignes:
@@ -117,6 +142,11 @@ def data_poneys():
 
 @app.route('/api/datacours')
 def data_cours():
+    """
+    Il renvoie un dictionnaire avec une clé "data" qui contient une liste de dictionnaires, chacun ayant
+    les clés "idc", "nomc", "descc", "typec" et "prix"
+    :return: Un dictionnaire avec une clé de données et une valeur d'une liste vide.
+    """
     data = {"data":[]}
     lignes = get_info_all_cours(session)
     for ligne in lignes:
@@ -132,6 +162,12 @@ def data_cours():
     
 @app.route('/api/datareservation',methods=["POST","GET"])
 def data_reservations():
+    """
+    Il renvoie un dictionnaire avec une clé "data" qui contient une liste de dictionnaires. Chaque
+    dictionnaire de la liste a les clés "jmahms", "id", "idpo", "nomp", "prenomp", "nomc", "nompo",
+    "duree" et "a_paye"
+    :return: Un dictionnaire avec une clé de "données" et une valeur d'une liste de dictionnaires.
+    """
     data = {"data":[]}
     lignes = get_info_all_reservations(session)
     for ligne in lignes:
@@ -164,6 +200,10 @@ def Reservation(jmahms,id,idpo):
 
 @app.route('/AddClient',methods=['POST'])
 def AddClient():
+    """
+    Il prend les données de formulaire de la page html et les insère dans la base de données
+    :return: Rien.
+    """
     prenom = request.form["prenom"]
     nom = request.form["nom"]
     ddn = request.form["date"]
@@ -179,12 +219,22 @@ def AddClient():
 
 @app.route('/AddPoney',methods=['POST'])
 def AddPoney():
+    """
+    Il ajoute un poney à la base de données
+    :return: Rien.
+    """
     nom = request.form["nom"]
     poids = int(request.form["poids"])
     ajout_poney(session,nom,poids)
     return ""
+
 @app.route('/AddReservation',methods=['POST'])
 def AddReservation():
+    """
+    Il prend les données du formulaire et les passe à la fonction ajout_reservation() qui est définie
+    dans le fichier ajout_reservation.py
+    :return: Rien.
+    """
     jmahms = request.form["jmahms"]
     id = request.form["id"]
     idpo = request.form["idpo"]
@@ -196,6 +246,10 @@ def AddReservation():
 
 @app.route('/AddCours',methods=['POST'])
 def AddCours():
+    """
+    Il prend les données du formulaire de la requête, et les passe à la fonction ajouteCours
+    :return: Rien.
+    """
     nom = request.form["nom"]
     descc = request.form["descc"]
     prix = request.form["prix"]
@@ -207,6 +261,7 @@ def AddCours():
 def DeletePoney():
     deletePoney(session,int(request.form["id"]))
     return ""
+
 @app.route('/DeleteClient',methods=['POST'])
 def DeleteClient():
     new_freq = request.get_data()
