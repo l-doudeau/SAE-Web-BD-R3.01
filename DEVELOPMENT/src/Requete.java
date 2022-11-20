@@ -93,7 +93,7 @@ public class Requete {
                 else{
                     a_paye = "n'est pas payé";
                 }
-                System.out.println("\nReservation du " + date + " " + heure +" " + a_paye + " par " + Executable.clients.get(res.getInt(2)).getNom() + " avec le poney " + Executable.poneys.get(res.getInt(4)).getNom() + " au cours " + Executable.cours.get(res.getInt(3)).getNomCours() + " qui dure " + temps +"h");
+                System.out.println("\nReservation du " + date + " " + heure +" " + a_paye + " par " + ExePonney.clients.get(res.getInt(2)).getNom() + " avec le poney " + ExePonney.poneys.get(res.getInt(4)).getNom() + " au cours " + ExePonney.cours.get(res.getInt(3)).getNomCours() + " qui dure " + temps +"h");
             }
 
         } catch (SQLException e) {
@@ -134,7 +134,7 @@ public class Requete {
             else{
                 a_paye = "n'est pas payé";
             }
-            System.out.println("\nReservation du " + dateR.getTime() + " " + heure +" " + a_paye + " par " + Executable.clients.get(res.getInt(2)).getNom() + " avec le poney " + Executable.poneys.get(res.getInt(4)).getNom() + " au cours " + Executable.cours.get(res.getInt(3)).getNomCours() + " qui dure " + temps +"h");
+            System.out.println("\nReservation du " + dateR.getTime() + " " + heure +" " + a_paye + " par " + ExePonney.clients.get(res.getInt(2)).getNom() + " avec le poney " + ExePonney.poneys.get(res.getInt(4)).getNom() + " au cours " + ExePonney.cours.get(res.getInt(3)).getNomCours() + " qui dure " + temps +"h");
     
         } catch (SQLException e) {
             

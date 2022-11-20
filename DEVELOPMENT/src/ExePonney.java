@@ -1,4 +1,3 @@
-
 import java.sql.SQLException;
 import java.sql.Time;
 import java.text.ParseException;
@@ -8,14 +7,11 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.GregorianCalendar;
 import java.util.Map;
 import java.util.Scanner;
 
-import javax.swing.JSpinner.DateEditor;
 
-
-public class Executable {
+public class ExePonney {
     static String[] options = {"1- Afficher les résultats",
         "2- Insérer des données",
         "3- Supprimer des données",
@@ -134,18 +130,18 @@ public class Executable {
                     }
                 }else{
 
-                    Executable.printMenu(options);
+                    ExePonney.printMenu(options);
                     String choix = myObj.nextLine();
                     Integer numchoix = Integer.parseInt(choix);
                     switch (numchoix){
                         case 1:
-                            Executable.menuAffichage(sousMenuAffichage,bd);
+                            ExePonney.menuAffichage(sousMenuAffichage,bd);
                             break;
                         case 2:
-                            Executable.menuInsertion(sousMenuInsertion,bd);
+                            ExePonney.menuInsertion(sousMenuInsertion,bd);
                             break;
                         case 3:
-                            Executable.menuSuppresion(sousMenuSuppresion,bd);
+                            ExePonney.menuSuppresion(sousMenuSuppresion,bd);
                             break;
                         case 4:
                             arret = true;
@@ -166,7 +162,7 @@ public class Executable {
         Scanner myObj = new Scanner(System.in);
         boolean fini = false;
         while(!fini){
-            Executable.printMenu(sousMenuSuppresion2);
+            ExePonney.printMenu(sousMenuSuppresion2);
             String choix = myObj.nextLine();
             Integer numchoix = Integer.parseInt(choix);
             switch(numchoix){
@@ -219,7 +215,7 @@ public class Executable {
             }
             catch(Exception e){
                 System.out.println("Saisie incorrecte !");
-                Executable.pressEnter(myObj);
+                ExePonney.pressEnter(myObj);
             }
 
         }
@@ -388,7 +384,7 @@ public class Executable {
         Scanner myObj = new Scanner(System.in);
         boolean fini = false;
         while(!fini){
-            Executable.printMenu(sousMenuAffichage);
+            ExePonney.printMenu(sousMenuAffichage);
             String choix = myObj.nextLine();
             try{
                 Integer numchoix = Integer.parseInt(choix);
@@ -428,7 +424,7 @@ public class Executable {
         Scanner myObj = new Scanner(System.in);
         boolean fini = false;
         while(!fini){
-            Executable.printMenu(sousMenuAffichage,arg);
+            ExePonney.printMenu(sousMenuAffichage,arg);
             String choix = myObj.nextLine();
             try{
                 Integer numchoix = Integer.parseInt(choix);
@@ -505,7 +501,7 @@ public class Executable {
         Scanner myObj = new Scanner(System.in);
         boolean fini = false;
         while(!fini){
-            Executable.printMenu(sousMenuInsertion);
+            ExePonney.printMenu(sousMenuInsertion);
             String choix = myObj.nextLine();
             try{
                 Integer numchoix = Integer.parseInt(choix);
@@ -526,7 +522,7 @@ public class Executable {
                         insererCours(bd,myObj);
                         break;
                     case 6:
-                        Executable.insererReservations(bd, myObj);
+                        ExePonney.insererReservations(bd, myObj);
                         break;
                     case 7:
                         fini = true;
@@ -605,7 +601,7 @@ public class Executable {
             }
             catch(Exception e){
                 System.out.println("Saisie incorrecte !");
-                Executable.pressEnter(myObj);
+                ExePonney.pressEnter(myObj);
             }
 
         }
