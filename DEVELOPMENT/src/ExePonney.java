@@ -1,3 +1,31 @@
+/* ============================= VOICI LES INSTRUCTIONS AFIN DE LANCER L'APPLICATION !!!!!! ================================
+
+ *  Tout d'abord vous devez lancer les fichiers '.sql' qui se trouve dans le repertoire DEVELOPMENT/scripts
+ *  1) Placez-vous dans le repertoire : DEVELOPMENT/scripts
+ *  2) Ouvrir une invite de commande et vous connecter à MySQL avec vos identifiants personnels (mysql -h servinfo-mariabd -u votre-login -p)
+ *  3) Selectionner votre base de donnée (use DBvotre_login)
+ *  4) entrer ces commandes :
+ *  > source crePon.sql
+ *  > source insPon.sql
+
+ * Afin de lancer l'application vous avez plusieurs possibilités :
+
+ *   1/ Lancer avec VSCode : --> PRÉFÉRABLE
+ *      A) Vous devez changer à la ligne 119 de ce fichier les informations pour se connecter à la base de données (votre username et password)
+ *      B) Vous devez ajouter dans les Referenced Libraries le fichier 'mysql-connector-java.jar' (module JDBC) si il n'est pas ajouté
+ *      C) Lancer avec le bouton en haut à droite / le Run and Debug
+ *      D) L'application se lancera dans le terminale en bas de l'écran sur VSCode, vous pouvez le mettre en plein écran
+ *         afin d'avoir la meilleur experience possible de l'application.
+ * 
+ *   2/ Lancer en console : 
+ *       A) Vous devez changer à la ligne 97 de ce fichier les informations pour se connecter à la base de données (votre username et password)
+ *       B) Placer vous dans le dossier DEVELOPMENT qui se trouve à la racine du projet
+ *       C) Ouvrez une invite de commande et entre les commande suivantes :
+ *       > javac -d bin --module-path /usr/share/java --add-modules=mysql-connector-java-8.0.30.jar src/*.java | changer le chemin de votre 'mysql-connector-java' si besoin
+ *       > java -cp /usr/share/java/mysql-connector-java-8.0.30.jar:bin/ExePonney | changer le chemin de votre 'mysql-connector-java' si besoin
+*/
+
+
 import java.sql.SQLException;
 import java.sql.Time;
 import java.text.ParseException;
@@ -88,7 +116,7 @@ public class ExePonney {
         try {
             bd = new ConnectionDB();
             try {
-                bd.connecter("GRAND_GALOP", "root", "root");
+                bd.connecter("GRAND_GALOP", "login", "login");
                 clients = Requete.chargerClient(bd);
                 poneys = Requete.chargerPoney(bd);
                 cours = Requete.chargerCours(bd);

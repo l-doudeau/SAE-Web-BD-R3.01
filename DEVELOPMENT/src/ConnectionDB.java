@@ -14,7 +14,7 @@ public class ConnectionDB{
     public void connecter(String database, String username, String password) throws SQLException{
         this.mysql = null;
         this.isConnected = false;
-        this.mysql = DriverManager.getConnection("jdbc:mysql://localhost/" + database, username , password); 
+        this.mysql = DriverManager.getConnection("jdbc:mysql://servinfo-mariadb/" + database, username , password); 
         this.isConnected = true;
     }
 

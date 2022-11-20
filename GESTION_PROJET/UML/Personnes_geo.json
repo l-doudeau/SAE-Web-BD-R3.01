@@ -1,0 +1,43 @@
+{
+  "width": 538,
+  "height": 540,
+  "cx": [
+    [ "PERSONNE", 210 ],
+    [ "MONITEUR", 80 ],
+    [ "IS_A", 210 ],
+    [ "CLIENT", 309 ],
+    [ "ETRE_RESPONSABLE", 80 ],
+    [ "COURS", 210 ],
+    [ "RESERVER", 309 ],
+    [ "HORAIRE", 455 ],
+    [ "PONEYS", 309 ]
+  ],
+  "cy": [
+    [ "PERSONNE", 119 ],
+    [ "MONITEUR", 279 ],
+    [ "IS_A", 279 ],
+    [ "CLIENT", 279 ],
+    [ "ETRE_RESPONSABLE", 388 ],
+    [ "COURS", 388 ],
+    [ "RESERVER", 388 ],
+    [ "HORAIRE", 388 ],
+    [ "PONEYS", 489 ]
+  ],
+  "shift": [
+    [ "IS_A,PERSONNE,0", 0 ],
+    [ "IS_A,CLIENT,0", 0 ],
+    [ "IS_A,MONITEUR,0", 0 ],
+    [ "ETRE_RESPONSABLE,MONITEUR,0", 0 ],
+    [ "ETRE_RESPONSABLE,COURS,0", 0 ],
+    [ "RESERVER,HORAIRE,0", 0 ],
+    [ "RESERVER,COURS,0", 0 ],
+    [ "RESERVER,PONEYS,0", 0 ],
+    [ "RESERVER,CLIENT,0", 0 ]
+  ],
+  "ratio": [
+    [ "IS_A,CLIENT,0", 1.0 ],
+    [ "IS_A,MONITEUR,0", 1.0 ],
+    [ "ETRE_RESPONSABLE,MONITEUR,0", 1.0 ],
+    [ "RESERVER,COURS,0", 1.0 ]
+  ]
+}
