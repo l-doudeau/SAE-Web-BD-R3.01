@@ -32,6 +32,10 @@ def index():
     
 @app.route("/logout")
 def logout():
+    """
+    Il déconnecte l'utilisateur et le redirige vers la page d'index
+    :return: la fonction de redirection.
+    """
     logout_user()
     return redirect(url_for("index"))
 
