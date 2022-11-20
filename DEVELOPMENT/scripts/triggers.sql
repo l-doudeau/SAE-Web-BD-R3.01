@@ -6,7 +6,7 @@ drop trigger if exists ajoutPersonneHoraire;
 drop trigger if exists verifHeureRepos;
 drop trigger if exists verifHeureReservation;
 drop trigger if exists verifHeuresMaxCours;
-drop trigger if exists verifPayementFonctionnel;
+drop trigger if exists verifPayement;
 drop trigger if exists verifPersonneReserveDansClient;
 drop trigger if exists verifPoidsUpdate;
 drop trigger if exists verifHeureReservationUpdate;
@@ -14,7 +14,7 @@ drop trigger if exists verifHeuresMaxCoursUpdate;
 drop trigger if exists ajoutPersonneCollectifUpdate;
 drop trigger if exists ajoutPersonneHoraireUpdate;
 drop trigger if exists verifHeureReposUpdate;
-drop trigger if exists verifPayementFonctionnelUpdate;
+drop trigger if exists verifPayementUpdate;
 drop trigger if exists verifPersonneReserveDansClientUpdate;
 drop trigger if exists ajouteTableAncienPersonne;
 drop trigger if exists ajouteTableAncienClient;
@@ -297,23 +297,22 @@ begin
       IF fini THEN
         LEAVE boucle_heure;
       END IF;
-      if TIMEDIFF(debutNew, debutAncien) = TIME("02:00:00") then
-        if dureeAncien = TIME("02:00:00") then
-          set msg = concat ("Inscription impossible à l'activité car le cheval n'a pas eu le temps de se reposer");
-          signal SQLSTATE '45000' set MESSAGE_TEXT = msg;
-        end if;
-      end if;
-      if TIMEDIFF(debutAncien, debutNew) = TIME("02:00:00") then
-        if dureeNew = TIME("02:00:00") then
-          set msg = concat ("Inscription impossible à l'activité car le cheval n'a pas eu le temps de se reposer");
-          signal SQLSTATE '45000' set MESSAGE_TEXT = msg;
-        end if;
-      end if;
       if debutAncien <= debutNew and debutNew < TIME(debutAncien+dureeAncien)  
         or debutAncien >= debutNew and debutAncien < TIME(debutNew+dureeNew) then
-
         set msg = concat ("Inscription impossible à l'activité car le cheval est déja en cours" ," - Heure du cours existant : ", debutAncien);
         signal SQLSTATE '45000' set MESSAGE_TEXT = msg;
+      end if;
+      if TIMEDIFF(debutNew, debutAncien) < TIME("03:00:00") and debutNew >= debutAncien then
+        if dureeAncien = TIME("02:00:00") then
+          set msg = concat ("Inscription impossible à l'activité car le cheval n'aura pas eu le temps de se reposer");
+          signal SQLSTATE '45000' set MESSAGE_TEXT = msg;
+        end if;
+      end if;
+      if TIMEDIFF(debutAncien, debutNew) < TIME("03:00:00") and debutNew <= debutAncien then
+        if dureeNew = TIME("02:00:00") then
+          set msg = concat ("Inscription impossible à l'activité car le cheval n'aura pas eu le temps de se reposer");
+          signal SQLSTATE '45000' set MESSAGE_TEXT = msg;
+        end if;
       end if;
     END LOOP;
   CLOSE heureRepos;
@@ -370,7 +369,7 @@ end |
 
 -- trigger permettant de vérifier que lors d'une réservation, le client a bien payé sa cotisation annuel et son cours (insert) 
 
-create trigger verifPayementFonctionnel before insert on RESERVER for each row
+create trigger verifPayement before insert on RESERVER for each row
 begin
   declare msg VARCHAR(300);
   declare cotistationAnnuelle boolean;
@@ -408,7 +407,7 @@ end |
 
 -- trigger permettant de vérifier que lors de la modification d'une réservation, le client a bien payé sa cotisation annuel et son cours (update)
 
-create trigger verifPayementFonctionnelUpdate before update on RESERVER for each row
+create trigger verifPayementUpdate before update on RESERVER for each row
 begin
   declare msg VARCHAR(300);
   declare cotistationAnnuelle boolean;
