@@ -35,7 +35,7 @@ def ouvrir_connexion(user,passwd,host,database):
         raise err
     print("connexion réussie")
     return cnx,engine
-connexion ,engine = ouvrir_connexion("doudeau","doudeau","localhost", "GRAND_GALOP")
+connexion ,engine = ouvrir_connexion("doudeau","doudeau","servinfo-mariadb", "DBdoudeau")
 #connexion ,engine = ouvrir_connexion("faucher","Thierry45.","servinfo-mariadb", "DBfaucher")
 Session = sessionmaker(bind=engine)
 session = Session()
@@ -46,7 +46,7 @@ def get_personne(session,id):
 def get_personne_email(session,email):
     return session.query(Personne).filter(Personne.adressemail == email).first()
 def get_info_all_moniteur(session):
-    return session.query(Moniteur)
+    return session.query(Personne.id,Personne.nomp,Personne.prenomp,Personne.ddn,Personne.adressemail,Personne.numerotel).join(Moniteur, Personne.id == Moniteur.id)
 def get_info_all_clients(session):
     return session.query(Personne.id,Personne.nomp,Personne.prenomp,Personne.ddn,Personne.adressemail,Personne.numerotel,Client.cotisationa).join(Client, Personne.id == Client.id)
 def get_info_all_poney(session):

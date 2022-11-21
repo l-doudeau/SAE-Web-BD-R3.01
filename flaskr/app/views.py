@@ -137,15 +137,15 @@ def data_moniteurs():
     """
     data = {"data":[]}
     lignes = get_info_all_moniteur(session)
-    for ligne in lignes:
+    for personne in lignes:
 
         data["data"].append({
-            "idp": ligne[0],
-            "nomp":ligne[1],
-            "prenomp":ligne[2],
-            "ddn":ligne[3],
-            "adressemail":ligne[4],
-            "numerotel":ligne[5],
+            "idp": personne.id,
+            "nomp": personne.nomp,
+            "prenomp": personne.prenomp,
+            "ddn":personne.ddn,
+            "adressemail":personne.adressemail,
+            "numerotel":personne.numerotel,
         })
     return data
 
@@ -253,17 +253,16 @@ def AddMoniteur():
     """
     prenom = request.form["prenom"]
     nom = request.form["nom"]
-    ddn = request.form["ddn"]
+    ddn = request.form["date"]
     poids = int(request.form["poids"])
     adresseemail = request.form["adresseemail"]
     adresse = request.form["adresse"]
     code_postal = int(request.form["codepostal"])
     ville = request.form["ville"]
     numerotel = request.form["tel"]
-    cotise = request.form["cotise"]
 
-    # ajout_personne(session, prenom, nom, ddn, poids, adresseemail, adresse, code_postal, ville, numerotel)
-    ajoute_moniteur(session)
+    #idp = ajout_personne(session, prenom, nom, ddn, poids, adresseemail, adresse, code_postal, ville, numerotel)
+    ajoute_moniteur(session, idp)
     return ""
 
 @app.route('/AddPoney',methods=['POST'])
