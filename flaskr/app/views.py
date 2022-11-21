@@ -6,7 +6,7 @@ from flask import Flask, render_template, request,redirect,url_for
 from .ConnexionMySQL import get_personne,session,get_moniteur,get_client,get_personne_email,\
     get_info_all_clients,deleteclient,ajout_client,ajout_poney,deletePoney,get_info_all_poney,\
         get_info_all_cours,get_info_all_reservations,deletereservation,ajout_reservation,rollback, ajouteCours, deletecours, get_info_all_moniteur\
-    , ajoute_moniteur, delete_moniteur
+    ,ajoute_moniteur, delete_moniteur, ajoute_personne        
 
 from sqlalchemy.orm import sessionmaker
 from flask_login import LoginManager,login_user,login_required,logout_user,current_user
@@ -261,7 +261,7 @@ def AddMoniteur():
     ville = request.form["ville"]
     numerotel = request.form["tel"]
 
-    #idp = ajout_personne(session, prenom, nom, ddn, poids, adresseemail, adresse, code_postal, ville, numerotel)
+    idp = ajoute_personne(session, prenom, nom, ddn, poids, adresseemail, adresse, code_postal, ville, numerotel)
     ajoute_moniteur(session, idp)
     return ""
 
@@ -305,6 +305,34 @@ def AddCours():
     ajouteCours(session, nom, descc, prix, type)
     return ""
 
+
+@app.route('/AddPersonne',methods=['POST'])
+def AddPersonne():
+    """
+    Il prend les données du formulaire de la requête, et les passe à la fonction ajoutePersonne
+    :return: Rien.
+    """
+    nomp = request.form["nomp"]
+    prenomp = request.form["prenomp"]
+    ddn = request.form["ddn"]
+    poids = request.form["poids"]
+    adressemail = request.form["adressemail"]
+    adresse = request.form["adresse"]
+    code_postal = request.form["code_postal"]
+    ville = request.form["ville"]
+    numerotel = request.form["numerotel"]
+    est_client = request.form["client"]
+    est_moniteur = request.form["moniteur"]
+    
+    id = ajoute_personne(session, nomp, prenomp, ddn, poids, adressemail, adresse, code_postal, ville, numerotel)
+    if est_client == "true" : 
+        ajout_client(session, id)
+    if est_moniteur == "true" :
+        ajoute_moniteur(session, id)   
+         
+    return ""
+
+
 @app.route('/DeletePoney',methods=['POST'])
 def DeletePoney():
     deletePoney(session,int(request.form["id"]))
@@ -329,5 +357,10 @@ def DeleteReservation():
 
 @app.route('/deleteCours',methods=['POST'])
 def deleteCours():
+    deletecours(session,request.form["id"])
+    return ""
+
+@app.route('/deletePersonne',methods=['POST'])
+def deletePersonne():
     deletecours(session,request.form["id"])
     return ""

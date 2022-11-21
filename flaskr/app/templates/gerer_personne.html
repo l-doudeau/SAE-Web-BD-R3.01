@@ -1,0 +1,255 @@
+
+{% include 'banner.html' %}
+<style>
+    .row{
+        margin: 1em;
+    }
+</style>
+<body>
+    <section>
+        <div class="container">
+            <div class="row">
+                <div class="row">
+                    <div class="col-12 col-md-8"></div>
+                    <div class="col-6 col-md-4">
+                        <button id="ajouterCours" type="button" class="btn btn-success">Ajouter</button>
+                        <button id="buttonmodalSupr" type="button" class="btn btn-danger" data-toggle="modal" data-target="#modalSupprimer">Supprimer</button>
+                    </div>
+                </div>
+            </div>
+            <table id="cours" class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Nom</th>
+                        <th>Description</th>
+                        <th>Type</th>
+                        <th>Prix</th>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>
+        <div class="modal fade" id="modalSupprimer" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered" role="document">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h5 class="modal-title" id="exampleModalLabel">Supprimer</h5>
+                  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                  </button>
+                </div>
+                <div class="modal-body">
+                  <p>Etes-vous sur de vouloir supprimer ce cours ?</p>
+                  <span id="courssupprimer"></span>
+                </div>
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-secondary" data-dismiss="modal">Fermer</button>
+                  <button type="button" class="btn btn-danger" id="deleteCours" data-dismiss="modal">Supprimer</button>
+                </div>
+              </div>
+            </div>
+        </div>
+        <form method="POST">
+            <div class="modal fade" id="modalAjouterCours" tabindex="2" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Nouveau Cours</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                    </div>
+                    <div class="modal-body">
+
+                        <div class="row">
+                            <div class="col-4">
+                                <label for="nomCours" class="label label-primary">Nom</label>
+                            </div>
+                            <div class="col-8">
+                                <input required id="nomCours">
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-4">
+                                <label for="descCours" class="label label-primary">Description</label>
+                            </div>
+                            <div class="col-8">
+                                <input required  id="descCours">
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-4">
+                                <label for="TypeCours" class="label label-primary">Type</label>
+                            </div>
+                            <div class="col-8">
+                                <input required id="TypeCours">
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-4">
+                                <label for="prixCours" class="label label-primary">Prix</label>
+                            </div>
+                            <div class="col-8">
+                                <input required id="prixCours">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Fermer</button>
+                    <button type="button" class="btn btn-success" id="ajouterCours2">Créer</button>
+                    </div>
+                </div>
+                </div>
+            </div>
+        </form>
+    </section>
+    <div></div>
+</body>
+<script>
+    function isNumeric(str) {
+        if (typeof str != "string") return false // we only process strings!  
+        return !isNaN(str) && // use type coercion to parse the _entirety_ of the string (`parseFloat` alone does not do this)...
+                !isNaN(parseFloat(str)) // ...and ensure strings of whitespace fail
+}
+    var row = null;
+    
+        
+
+        $("#buttonmodalSupr").prop("disabled",true)
+
+        $(document).ready(function() {
+ 
+        var table = $('#cours').DataTable({
+            ajax: '/api/datacours',
+            columns: [
+                {data: 'idc',className: "dt-center"},
+                {data: 'nomc',className: "dt-center"},
+                {data: 'descc',className: "dt-center"},
+                {data: 'typec',className: "dt-center"},
+                {data: 'prix',className: "dt-center"},
+        ],
+            info:true,
+            scroller:true,
+            scrollY:500,
+            paging: false,
+            info: false,
+            "searching": false,
+      });
+        const container = document.getElementById("modalAjouterCours");
+        const modal = new bootstrap.Modal(container);
+        document.getElementById("ajouterCours").addEventListener("click", function () {
+            modal.show();
+        });
+        document.getElementById("ajouterCours2").addEventListener("click", function () {
+            var nom = $("#nomCours").val()
+            var descc = $("#descCours").val()
+            var prix = $("#prixCours").val()
+            var type = $("#TypeCours").val();
+
+            if(nom != "" && descc != "" && prix != ""&& isNumeric(prix) && type != ""){
+                modal.hide();
+            }
+      });
+  
+        
+        $("#ajouterCours2").on("click",function(){
+            var nom = $("#nomCours").val()
+            var descc = $("#descCours").val()
+            var prix = $("#prixCours").val()
+            var type = $("#TypeCours").val();
+
+            nom == ""?$("#nomCours").css("border","1px solid red"):$("#nomCours").css("border","");
+            descc == ""?$("#descCours").css("border","1px solid red"):$("#descCours").css("border","");
+            type == ""?$("#TypeCours").css("border","1px solid red"):$("#TypeCours").css("border","");
+            prix == ""  || !isNumeric(prix)?$("#prixCours").css("border","1px solid red"):$("#prixCours").css("border","");
+
+            if(nom != "" && descc != "" && prix != ""&& isNumeric(prix) && type != ""){
+                $.ajax({
+                url:'{{url_for("AddCours")}}',
+                type:'POST',
+                data:{nom : nom,
+                    descc : descc,
+                    prix : prix,
+                    type : type,
+                    },
+            success: function(){ 
+                console.log("reussi");
+                table.ajax.reload();
+
+                } 
+            });
+        }     
+        });
+
+        $("#nomCours").kendoTextBox({
+            placeholder: "Nom",
+            fillMode: "solid",
+            size:"large"
+        });
+
+        $("#descCours").kendoTextBox({
+            placeholder: "Description",
+            fillMode: "solid",
+            size:"large"
+        });
+
+        $("#prixCours").kendoTextBox({
+            placeholder: "Prix",
+            fillMode: "solid",
+            size:"large"
+        });
+
+        $("#TypeCours").kendoComboBox({
+                        dataTextField: "text",
+                        dataValueField: "value",
+                        dataSource: [
+                            { text: "Individuel", value: "1" },
+                            { text: "Collectif", value: "2" },
+                        ],
+                        suggest: true,
+                        clearButton: false,
+                        index: 1
+                    });
+
+
+        $("#cours").on("click", "tr", function() {
+            if(row !=null){
+                $(row).css('background-color', "");     
+            }
+            $("#buttonmodalSupr").prop("disabled",false)
+            row = this;
+            $(this).css('background-color', "#AFE1AF");
+            $("#courssupprimer").html($(row)[0].childNodes[1].innerHTML+ " " + $(row)[0].childNodes[2].innerHTML)
+        });
+        
+
+        $("#cours").on("dblclick", "tr", function() {
+            const id = $(row)[0].childNodes[0].innerHTML
+            const url = '{{url_for("Cours",id="idCours")}}'.replace("idCours",id)
+            $.ajax({
+                type:"POST",
+                data:{"id":id},
+                url:url,
+                success:function(response){ window.location.href = "/Cours/"+id;
+} 
+               
+
+            });
+        });
+                
+        $("#deleteCours").on("click",function(){
+            $.ajax({
+                url:'{{url_for("deleteCours")}}',
+                type:'POST',
+                data:{id:$(row)[0].childNodes[0].innerHTML},
+            success: function(){
+                table.ajax.reload();
+                } 
+            });       
+        });
+
+        });
+
+</script>
+</html>

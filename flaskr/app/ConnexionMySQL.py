@@ -5,13 +5,13 @@
 import sqlalchemy
 from sqlalchemy.sql.expression import func
 from sqlalchemy.orm import sessionmaker
-from .Personne import Personne
-from .Client import  Client
-from .Cours import Cours
-from .Personne import Personne
-from .Moniteur import Moniteur
-from .Reserver import Reserver
-from .Poney import Poney
+from Personne import Personne
+from Client import  Client
+from Cours import Cours
+from Personne import Personne
+from Moniteur import Moniteur
+from Reserver import Reserver
+from Poney import Poney
 from secrets import token_urlsafe
 import datetime
 
@@ -71,10 +71,12 @@ def deleteclient(session,id):
     """
     user = session.query(Client).get(id)
     session.delete(user)
-    if(session.commit()):
+    try : 
+        session.commit()
+        return True
+    except : 
         session.rollback()
         return False
-    return True
 
 def deletePoney(session,id):
     """
@@ -90,10 +92,12 @@ def deletePoney(session,id):
         session.delete(poney_reserv)
         session.commit()
     session.delete(poney)
-    if(not session.commit()):
+    try : 
+        session.commit()
+        return True
+    except : 
         session.rollback()
         return False
-    return True
 
 def deletereservation(session,date,id,idpo):
     """
@@ -113,10 +117,12 @@ def deletereservation(session,date,id,idpo):
     jmahms = datetime.datetime(int(liste_date[2]),int(liste_date[1]),int(liste_date[0]),int(liste_time[0]),int(liste_time[1]),int(liste_time[2]))
     reservation = session.query(Reserver).filter(Reserver.jmahms == jmahms).filter(Reserver.id == id).filter(Reserver.idpo == idpo).first()
     session.delete(reservation)
-    if(session.commit()):
+    try : 
+        session.commit()
+        return True
+    except : 
         session.rollback()
         return False
-    return True
 
 def deletecours(session, idc):
     """
@@ -129,10 +135,26 @@ def deletecours(session, idc):
     """
     cours = session.query(Cours).get(idc)
     session.delete(cours)
-    if(session.commit()):
+    try:
+        session.commit()
+        return True
+
+    except:
         session.rollback()
         return False
-    return True
+    
+    
+    
+def delete_personne(session, id) : 
+    personne = session.query(Personne).get(id)
+    session.delete(personne)
+    try : 
+        session.commit()
+        return True
+    except : 
+        session.rollback()
+        return False
+    
 
 def get_max_id_personne(session):
     return session.query(func.max(Personne.id)).first()[0]
@@ -256,3 +278,20 @@ def delete_moniteur(session, id):
     except:
         session.rollback()
         return False
+    
+    
+def ajoute_personne(session, nomp, prenomp, ddn, poids, adressemail, adresse, code_postal, ville, numerotel) : 
+    idp = get_max_id_personne(session) +1
+    mdp = token_urlsafe(6)
+    liste = ddn.split("/")
+    date_naissance = datetime.date(int(liste[2]),int(liste[1]),int(liste[0]))
+    personne = Personne(idp, nomp, prenomp, date_naissance, poids, adressemail, adresse, code_postal, ville, numerotel, mdp)
+    session.add(personne)
+
+    try :
+        session.commit()
+        return idp
+    except :
+        session.rollback()
+        return False
+    
