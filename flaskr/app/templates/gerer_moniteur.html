@@ -1,0 +1,381 @@
+
+{% include 'banner.html' %}
+<style>
+    .row{
+        margin: 1em;
+    }
+</style>
+<body>
+    <section>
+        <div class="container">
+            <div class="row">
+                <div class="row">
+                    <div class="col-12 col-md-8"></div>
+                    <div class="col-6 col-md-4">
+                        <button id="ajouterClient" type="button" class="btn btn-success">Ajouter</button>
+                        <button id="buttonmodalSupr" type="button" class="btn btn-danger" data-toggle="modal" data-target="#modalSupprimer">Supprimer</button>
+                    </div>
+                </div>
+            </div>
+            <table id="clients" class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Nom</th>
+                        <th>Prenom</th>
+                        <th>Date de naissance</th>
+                        <th>Adresse Email</th>
+                        <th>Numero de téléphone</th>
+                        <th>A cotisé</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>
+        <div class="modal fade" id="modalSupprimer" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered" role="document">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h5 class="modal-title" id="exampleModalLabel">Supprimer</h5>
+                  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                  </button>
+                </div>
+                <div class="modal-body">
+                  <p>Etes-vous sur de vouloir supprimer ce client ?</p>
+                  <span id="clientsupprimer"></span>
+                </div>
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-secondary" data-dismiss="modal">Fermer</button>
+                  <button type="button" class="btn btn-danger" id="deleteClient" data-dismiss="modal">Supprimer</button>
+                </div>
+              </div>
+            </div>
+        </div>
+        <form method="POST">
+            <div class="modal fade" id="modalAjouterClient" tabindex="2" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Nouveau Client</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                    </div>
+                    <div class="modal-body">
+
+                        <div class="row">
+                            <div class="col-4">
+                                <label for="PrenomClient" class="label label-primary">Prenom</label>
+                            </div>
+                            <div class="col-8">
+                                <input required id="PrenomClient">
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-4">
+                                <label for="NomClient" class="label label-primary">Nom</label>
+                            </div>
+                            <div class="col-8">
+                                <input required  id="NomClient">
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-4">
+                                <label for="DateClient" class="label label-primary">Date de naissance</label>
+                            </div>
+                            <div class="col-8">
+                                <input required id="DateClient" value="01/01/2022">
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-4">
+                                <label for="PoidsClient" class="label label-primary">Poids</label>
+                            </div>
+                            <div class="col-8">
+                                <input required id="PoidsClient">
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-4">
+                                <label for="AdresseEmailClient" class="label label-primary">Adresse Email</label>
+                            </div>
+                            <div class="col-8">
+                                <input required  id="AdresseEmailClient">
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-4">
+                                <label  for="AdresseClient" class="label label-primary">Adresse</label>
+                            </div>
+                            <div class="col-8">
+                                <input required  id="AdresseClient">
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-4">
+                                <label for="CodePostalClient" class="label label-primary">Code Postal</label>
+                            </div>
+                            <div class="col-8">
+                                <input required  id="CodePostalClient">
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-4">
+                                <label for="VilleClient" class="label label-primary">Ville</label>
+                            </div>
+                            <div class="col-8">
+                                <input required id="VilleClient">
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-4">
+                                <label for="TelClient" class="label label-primary">Numero de téléphone</label>
+                            </div>
+                            <div class="col-8">
+                                <input required id="TelClient">
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-4">
+                                <label for="CotiseClient" class="label label-primary">Déjà cotisé ?</label>
+                            </div>
+                            <div class="col-8">
+                                <input required id="CotiseClient">
+                            </div>
+                        </div>
+
+                    </div>
+                    <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Fermer</button>
+                    <button type="button" class="btn btn-success" id="ajouterClient2">Créer</button>
+                    </div>
+                </div>
+                </div>
+            </div>
+        </form>
+    </section>
+    <div></div>
+</body>
+<script>
+    function isNumeric(str) {
+        if (typeof str != "string") return false // we only process strings!  
+        return !isNaN(str) && // use type coercion to parse the _entirety_ of the string (`parseFloat` alone does not do this)...
+                !isNaN(parseFloat(str)) // ...and ensure strings of whitespace fail
+}
+    var row = null;
+    
+        
+
+        $("#buttonmodalSupr").prop("disabled",true)
+
+        $(document).ready(function() {
+ 
+        var table = $('#clients').DataTable({
+            ajax: '/api/dataclients',
+            columns: [
+                {data: 'idp',className: "dt-center"},
+                {data: 'nomp',className: "dt-center"},
+                {data: 'prenomp',className: "dt-center"},
+                {data: 'ddn',className: "dt-center",orderable:false,"render" : function (data) { 
+    
+                    let m = new Date(data);
+                    return moment(m).format("M/D/YYYY");}
+                },
+                {data: 'adressemail',orderable:false,className: "dt-center"},
+                {data: 'numerotel',orderable:false,className: "dt-center"},
+                {data: 'cotisation',orderable:false,className: "dt-center", "render":function (data, type, row) {
+                          return (data === true) ? '<input class="form-check-input" type="checkbox" value="" id="flexCheckChecked" checked disabled>':'<input class="form-check-input" type="checkbox" value="" id="flexCheckChecked" disabled>'}
+           },
+        ],
+            info:true,
+            scroller:true,
+            scrollY:500,
+            paging: false,
+            info: false,
+            "searching": false,
+      });
+        const container = document.getElementById("modalAjouterClient");
+        const modal = new bootstrap.Modal(container);
+        document.getElementById("ajouterClient").addEventListener("click", function () {
+            modal.show();
+        });
+        document.getElementById("ajouterClient2").addEventListener("click", function () {
+            var prenom = $("#PrenomClient").val()
+            var nom = $("#NomClient").val()
+            var poids = $("#PoidsClient").val()
+            var adresseemail = $("#AdresseEmailClient").val()
+            var adresse = $("#AdresseClient").val()
+            var codepostal = $("#CodePostalClient").val()
+            var ville = $("#VilleClient").val()
+            var tel = $("#TelClient").val()
+            var datepicker = $("#DateClient").data("kendoDatePicker");
+
+            if(prenom != "" && nom != "" && poids != ""&& isNumeric(poids) && adresseemail != "" && adresse != "" && codepostal != ""&& isNumeric(codepostal) && ville != "" && tel != ""&& isNumeric(tel)&& datepicker._value != null){
+
+                modal.hide();
+            }
+      });
+  
+        
+        $("#ajouterClient2").on("click",function(){
+            var prenom = $("#PrenomClient").val()
+            var nom = $("#NomClient").val()
+            var poids = $("#PoidsClient").val()
+            var adresseemail = $("#AdresseEmailClient").val()
+            var adresse = $("#AdresseClient").val()
+            var codepostal = $("#CodePostalClient").val()
+            var ville = $("#VilleClient").val()
+            var tel = $("#TelClient").val()
+            var cotise = $("#CotiseClient").val() == "Oui"?true:false;
+            console.log(cotise)
+            prenom == ""?$("#PrenomClient").css("border","1px solid red"):$("#PrenomClient").css("border","");
+            nom == ""?$("#NomClient").css("border","1px solid red"):$("#NomClient").css("border","");
+            var datepicker = $("#DateClient").data("kendoDatePicker");
+            datepicker._value == null?$('#DateClient').css("border","1px solid red"):$("#DateClient").css("border","");
+            
+            poids == ""  || !isNumeric(poids)?$("#PoidsClient").css("border","1px solid red"):$("#PoidsClient").css("border","");
+            adresseemail == ""?$("#AdresseEmailClient").css("border","1px solid red"):$("#AdresseEmailClient").css("border","");
+            adresse == ""?$("#AdresseClient").css("border","1px solid red"):$("#AdresseClient").css("border","");
+            codepostal == "" || !isNumeric(codepostal) ?$("#CodePostalClient").css("border","1px solid red"):$("#CodePostalClient").css("border","");
+            ville == ""?$("#VilleClient").css("border","1px solid red"):$("#VilleClient").css("border","");
+            tel == "" || !isNumeric(tel)?$("#TelClient").css("border","1px solid red"):$("#TelClient").css("border","");
+
+            if(prenom != "" && nom != "" && poids != ""&& isNumeric(poids) && adresseemail != "" && adresse != "" && codepostal != ""&& isNumeric(codepostal) && ville != "" && tel != ""&& isNumeric(tel)&& datepicker._value != null){
+                $.ajax({
+                url:'{{url_for("AddClient")}}',
+                type:'POST',
+                data:{prenom : prenom,
+                    nom : nom,
+                    date : datepicker._value.toLocaleDateString(),
+                    poids : poids,
+                    adresseemail : adresseemail,
+                    adresse:adresse,
+                    codepostal:codepostal,
+                    ville:ville,
+                    tel:tel,
+                    cotise:cotise
+                    },
+            success: function(){ 
+                console.log("reussi")
+                table.ajax.reload();
+
+                } 
+            });
+        }     
+        });
+
+        $("#PrenomClient").kendoTextBox({
+            placeholder: "Prenom",
+            fillMode: "solid",
+            size:"large"
+        });
+
+        $("#NomClient").kendoTextBox({
+            placeholder: "Nom",
+            fillMode: "solid",
+            size:"large"
+        });
+
+        $("#DateClient").kendoDatePicker({
+            start: "year",
+            format: "dd/MM/yyyy",
+            size:"large"
+        });
+
+        $("#PoidsClient").kendoTextBox({
+            placeholder: "Poids",
+            fillMode: "solid",
+            size:"large"
+        });
+
+        $("#AdresseEmailClient").kendoTextBox({
+            placeholder: "Adresse Email",
+            fillMode: "solid",
+            size:"large"
+        });
+
+        $("#AdresseClient").kendoTextBox({
+            placeholder: "Adresse",
+            fillMode: "solid",
+            size:"large"
+        });
+
+        $("#CodePostalClient").kendoTextBox({
+            placeholder: "Code Postal",
+            fillMode: "solid",
+            size:"large"
+        });
+
+        $("#VilleClient").kendoTextBox({
+            placeholder: "Ville",
+            fillMode: "solid",
+            size:"large"
+        });
+
+        $("#TelClient").kendoTextBox({
+            placeholder: "Numéro de téléphone",
+            fillMode: "solid",
+            size:"large"
+        });
+
+        $("#CotiseClient").kendoComboBox({
+                        dataTextField: "text",
+                        dataValueField: "value",
+                        dataSource: [
+                            { text: "Oui", value: "1" },
+                            { text: "Non", value: "2" },
+                        ],
+                        filter: "contains",
+                        suggest: true,
+                        clearButton: false,
+                        index: 1
+                    });
+
+        $("#clients").on("click", "tr", function() {
+            if(row !=null){
+                $(row).css('background-color', "");     
+            }
+            $("#buttonmodalSupr").prop("disabled",false)
+            row = this;
+            $(this).css('background-color', "#AFE1AF");
+            $("#clientsupprimer").html($(row)[0].childNodes[1].innerHTML+ " " + $(row)[0].childNodes[2].innerHTML)
+        });
+        
+
+        $("#clients").on("dblclick", "tr", function() {
+            const id = $(row)[0].childNodes[0].innerHTML
+            const url = '{{url_for("Client",id="idClient")}}'.replace("idClient",id)
+            $.ajax({
+                type:"POST",
+                data:{"id":id},
+                url:url,
+                success:function(response){ window.location.href = "/Client/"+id;
+} 
+               
+
+            });
+        });
+                
+        $("#deleteClient").on("click",function(){
+            $.ajax({
+                url:'{{url_for("DeleteClient")}}',
+                type:'POST',
+                data:{id:$(row)[0].childNodes[0].innerHTML},
+            success: function(){
+                table.ajax.reload();
+                } 
+            });       
+        });
+
+        });
+
+</script>
+</html>

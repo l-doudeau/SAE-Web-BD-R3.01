@@ -86,6 +86,12 @@ def Clients():
     print(login_manager.login_message + "\n")
     return render_template('gerer_client.html')
 
+@app.route('/Moniteurs')
+@login_required
+def Moniteurs():
+    print(login_manager.login_message + "\n")
+    return render_template('gerer_client.html')
+
 @app.route('/Poneys')
 @login_required
 def Poneys():

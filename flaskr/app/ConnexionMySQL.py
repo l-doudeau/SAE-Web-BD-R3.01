@@ -274,7 +274,9 @@ def delete_moniteur(session, id):
     """
     user = session.query(Moniteur).get(id)
     session.delete(user)
-    if(session.commit()):
+    try:
+        session.commit()
+        return True
+    except:
         session.rollback()
         return False
-    return True
