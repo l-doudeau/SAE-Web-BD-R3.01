@@ -5,13 +5,13 @@
 import sqlalchemy
 from sqlalchemy.sql.expression import func
 from sqlalchemy.orm import sessionmaker
-from Personne import Personne
-from Client import  Client
-from Cours import Cours
-from Personne import Personne
-from Moniteur import Moniteur
-from Reserver import Reserver
-from Poney import Poney
+from .Personne import Personne
+from .Client import  Client
+from .Cours import Cours
+from .Personne import Personne
+from .Moniteur import Moniteur
+from .Reserver import Reserver
+from .Poney import Poney
 from secrets import token_urlsafe
 import datetime
 
