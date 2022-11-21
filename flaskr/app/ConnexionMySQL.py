@@ -143,40 +143,28 @@ def get_max_id_poney(session):
 def rollback(session):
     session.rollback()
     
-def ajout_client(session,prenom,nom,ddn,poids,adresseemail,adresse,code_postal,ville,numerotel,cotise):
+def ajout_client(session,idp, cotise):
     """
     Il ajoute un client à la base de données
     
     :param session: bd
-    :param prenom: chaîne de caractères
-    :param nom: chaîne de caractères
-    :param ddn: date
-    :param poids: float
-    :param adresseemail: chaîne de caractères
-    :param adresse: chaîne de caractères
-    :param code_postal: entier
-    :param ville: chaîne de caractères
-    :param numerotel: chaîne de caractères
+    :param idp: int
     :param cotise: booléen
     """
-    idp = get_max_id_personne(session) +1
-    mdp = token_urlsafe(6)
-    liste = ddn.split("/")
-    date_naissance = datetime.date(int(liste[2]),int(liste[1]),int(liste[0]))
-    personne = Personne(idp,prenom,nom,date_naissance,poids,adresseemail,adresse,code_postal,ville,numerotel,mdp)
     
     if(cotise == "false"): 
         cotise = False
     else: 
         cotise = True
     client = Client(idp,cotise)
-    session.add(personne)
-    
-    if(not session.commit()):
-        session.rollback()
     session.add(client)
-    if(not session.commit()):
+    
+    try:
+        session.commit()
+        return True
+    except:
         session.rollback()
+        return False
 
 def ajout_poney(session,nom,poids):
     """
@@ -235,33 +223,21 @@ def ajouteCours(session, nomc, descc, typec, prix):
         session.rollback()
         return False
 
-def ajoute_moniteur(session,prenom,nom,ddn,poids,adresseemail,adresse,code_postal,ville,numerotel):
+def ajoute_moniteur(session, idp):
     """
     Il ajoute un client à la base de données
     
     :param session: bd
-    :param prenom: chaîne de caractères
-    :param nom: chaîne de caractères
-    :param ddn: date
-    :param poids: float
-    :param adresseemail: chaîne de caractères
-    :param adresse: chaîne de caractères
-    :param code_postal: entier
-    :param ville: chaîne de caractères
-    :param numerotel: chaîne de caractères
+    :param idp: int
     """
-    idp = get_max_id_personne(session) +1
-    mdp = token_urlsafe(6)
-    liste = ddn.split("/")
-    date_naissance = datetime.date(int(liste[2]),int(liste[1]),int(liste[0]))
-    personne = Personne(idp,prenom,nom,date_naissance,poids,adresseemail,adresse,code_postal,ville,numerotel,mdp)
     moniteur = Moniteur(idp)
-    session.add(personne)
-    if(not session.commit()):
-        session.rollback()
     session.add(moniteur)
-    if(not session.commit()):
+    try:
+        session.commit()
+        return True
+    except:
         session.rollback()
+        return False
     
 def delete_moniteur(session, id):
     """
