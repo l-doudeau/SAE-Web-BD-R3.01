@@ -260,16 +260,29 @@ def AddCours():
 
 
 @app.route('/AddPersonne',methods=['POST'])
-def AddCours():
+def AddPersonne():
     """
     Il prend les données du formulaire de la requête, et les passe à la fonction ajoutePersonne
     :return: Rien.
     """
-    nom = request.form["nom"]
-    descc = request.form["descc"]
-    prix = request.form["prix"]
-    type = request.form["type"]
-    ajoute_personne(session, nom, descc, prix, type)
+    nomp = request.form["nomp"]
+    prenomp = request.form["prenomp"]
+    ddn = request.form["ddn"]
+    poids = request.form["poids"]
+    adressemail = request.form["adressemail"]
+    adresse = request.form["adresse"]
+    code_postal = request.form["code_postal"]
+    ville = request.form["ville"]
+    numerotel = request.form["numerotel"]
+    est_client = request.form["client"]
+    est_moniteur = request.form["moniteur"]
+    
+    id = ajoute_personne(session, nomp, prenomp, ddn, poids, adressemail, adresse, code_postal, ville, numerotel)
+    if est_client == "true" : 
+        ajout_client(session, id)
+    if est_moniteur == "true" :
+        ajoute_moniteur(session, id)   
+         
     return ""
 
 
@@ -293,5 +306,10 @@ def DeleteReservation():
 
 @app.route('/deleteCours',methods=['POST'])
 def deleteCours():
+    deletecours(session,request.form["id"])
+    return ""
+
+@app.route('/deletePersonne',methods=['POST'])
+def deletePersonne():
     deletecours(session,request.form["id"])
     return ""

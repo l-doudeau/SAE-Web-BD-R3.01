@@ -5,13 +5,13 @@
 import sqlalchemy
 from sqlalchemy.sql.expression import func
 from sqlalchemy.orm import sessionmaker
-from .Personne import Personne
-from .Client import  Client
-from .Cours import Cours
-from .Personne import Personne
-from .Moniteur import Moniteur
-from .Reserver import Reserver
-from .Poney import Poney
+from Personne import Personne
+from Client import  Client
+from Cours import Cours
+from Personne import Personne
+from Moniteur import Moniteur
+from Reserver import Reserver
+from Poney import Poney
 from secrets import token_urlsafe
 import datetime
 
@@ -36,7 +36,7 @@ def ouvrir_connexion(user,passwd,host,database):
     print("connexion réussie")
     return cnx,engine
 #connexion ,engine = ouvrir_connexion("doudeau","doudeau","localhost", "GRAND_GALOP")
-connexion ,engine = ouvrir_connexion("faucher","Thierry45.","servinfo-mariadb", "DBfaucher")
+connexion ,engine = ouvrir_connexion("doudeau","doudeau","servinfo-mariadb", "DBdoudeau")
 Session = sessionmaker(bind=engine)
 session = Session()
 
@@ -256,7 +256,7 @@ def ajouteCours(session, nomc, descc, typec, prix):
         return False
     
     
-def ajoute_personne(session, nomp, prenomp, ddn, poids, adressemail, adresse, code_postal, ville, numerotel, mdp) : 
+def ajoute_personne(session, nomp, prenomp, ddn, poids, adressemail, adresse, code_postal, ville, numerotel) : 
     idp = get_max_id_personne(session) +1
     mdp = token_urlsafe(6)
     liste = ddn.split("/")
@@ -266,8 +266,10 @@ def ajoute_personne(session, nomp, prenomp, ddn, poids, adressemail, adresse, co
 
     try :
         session.commit()
-        return True
+        return idp
     except :
         session.rollback()
         return False
     
+print(session.query(Moniteur).all())
+print(session.query(Cours).first().id)
