@@ -5,7 +5,8 @@
 from flask import Flask, render_template, request,redirect,url_for
 from .ConnexionMySQL import get_personne,session,get_moniteur,get_client,get_personne_email,\
     get_info_all_clients,deleteclient,ajout_client,ajout_poney,deletePoney,get_info_all_poney,\
-        get_info_all_cours,get_info_all_reservations,deletereservation,ajout_reservation,rollback, ajouteCours, deletecours, get_info_all_moniteur
+        get_info_all_cours,get_info_all_reservations,deletereservation,ajout_reservation,rollback, ajouteCours, deletecours, get_info_all_moniteur\
+    , ajoute_moniteur, delete_moniteur
 
 from sqlalchemy.orm import sessionmaker
 from flask_login import LoginManager,login_user,login_required,logout_user,current_user
@@ -244,6 +245,27 @@ def AddClient():
     ajout_client(session, cotise)
     return ""
 
+@app.route('/AddMoniteur',methods=['POST'])
+def AddMoniteur():
+    """
+    Il prend les données de formulaire de la page html et les insère dans la base de données
+    :return: Rien.
+    """
+    prenom = request.form["prenom"]
+    nom = request.form["nom"]
+    ddn = request.form["ddn"]
+    poids = int(request.form["poids"])
+    adresseemail = request.form["adresseemail"]
+    adresse = request.form["adresse"]
+    code_postal = int(request.form["codepostal"])
+    ville = request.form["ville"]
+    numerotel = request.form["tel"]
+    cotise = request.form["cotise"]
+
+    # ajout_personne(session, prenom, nom, ddn, poids, adresseemail, adresse, code_postal, ville, numerotel)
+    ajoute_moniteur(session)
+    return ""
+
 @app.route('/AddPoney',methods=['POST'])
 def AddPoney():
     """
@@ -291,11 +313,15 @@ def DeletePoney():
 
 @app.route('/DeleteClient',methods=['POST'])
 def DeleteClient():
-    new_freq = request.get_data()
-    id_brute = new_freq.decode("utf-8")
-    id = id_brute.split("=")[1]
-    deleteclient(session,id)
+    id = int(request.form["id"])
+    deleteclient(session, id)
     return ""
+
+@app.route('/DeleteMoniteur', methods=['POST'])
+def DeleteMoniteur():
+    id = int(request.form["id"])
+    delete_moniteur(session, id)
+    return ""   
 
 @app.route('/DeleteReservation',methods=['POST'])
 def DeleteReservation():
