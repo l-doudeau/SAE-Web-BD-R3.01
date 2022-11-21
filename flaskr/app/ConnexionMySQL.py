@@ -45,6 +45,8 @@ def get_personne(session,id):
     return session.query(Personne).get(int(id))
 def get_personne_email(session,email):
     return session.query(Personne).filter(Personne.adressemail == email).first()
+def get_info_all_moniteu(session):
+    return session.query(Moniteur)
 def get_info_all_clients(session):
     return session.query(Personne.id,Personne.nomp,Personne.prenomp,Personne.ddn,Personne.adressemail,Personne.numerotel,Client.cotisationa).join(Client, Personne.id == Client.id)
 def get_info_all_poney(session):
@@ -232,3 +234,47 @@ def ajouteCours(session, nomc, descc, typec, prix):
     except:
         session.rollback()
         return False
+
+def ajoute_moniteur(session,prenom,nom,ddn,poids,adresseemail,adresse,code_postal,ville,numerotel):
+    """
+    Il ajoute un client à la base de données
+    
+    :param session: bd
+    :param prenom: chaîne de caractères
+    :param nom: chaîne de caractères
+    :param ddn: date
+    :param poids: float
+    :param adresseemail: chaîne de caractères
+    :param adresse: chaîne de caractères
+    :param code_postal: entier
+    :param ville: chaîne de caractères
+    :param numerotel: chaîne de caractères
+    """
+    idp = get_max_id_personne(session) +1
+    mdp = token_urlsafe(6)
+    liste = ddn.split("/")
+    date_naissance = datetime.date(int(liste[2]),int(liste[1]),int(liste[0]))
+    personne = Personne(idp,prenom,nom,date_naissance,poids,adresseemail,adresse,code_postal,ville,numerotel,mdp)
+    moniteur = Moniteur(idp)
+    session.add(personne)
+    if(not session.commit()):
+        session.rollback()
+    session.add(moniteur)
+    if(not session.commit()):
+        session.rollback()
+    
+def delete_moniteur(session, id):
+    """
+    Il supprime un moniteur de la base de données et renvoie True si la suppression a réussi et False si
+    ce n'est pas le cas.
+    
+    :param session: l'objet de session
+    :param id: l'identifiant du client à supprimer
+    :return: La valeur de retour est une valeur booléenne.
+    """
+    user = session.query(Moniteur).get(id)
+    session.delete(user)
+    if(session.commit()):
+        session.rollback()
+        return False
+    return True
