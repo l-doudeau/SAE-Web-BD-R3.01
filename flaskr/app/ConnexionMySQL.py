@@ -35,8 +35,8 @@ def ouvrir_connexion(user,passwd,host,database):
         raise err
     print("connexion réussie")
     return cnx,engine
-connexion ,engine = ouvrir_connexion("doudeau","doudeau","localhost", "GRAND_GALOP")
-#connexion ,engine = ouvrir_connexion("faucher","Thierry45.","servinfo-mariadb", "DBfaucher")
+#connexion ,engine = ouvrir_connexion("doudeau","doudeau","localhost", "GRAND_GALOP")
+connexion ,engine = ouvrir_connexion("faucher","Thierry45.","servinfo-mariadb", "DBfaucher")
 Session = sessionmaker(bind=engine)
 session = Session()
 
@@ -69,10 +69,12 @@ def deleteclient(session,id):
     """
     user = session.query(Client).get(id)
     session.delete(user)
-    if(session.commit()):
+    try : 
+        session.commit()
+        return True
+    except : 
         session.rollback()
         return False
-    return True
 
 def deletePoney(session,id):
     """
@@ -88,10 +90,12 @@ def deletePoney(session,id):
         session.delete(poney_reserv)
         session.commit()
     session.delete(poney)
-    if(not session.commit()):
+    try : 
+        session.commit()
+        return True
+    except : 
         session.rollback()
         return False
-    return True
 
 def deletereservation(session,date,id,idpo):
     """
@@ -111,10 +115,12 @@ def deletereservation(session,date,id,idpo):
     jmahms = datetime.datetime(int(liste_date[2]),int(liste_date[1]),int(liste_date[0]),int(liste_time[0]),int(liste_time[1]),int(liste_time[2]))
     reservation = session.query(Reserver).filter(Reserver.jmahms == jmahms).filter(Reserver.id == id).filter(Reserver.idpo == idpo).first()
     session.delete(reservation)
-    if(session.commit()):
+    try : 
+        session.commit()
+        return True
+    except : 
         session.rollback()
         return False
-    return True
 
 def deletecours(session, idc):
     """
@@ -127,10 +133,26 @@ def deletecours(session, idc):
     """
     cours = session.query(Cours).get(idc)
     session.delete(cours)
-    if(session.commit()):
+    try:
+        session.commit()
+        return True
+
+    except:
         session.rollback()
         return False
-    return True
+    
+    
+    
+def delete_personne(session, id) : 
+    personne = session.query(Personne).get(id)
+    session.delete(personne)
+    try : 
+        session.commit()
+        return True
+    except : 
+        session.rollback()
+        return False
+    
 
 def get_max_id_personne(session):
     return session.query(func.max(Personne.id)).first()[0]
@@ -232,3 +254,20 @@ def ajouteCours(session, nomc, descc, typec, prix):
     except:
         session.rollback()
         return False
+    
+    
+def ajoute_personne(session, nomp, prenomp, ddn, poids, adressemail, adresse, code_postal, ville, numerotel, mdp) : 
+    idp = get_max_id_personne(session) +1
+    mdp = token_urlsafe(6)
+    liste = ddn.split("/")
+    date_naissance = datetime.date(int(liste[2]),int(liste[1]),int(liste[0]))
+    personne = Personne(idp, nomp, prenomp, date_naissance, poids, adressemail, adresse, code_postal, ville, numerotel, mdp)
+    session.add(personne)
+
+    try :
+        session.commit()
+        return True
+    except :
+        session.rollback()
+        return False
+    

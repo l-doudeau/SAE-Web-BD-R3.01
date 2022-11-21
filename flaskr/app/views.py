@@ -5,7 +5,8 @@
 from flask import Flask, render_template, request,redirect,url_for
 from .ConnexionMySQL import get_personne,session,get_moniteur,get_client,get_personne_email,\
     get_info_all_clients,deleteclient,ajout_client,ajout_poney,deletePoney,get_info_all_poney,\
-        get_info_all_cours,get_info_all_reservations,deletereservation,ajout_reservation,rollback, ajouteCours, deletecours
+        get_info_all_cours,get_info_all_reservations,deletereservation,ajout_reservation,rollback, ajouteCours, deletecours,\
+        ajoute_personne
 
 from sqlalchemy.orm import sessionmaker
 from flask_login import LoginManager,login_user,login_required,logout_user,current_user
@@ -256,6 +257,21 @@ def AddCours():
     type = request.form["type"]
     ajouteCours(session, nom, descc, prix, type)
     return ""
+
+
+@app.route('/AddPersonne',methods=['POST'])
+def AddCours():
+    """
+    Il prend les données du formulaire de la requête, et les passe à la fonction ajoutePersonne
+    :return: Rien.
+    """
+    nom = request.form["nom"]
+    descc = request.form["descc"]
+    prix = request.form["prix"]
+    type = request.form["type"]
+    ajoute_personne(session, nom, descc, prix, type)
+    return ""
+
 
 @app.route('/DeletePoney',methods=['POST'])
 def DeletePoney():
