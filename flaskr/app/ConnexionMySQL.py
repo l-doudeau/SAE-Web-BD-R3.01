@@ -45,7 +45,7 @@ def get_personne(session,id):
     return session.query(Personne).get(int(id))
 def get_personne_email(session,email):
     return session.query(Personne).filter(Personne.adressemail == email).first()
-def get_info_all_moniteu(session):
+def get_info_all_moniteur(session):
     return session.query(Moniteur)
 def get_info_all_clients(session):
     return session.query(Personne.id,Personne.nomp,Personne.prenomp,Personne.ddn,Personne.adressemail,Personne.numerotel,Client.cotisationa).join(Client, Personne.id == Client.id)

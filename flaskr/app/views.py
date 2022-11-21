@@ -5,7 +5,7 @@
 from flask import Flask, render_template, request,redirect,url_for
 from .ConnexionMySQL import get_personne,session,get_moniteur,get_client,get_personne_email,\
     get_info_all_clients,deleteclient,ajout_client,ajout_poney,deletePoney,get_info_all_poney,\
-        get_info_all_cours,get_info_all_reservations,deletereservation,ajout_reservation,rollback, ajouteCours, deletecours
+        get_info_all_cours,get_info_all_reservations,deletereservation,ajout_reservation,rollback, ajouteCours, deletecours, get_info_all_moniteur
 
 from sqlalchemy.orm import sessionmaker
 from flask_login import LoginManager,login_user,login_required,logout_user,current_user
@@ -90,7 +90,7 @@ def Clients():
 @login_required
 def Moniteurs():
     print(login_manager.login_message + "\n")
-    return render_template('gerer_client.html')
+    return render_template('gerer_moniteur.html')
 
 @app.route('/Poneys')
 @login_required
@@ -125,6 +125,26 @@ def data_client():
             "adressemail":ligne[4],
             "numerotel":ligne[5],
             "cotisation":ligne[6]
+        })
+    return data
+
+@app.route('/api/datamoniteurs')
+def data_moniteurs():
+    """
+    Il prend une liste de tuples et renvoie un dictionnaire avec une liste de dictionnaires
+    :return: Un dictionnaire avec une clé "data" et une valeur d'une liste de dictionnaires.
+    """
+    data = {"data":[]}
+    lignes = get_info_all_moniteur(session)
+    for ligne in lignes:
+
+        data["data"].append({
+            "idp": ligne[0],
+            "nomp":ligne[1],
+            "prenomp":ligne[2],
+            "ddn":ligne[3],
+            "adressemail":ligne[4],
+            "numerotel":ligne[5],
         })
     return data
 
@@ -220,7 +240,8 @@ def AddClient():
     ville = request.form["ville"]
     numerotel = request.form["tel"]
     cotise = request.form["cotise"]
-    ajout_client(session,prenom,nom,ddn,poids,adresseemail,adresse,code_postal,ville,numerotel,cotise)
+    # ajout_personne(session, prenom, nom, ddn, poids, adresseemail, adresse, code_postal, ville, numerotel)
+    ajout_client(session, cotise)
     return ""
 
 @app.route('/AddPoney',methods=['POST'])
