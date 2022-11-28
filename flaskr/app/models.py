@@ -1,20 +1,20 @@
-from sqlalchemy import Integer, BOOLEAN,Column, ForeignKey
+from sqlalchemy import Integer, BOOLEAN,Column, ForeignKey, String
 from sqlalchemy.orm import declarative_base,relationship
 from .app import db
 from flask_login import UserMixin
 
 class Personne(db.Model,UserMixin):
     id = db.Column(db.Integer, primary_key = True)
-    nomp = db.Column(db.Text)
-    prenomp = db.Column(db.Text)
+    nomp = db.Column(db.String)
+    prenomp = db.Column(db.String)
     ddn = db.Column(db.Date)
     poids = db.Column(db.DECIMAL)
-    adressemail = db.Column(db.Text)
-    adresse = db.Column(db.Text)
+    adressemail = db.Column(db.String)
+    adresse = db.Column(db.String)
     code_postal = db.Column(db.Integer)
-    ville = db.Column(db.Text)
-    numerotel = db.Column(db.Text)
-    mdp = db.Column(db.Text)
+    ville = db.Column(db.String)
+    numerotel = db.Column(db.String)
+    mdp = db.Column(db.String)
     def __init__(self, idp, nomp,prenomp,ddn,poids,adressemail,adresse,code_postal,ville,numerotel,mdp) -> None:
         self.id         = idp
         self.nomp       = nomp
@@ -45,9 +45,9 @@ class Client(db.Model):
 
 class Cours(db.Model):
     idc = db.Column(db.Integer, primary_key = True)
-    nomc = db.Column(db.TEXT)
-    descc = db.Column(db.TEXT)
-    typec = db.Column(db.TEXT)
+    nomc = db.Column(db.String)
+    descc = db.Column(db.String)
+    typec = db.Column(db.String)
     prix = db.Column(db.DECIMAL)
     
     def __init__(self, idc, nomc,descc,typec,prix) -> None:
@@ -75,7 +75,7 @@ class Moniteur(db.Model):
 
 class Poney(db.Model):
     idpo = db.Column(db.Integer, primary_key = True)
-    nomp = db.Column(db.Text)
+    nomp = db.Column(db.String)
     poidssup = db.Column(db.DECIMAL)
     
     def __init__(self, idpo,nomp,poidssup) -> None:
