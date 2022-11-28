@@ -30,8 +30,11 @@ class Personne(db.Model,UserMixin):
         self.numerotel = numerotel
         self.mdp = mdp
     
+    def get_tuple_personne(self) : 
+        return tuple((self.id, self.nomp,self.prenomp,self.ddn,self.poids,self.adressemail,self.adresse,self.code_postal,self.ville,self.numerotel,self.mdp))
+    
     def __repr__(self) -> str:
-        return str(self.id) + " " + self.nomp + " " + self.prenomp+ " " + str(self.ddn)+ " " + str(self.poids)+ " " + self.adressemail + " " + self.adresse+ " " + str(self.code_postal)+ " " + self.ville+ " " + self.numerotel+ " " + self.mdp
+        return str(self.id) + ", " + self.nomp + ", " + self.prenomp+ ", " + str(self.ddn)+ ", " + str(self.poids)+ ", " + self.adressemail + ", " + self.adresse+ ", " + str(self.code_postal)+ ", " + self.ville+ ", " + self.numerotel+ ", " + self.mdp
 
 class Client(db.Model):
     __tablename__ = 'client'
@@ -44,7 +47,7 @@ class Client(db.Model):
         self.cotisationa = cotisationA
     
     def __repr__(self) -> str:
-        return str(self.id) + " " + "a cotisé" if self.cotisationa else str(self.id) + " " +"n'a pas cotisé"
+        return str(self.id) + ", " + "a cotisé" if self.cotisationa else str(self.id) + " " +"n'a pas cotisé"
 
 class Cours(db.Model):
     idc = db.Column(db.Integer, primary_key = True)
@@ -61,7 +64,7 @@ class Cours(db.Model):
         self.prix = prix
     
     def __repr__(self) -> str:
-        return str(self.idc) + " " + self.nomc + " : " + self.descc + " " + self.typec + " coute : " + str(self.prix)
+        return str(self.idc) + ", " + self.nomc + ", " + self.descc + ", " + self.typec + " coute : " + str(self.prix)
 
 class Moniteur(db.Model):
     id = db.Column(db.Integer, primary_key = True)
@@ -71,9 +74,6 @@ class Moniteur(db.Model):
     
     def __repr__(self) -> str:
         return str(self.id)
-
-
-
 
 
 class Poney(db.Model):
@@ -86,7 +86,7 @@ class Poney(db.Model):
         self.nomp = nomp
         self.poidssup = poidssup
     def __repr__(self) -> str:
-        return str(self.idpo) + " " + self.nomp + " " + str(self.poidssup)
+        return str(self.idpo) + ", " + self.nomp + ", " + str(self.poidssup)
 
 
 class Reserver(db.Model):
@@ -107,5 +107,5 @@ class Reserver(db.Model):
         self.a_paye = a_paye
     
     def __repr__(self) -> str:
-        return str(self.jmahms) + " " + str(self.id) + " " + str(self.idpo) + " " + str(self.duree) + " " + str(self.a_paye)
+        return str(self.jmahms) + ", " + str(self.id) + ", " + str(self.idpo) + ", " + str(self.duree) + ", " + str(self.a_paye)
 

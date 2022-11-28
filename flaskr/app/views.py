@@ -114,7 +114,7 @@ def data_cours():
 @app.route('/api/datareservation',methods=["POST","GET"])
 def data_reservations():
     data = {"data":[]}
-    lignes = get_info_all_reservations(session)
+    lignes = get_info_all_reservations()
     for ligne in lignes:
         data["data"].append({
             "jmahms": ligne.jmahms,
