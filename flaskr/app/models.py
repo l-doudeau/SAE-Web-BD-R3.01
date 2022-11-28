@@ -15,14 +15,12 @@ class Personne(db.Model,UserMixin):
     ville = db.Column(db.Text)
     numerotel = db.Column(db.Text)
     mdp = db.Column(db.Text)
-
-  
     def __init__(self, idp, nomp,prenomp,ddn,poids,adressemail,adresse,code_postal,ville,numerotel,mdp) -> None:
-        self.id = idp
-        self.nomp = nomp
-        self.prenomp = prenomp
-        self.ddn = ddn
-        self.poids = poids
+        self.id         = idp
+        self.nomp       = nomp
+        self.prenomp    = prenomp
+        self.ddn        = ddn
+        self.poids      = poids
         self.adressemail = adressemail
         self.adresse = adresse
         self.code_postal = code_postal
@@ -34,10 +32,9 @@ class Personne(db.Model,UserMixin):
         return str(self.id) + " " + self.nomp + " " + self.prenomp+ " " + str(self.ddn)+ " " + str(self.poids)+ " " + self.adressemail + " " + self.adresse+ " " + str(self.code_postal)+ " " + self.ville+ " " + self.numerotel+ " " + self.mdp
 
 class Client(db.Model):
-    id = db.Column(db.Integer,primary_key = True)
+    id          = db.Column(db.Integer,db.ForeignKey("personne.id"),primary_key = True)
     cotisationa = db.Column(db.BOOLEAN)
-    personne_id = db.Column(db.Integer, db.ForeignKey("Personne.id"))
-    personne = db.relationship("Personne", back_populates='Personne')
+    personne    = db.relationship ("Personne",backref =db.backref("personnes", lazy="dynamic"))
 
     def __init__(self, idp, cotisationA) -> None:
         self.id = idp
