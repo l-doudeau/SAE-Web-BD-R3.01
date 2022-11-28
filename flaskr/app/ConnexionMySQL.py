@@ -1,3 +1,7 @@
+"""
+    Fichier qui regroupe la connexion ainsi que les reqûetes en SQLAlchemy.
+"""
+
 import sqlalchemy
 from sqlalchemy.sql.expression import func
 from sqlalchemy.orm import sessionmaker,scoped_session
@@ -51,8 +55,12 @@ def get_personne(id):
 
 def get_personne_email(session,email):
     return session.query(Personne).filter(Personne.adressemail == email).first()
+def get_info_all_moniteur(session):
+    return session.query(Personne.id,Personne.nomp,Personne.prenomp,Personne.ddn,Personne.adressemail,Personne.numerotel).join(Moniteur, Personne.id == Moniteur.id)
 def get_info_all_clients(session):
     return session.query(Personne.id,Personne.nomp,Personne.prenomp,Personne.ddn,Personne.adressemail,Personne.numerotel,Client.cotisationa).join(Client, Personne.id == Client.id)
+def get_info_all_personnes(session):
+    return session.query(Personne.id,Personne.nomp,Personne.prenomp,Personne.ddn,Personne.adressemail,Personne.numerotel)
 def get_info_all_poney(session):
     return session.query(Poney)
 def get_info_all_cours(session):
@@ -63,64 +71,143 @@ def get_moniteur(session,id):
     return session.query(Moniteur).filter(Moniteur.id == id).first()
 def get_client(session,id):
     return session.query(Client).filter(Client.id == id).first()
+
 def deleteclient(session,id):
+    """
+    Il supprime un client de la base de données et renvoie True si la suppression a réussi et False si
+    ce n'est pas le cas.
+    
+    :param session: l'objet de session
+    :param id: l'identifiant du client à supprimer
+    :return: La valeur de retour est une valeur booléenne.
+    """
     user = session.query(Client).get(id)
     session.delete(user)
-    if(session.commit()):
+    try : 
+        session.commit()
+        return True
+    except : 
         session.rollback()
         return False
-    return True
+
 def deletePoney(session,id):
+    """
+    Il supprime un poney et toutes ses réservations
+    
+    :param session: l'objet de session
+    :param id: l'id du poney à supprimer
+    :return: Un booléen
+    """
     poney = session.query(Poney).get(id)
+    poney_reservation = session.query(Reserver).filter(Reserver.idpo == id).all()
+    for poney_reserv in poney_reservation:
+        session.delete(poney_reserv)
+        session.commit()
     session.delete(poney)
-    if(not session.commit()):
+    try : 
+        session.commit()
+        return True
+    except : 
         session.rollback()
         return False
-    return True
+
 def deletereservation(session,date,id,idpo):
-    print(date,id,idpo+"\n\n\n")
+    """
+    Il prend une date, un id et un idpo et supprime la réservation qui correspond à la date, l'id et
+    l'idpo
+    
+    :param session: la session de la base de données
+    :param date: "01/01/2020 00:00:00"
+    :param id: l'identifiant de l'utilisateur
+    :param idpo: l'identifiant de l'utilisateur qui a effectué la réservation
+    :return: une valeur booléenne.
+    """
     liste_date_time = date.split(" ")
     liste_date = liste_date_time[0].split("/")
     liste_time = liste_date_time[1].split(":")
 
     jmahms = datetime.datetime(int(liste_date[2]),int(liste_date[1]),int(liste_date[0]),int(liste_time[0]),int(liste_time[1]),int(liste_time[2]))
-    print(jmahms)
-    print(session.query(Reserver).filter(Reserver.jmahms == jmahms).filter(Reserver.id == id).filter(Reserver.idpo == idpo).all())
     reservation = session.query(Reserver).filter(Reserver.jmahms == jmahms).filter(Reserver.id == id).filter(Reserver.idpo == idpo).first()
-    print(reservation)
     session.delete(reservation)
-    if(session.commit()):
+    try : 
+        session.commit()
+        return True
+    except : 
         session.rollback()
         return False
-    return True
+
+def deletecours(session, idc):
+    """
+    Il supprime un cours de la base de données, mais s'il ne parvient pas à supprimer le cours, il
+    annule la transaction et renvoie False
+    
+    :param session: l'objet de session
+    :param idc: l'identifiant du cours à supprimer
+    :return: Une valeur booléenne.
+    """
+    cours = session.query(Cours).get(idc)
+    session.delete(cours)
+    try:
+        session.commit()
+        return True
+
+    except:
+        session.rollback()
+        return False
+    
+    
+    
+def delete_personne(session, id) : 
+    personne = session.query(Personne).get(id)
+    session.delete(personne)
+    try : 
+        session.commit()
+        return True
+    except : 
+        session.rollback()
+        return False
+    
 
 def get_max_id_personne(session):
     return session.query(func.max(Personne.id)).first()[0]
+def get_max_id_cours(session):
+    return session.query(func.max(Cours.idc)).first()[0]
 def get_max_id_poney(session):
     return session.query(func.max(Poney.idpo)).first()[0]
 def rollback(session):
     session.rollback()
-def ajout_client(session,prenom,nom,ddn,poids,adresseemail,adresse,code_postal,ville,numerotel,cotise):
-
-    idp = get_max_id_personne(session) +1
-    mdp = token_urlsafe(6)
-    liste = ddn.split("/")
-    date_naissance = datetime.date(int(liste[2]),int(liste[1]),int(liste[0]))
-    personne = Personne(idp,prenom,nom,date_naissance,poids,adresseemail,adresse,code_postal,ville,numerotel,mdp)
+    
+def ajout_client(session,idp, cotise):
+    """
+    Il ajoute un client à la base de données
+    
+    :param session: bd
+    :param idp: int
+    :param cotise: booléen
+    """
+    
     if(cotise == "false"): 
         cotise = False
     else: 
         cotise = True
     client = Client(idp,cotise)
-    session.add(personne)
-    
-    if(not session.commit()):
-        session.rollback()
     session.add(client)
-    if(not session.commit()):
+    
+    try:
+        session.commit()
+        return True
+    except:
         session.rollback()
+        return False
 
 def ajout_poney(session,nom,poids):
+    """
+    Il ajoute un poney à la base de données
+    
+    :param session: bd
+    :param nom: chaîne de caractères
+    :param poids: float
+    """
     idpo = get_max_id_poney(session) + 1
     poney = Poney(idpo,nom,poids)
     session.add(poney)
@@ -128,6 +215,19 @@ def ajout_poney(session,nom,poids):
         session.rollback()
 
 def ajout_reservation(session,date,id,idpo,idc,duree,a_paye):
+    """
+    Il prend une date au format jj/mm/aaaa hh:mm:ss, la divise en une liste de chaînes, divise le
+    premier élément de cette liste en une autre liste de chaînes, divise le deuxième élément de la
+    première liste en une autre liste de chaînes, puis utilise ces listes pour créer un objet datetime
+    
+    :param session: bd
+    :param date: une chaîne au format "jj/mm/aaaa hh:mm:ss"
+    :param id: int
+    :param idpo: int
+    :param idc: int
+    :param duree: time
+    :param a_paye: booléen
+    """
     liste_datetime = date.split(" ")
     liste = liste_datetime[0].split("/")
     liste_time = liste_datetime[1].split(":")
@@ -136,4 +236,74 @@ def ajout_reservation(session,date,id,idpo,idc,duree,a_paye):
     session.add(reservation)
     if(not session.commit()):
         session.rollback()
+    
+def ajouteCours(session, nomc, descc, typec, prix):
+    """
+    Il ajoute un nouveau cours à la base de données
+    
+    :param session: bd
+    :param nomc: chaîne de caractères
+    :param descc: chaîne de caractères
+    :param typec: chaîne de caractères
+    :param prix: float
+    :return: une valeur booléenne.
+    """
+    cours = Cours(get_max_id_cours(session)+1, nomc, descc, typec, prix)
+    session.add(cours)
+    try:
+        session.commit()
+        return True
+    except:
+        session.rollback()
+        return False
 
+def ajoute_moniteur(session, idp):
+    """
+    Il ajoute un client à la base de données
+    
+    :param session: bd
+    :param idp: int
+    """
+    moniteur = Moniteur(idp)
+    session.add(moniteur)
+    try:
+        session.commit()
+        return True
+    except:
+        session.rollback()
+        return False
+    
+def delete_moniteur(session, id):
+    """
+    Il supprime un moniteur de la base de données et renvoie True si la suppression a réussi et False si
+    ce n'est pas le cas.
+    
+    :param session: l'objet de session
+    :param id: l'identifiant du client à supprimer
+    :return: La valeur de retour est une valeur booléenne.
+    """
+    user = session.query(Moniteur).get(id)
+    session.delete(user)
+    try:
+        session.commit()
+        return True
+    except:
+        session.rollback()
+        return False
+    
+    
+def ajoute_personne(session, nomp, prenomp, ddn, poids, adressemail, adresse, code_postal, ville, numerotel) : 
+    idp = get_max_id_personne(session) +1
+    mdp = token_urlsafe(6)
+    liste = ddn.split("/")
+    date_naissance = datetime.date(int(liste[2]),int(liste[1]),int(liste[0]))
+    personne = Personne(idp, nomp, prenomp, date_naissance, poids, adressemail, adresse, code_postal, ville, numerotel, mdp)
+    session.add(personne)
+
+    try :
+        session.commit()
+        return idp
+    except :
+        session.rollback()
+        return False
+    

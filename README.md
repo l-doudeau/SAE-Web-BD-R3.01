@@ -27,14 +27,13 @@ Lancer le projet :
     2/ Entrer la commande suivante : 'sudo mysql -u votre_nom_user -p' ou 'mysql -h servinfo-mariadb -u votre_user -p'
     3/ Entre le mot de passe de votre machine ou 'root'
     4/ Une fois connecter sur MySQL, entrer les commandes suivante : 
-      4A/ D'abord : 'source script.sql'
-      4B/ Puis :    'source triggers.sql'
-      4C/ Enfin :   'source insertion.sql'
-    6/ Ouvrez le fichier Executable.java qui se trouve dans le repertoire /DEVELOPMENT/src
-    7/ Modifier à la ligne 95, les informations selon votre compte MySQL, à savoir votre_user et votre_mot_de_passe
+      4A/ D'abord : 'source creaPon.sql'
+      4B/ Enfin :   'source insPon.sql'
+    6/ Ouvrez le fichier ExePonney.java qui se trouve dans le repertoire /DEVELOPMENT/src
+    7/ Modifier à la ligne 119, les informations selon votre compte MySQL, à savoir votre_user et votre_mot_de_passe
     8/ Ouvrir un terminale dans le dossier DEVELOPMENT qui se trouve à la racine du projet
     9/ Entrer la commande suivante : 'javac -d bin src/*.java'
-    10/ Puis, entrer la commande suivante : 'java -cp bin Executable'
+    10/ Puis, entrer la commande suivante : 'java -cp bin ExePonney'
 
 
 Programmes/logiciels/ressources utilisé pour développer ce projet

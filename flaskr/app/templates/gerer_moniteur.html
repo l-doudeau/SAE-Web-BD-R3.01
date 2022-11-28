@@ -1,0 +1,352 @@
+
+{% include 'banner.html' %}
+<style>
+    .row{
+        margin: 1em;
+    }
+</style>
+<body>
+    <section>
+        <div class="container">
+            <div class="row">
+                <div class="row">
+                    <div class="col-12 col-md-8"></div>
+                    <div class="col-6 col-md-4">
+                        <button id="ajouterMoniteur" type="button" class="btn btn-success">Ajouter</button>
+                        <button id="buttonmodalSupr" type="button" class="btn btn-danger" data-toggle="modal" data-target="#modalSupprimer">Supprimer</button>
+                    </div>
+                </div>
+            </div>
+            <table id="moniteurs" class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Nom</th>
+                        <th>Prenom</th>
+                        <th>Date de naissance</th>
+                        <th>Adresse Email</th>
+                        <th>Numero de téléphone</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>
+        <div class="modal fade" id="modalSupprimer" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered" role="document">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h5 class="modal-title" id="exampleModalLabel">Supprimer</h5>
+                  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                  </button>
+                </div>
+                <div class="modal-body">
+                  <p>Etes-vous sur de vouloir supprimer ce moniteur ?</p>
+                  <span id="moniteursupprimer"></span>
+                </div>
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-secondary" data-dismiss="modal">Fermer</button>
+                  <button type="button" class="btn btn-danger" id="deleteMoniteur" data-dismiss="modal">Supprimer</button>
+                </div>
+              </div>
+            </div>
+        </div>
+        <form method="POST">
+            <div class="modal fade" id="modalAjouterMoniteur" tabindex="2" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Nouveau Moniteur</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                    </div>
+                    <div class="modal-body">
+
+                        <div class="row">
+                            <div class="col-4">
+                                <label for="PrenomMoniteur" class="label label-primary">Prenom</label>
+                            </div>
+                            <div class="col-8">
+                                <input required id="PrenomMoniteur">
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-4">
+                                <label for="NomMoniteur" class="label label-primary">Nom</label>
+                            </div>
+                            <div class="col-8">
+                                <input required  id="NomMoniteur">
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-4">
+                                <label for="DateMoniteur" class="label label-primary">Date de naissance</label>
+                            </div>
+                            <div class="col-8">
+                                <input required id="DateMoniteur" value="01/01/2022">
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-4">
+                                <label for="PoidsMoniteur" class="label label-primary">Poids</label>
+                            </div>
+                            <div class="col-8">
+                                <input required id="PoidsMoniteur">
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-4">
+                                <label for="AdresseEmailMoniteur" class="label label-primary">Adresse Email</label>
+                            </div>
+                            <div class="col-8">
+                                <input required  id="AdresseEmailMoniteur">
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-4">
+                                <label  for="AdresseMoniteur" class="label label-primary">Adresse</label>
+                            </div>
+                            <div class="col-8">
+                                <input required  id="AdresseMoniteur">
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-4">
+                                <label for="CodePostalMoniteur" class="label label-primary">Code Postal</label>
+                            </div>
+                            <div class="col-8">
+                                <input required  id="CodePostalMoniteur">
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-4">
+                                <label for="VilleMoniteur" class="label label-primary">Ville</label>
+                            </div>
+                            <div class="col-8">
+                                <input required id="VilleMoniteur">
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-4">
+                                <label for="TelMoniteur" class="label label-primary">Numero de téléphone</label>
+                            </div>
+                            <div class="col-8">
+                                <input required id="TelMoniteur">
+                            </div>
+                        </div>
+
+                    </div>
+                    <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Fermer</button>
+                    <button type="button" class="btn btn-success" id="ajouterMoniteur2">Créer</button>
+                    </div>
+                </div>
+                </div>
+            </div>
+        </form>
+    </section>
+    <div></div>
+</body>
+<script>
+    function isNumeric(str) {
+        if (typeof str != "string") return false // we only process strings!  
+        return !isNaN(str) && // use type coercion to parse the _entirety_ of the string (`parseFloat` alone does not do this)...
+                !isNaN(parseFloat(str)) // ...and ensure strings of whitespace fail
+}
+    var row = null;
+    
+        
+
+        $("#buttonmodalSupr").prop("disabled",true)
+
+        $(document).ready(function() {
+ 
+        var table = $('#moniteurs').DataTable({
+            ajax: '/api/datamoniteurs',
+            columns: [
+                {data: 'idp',className: "dt-center"},
+                {data: 'nomp',className: "dt-center"},
+                {data: 'prenomp',className: "dt-center"},
+                {data: 'ddn',className: "dt-center",orderable:false,"render" : function (data) { 
+    
+                    let m = new Date(data);
+                    return moment(m).format("M/D/YYYY");}
+                },
+                {data: 'adressemail',orderable:false,className: "dt-center"},
+                {data: 'numerotel',orderable:false,className: "dt-center"},
+        ],
+            info:true,
+            scroller:true,
+            scrollY:500,
+            paging: false,
+            info: false,
+            "searching": false,
+      });
+        const container = document.getElementById("modalAjouterMoniteur");
+        const modal = new bootstrap.Modal(container);
+        document.getElementById("ajouterMoniteur").addEventListener("click", function () {
+            modal.show();
+        });
+        document.getElementById("ajouterMoniteur2").addEventListener("click", function () {
+            var prenom = $("#PrenomMoniteur").val()
+            var nom = $("#NomMoniteur").val()
+            var poids = $("#PoidsMoniteur").val()
+            var adresseemail = $("#AdresseEmailMoniteur").val()
+            var adresse = $("#AdresseMoniteur").val()
+            var codepostal = $("#CodePostalMoniteur").val()
+            var ville = $("#VilleMoniteur").val()
+            var tel = $("#TelMoniteur").val()
+            var datepicker = $("#DateMoniteur").data("kendoDatePicker");
+
+            if(prenom != "" && nom != "" && poids != ""&& isNumeric(poids) && adresseemail != "" && adresse != "" && codepostal != ""&& isNumeric(codepostal) && ville != "" && tel != ""&& isNumeric(tel)&& datepicker._value != null){
+
+                modal.hide();
+            }
+      });
+  
+        
+        $("#ajouterMoniteur2").on("click",function(){
+            var prenom = $("#PrenomMoniteur").val()
+            var nom = $("#NomMoniteur").val()
+            var poids = $("#PoidsMoniteur").val()
+            var adresseemail = $("#AdresseEmailMoniteur").val()
+            var adresse = $("#AdresseMoniteur").val()
+            var codepostal = $("#CodePostalMoniteur").val()
+            var ville = $("#VilleMoniteur").val()
+            var tel = $("#TelMoniteur").val()
+            prenom == ""?$("#PrenomMoniteur").css("border","1px solid red"):$("#PrenomMoniteur").css("border","");
+            nom == ""?$("#NomMoniteur").css("border","1px solid red"):$("#NomMoniteur").css("border","");
+            var datepicker = $("#DateMoniteur").data("kendoDatePicker");
+            datepicker._value == null?$('#DateMoniteur').css("border","1px solid red"):$("#DateMoniteur").css("border","");
+            
+            poids == ""  || !isNumeric(poids)?$("#PoidsMoniteur").css("border","1px solid red"):$("#PoidsMoniteur").css("border","");
+            adresseemail == ""?$("#AdresseEmailMoniteur").css("border","1px solid red"):$("#AdresseEmailMoniteur").css("border","");
+            adresse == ""?$("#AdresseMoniteur").css("border","1px solid red"):$("#AdresseMoniteur").css("border","");
+            codepostal == "" || !isNumeric(codepostal) ?$("#CodePostalMoniteur").css("border","1px solid red"):$("#CodePostalMoniteur").css("border","");
+            ville == ""?$("#VilleMoniteur").css("border","1px solid red"):$("#VilleMoniteur").css("border","");
+            tel == "" || !isNumeric(tel)?$("#TelMoniteur").css("border","1px solid red"):$("#TelMoniteur").css("border","");
+
+            if(prenom != "" && nom != "" && poids != ""&& isNumeric(poids) && adresseemail != "" && adresse != "" && codepostal != ""&& isNumeric(codepostal) && ville != "" && tel != ""&& isNumeric(tel)&& datepicker._value != null){
+                $.ajax({
+                url:'{{url_for("AddMoniteur")}}',
+                type:'POST',
+                data:{prenom : prenom,
+                    nom : nom,
+                    date : datepicker._value.toLocaleDateString(),
+                    poids : poids,
+                    adresseemail : adresseemail,
+                    adresse:adresse,
+                    codepostal:codepostal,
+                    ville:ville,
+                    tel:tel
+                    },
+            success: function(){ 
+                console.log("reussi")
+                table.ajax.reload();
+
+                } 
+            });
+        }     
+        });
+
+        $("#PrenomMoniteur").kendoTextBox({
+            placeholder: "Prenom",
+            fillMode: "solid",
+            size:"large"
+        });
+
+        $("#NomMoniteur").kendoTextBox({
+            placeholder: "Nom",
+            fillMode: "solid",
+            size:"large"
+        });
+
+        $("#DateMoniteur").kendoDatePicker({
+            start: "year",
+            format: "dd/MM/yyyy",
+            size:"large"
+        });
+
+        $("#PoidsMoniteur").kendoTextBox({
+            placeholder: "Poids",
+            fillMode: "solid",
+            size:"large"
+        });
+
+        $("#AdresseEmailMoniteur").kendoTextBox({
+            placeholder: "Adresse Email",
+            fillMode: "solid",
+            size:"large"
+        });
+
+        $("#AdresseMoniteur").kendoTextBox({
+            placeholder: "Adresse",
+            fillMode: "solid",
+            size:"large"
+        });
+
+        $("#CodePostalMoniteur").kendoTextBox({
+            placeholder: "Code Postal",
+            fillMode: "solid",
+            size:"large"
+        });
+
+        $("#VilleMoniteur").kendoTextBox({
+            placeholder: "Ville",
+            fillMode: "solid",
+            size:"large"
+        });
+
+        $("#TelMoniteur").kendoTextBox({
+            placeholder: "Numéro de téléphone",
+            fillMode: "solid",
+            size:"large"
+        });
+
+        $("#moniteurs").on("click", "tr", function() {
+            if(row !=null){
+                $(row).css('background-color', "");     
+            }
+            $("#buttonmodalSupr").prop("disabled",false)
+            row = this;
+            $(this).css('background-color', "#AFE1AF");
+            $("#moniteursupprimer").html($(row)[0].childNodes[1].innerHTML+ " " + $(row)[0].childNodes[2].innerHTML)
+        });
+        
+
+        $("#moniteurs").on("dblclick", "tr", function() {
+            const id = $(row)[0].childNodes[0].innerHTML
+            const url = '{{url_for("Moniteurs",id="idMoniteur")}}'.replace("idMoniteur",id)
+            $.ajax({
+                type:"POST",
+                data:{"id":id},
+                url:url,
+                success:function(response){ window.location.href = "/Moniteur/"+id;
+} 
+               
+
+            });
+        });
+                
+        $("#deleteMoniteur").on("click",function(){
+            $.ajax({
+                url:'{{url_for("DeleteMoniteur")}}',
+                type:'POST',
+                data:{id:$(row)[0].childNodes[0].innerHTML},
+            success: function(){
+                table.ajax.reload();
+                } 
+            });       
+        });
+
+        });
+
+</script>
+</html>

@@ -5,13 +5,16 @@ public class Cours {
     private String description;
     private String typeCours;
     private float prix;
+    private int idp;
 
-    public Cours(int id, String nomCours, String description, String typeCours, float prix){
+
+    public Cours(int id, String nomCours, String description, String typeCours, float prix, int idp){
         this.id = id;
         this.nomCours = nomCours;
         this.description = description;
         this.typeCours = typeCours;
         this.prix = prix;
+        this.idp = idp;
     }
 
     public int getId() {
@@ -54,9 +57,17 @@ public class Cours {
         this.prix = prix;
     }
 
+    public float getIdMoniteur() {
+        return this.idp;
+    }
+
+    public void setIdMoniteur(int idp) {
+        this.idp = idp;
+    }
+
     @Override
     public String toString(){
-        return "\n"+this.nomCours + " : \n" + this.description + "\n" + "Il coûte " + this.prix + " et est de type " + this.typeCours  ;
+        return "\n"+this.id + " " +this.nomCours + " : \n" + this.description + "\n" + "Il coûte " + this.prix + " et est de type " + this.typeCours+"\nL'id du moniteur est :" +this.idp ;
     }
 
     @Override

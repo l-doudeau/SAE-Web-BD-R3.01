@@ -1,0 +1,19 @@
+:
+PERSONNE : id, nomp, prenomp, ddn, poids, adressemail, adresse, code_postal, ville, numerotel, mdp
+:
+:
+
+MONITEUR:
+IS_A, TO PERSONNE, XX> CLIENT, XX> MONITEUR
+CLIENT: _cotisationA
+:
+
+ETRE_RESPONSABLE, ON> MONITEUR, 11 COURS
+COURS : idc, nomc, descc, typec, prix
+RESERVER, 0N HORAIRE , ON> COURS, ON PONEYS, ON CLIENT: duree, a_paye
+HORAIRE: jj/mm/aaaa hh:mm:ss
+
+:
+:
+PONEYS : idpo, nomp, poidssup
+:

@@ -1,0 +1,401 @@
+
+{% include 'banner.html' %}
+<style>
+    .row{
+        margin: 1em;
+    }
+</style>
+<body>
+    <section>
+        <div class="container">
+            <div class="row">
+                <div class="row">
+                    <div class="col-12 col-md-8"></div>
+                    <div class="col-6 col-md-4">
+                        <button id="ajouterPersonne" type="button" class="btn btn-success">Ajouter</button>
+                        <button id="buttonmodalSupr" type="button" class="btn btn-danger" data-toggle="modal" data-target="#modalSupprimer">Supprimer</button>
+                    </div>
+                </div>
+            </div>
+            <table id="personnes" class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Nom</th>
+                        <th>Prenom</th>
+                        <th>Date de naissance</th>
+                        <th>Adresse Email</th>
+                        <th>Numero de téléphone</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>
+        <div class="modal fade" id="modalSupprimer" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered" role="document">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h5 class="modal-title" id="exampleModalLabel">Supprimer</h5>
+                  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                  </button>
+                </div>
+                <div class="modal-body">
+                  <p>Etes-vous sur de vouloir supprimer ce Personne ?</p>
+                  <span id="personnesupprimer"></span>
+                </div>
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-secondary" data-dismiss="modal">Fermer</button>
+                  <button type="button" class="btn btn-danger" id="deletePersonne" data-dismiss="modal">Supprimer</button>
+                </div>
+              </div>
+            </div>
+        </div>
+        <form method="POST">
+            <div class="modal fade" id="modalAjouterPersonne" tabindex="2" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Nouveau Personne</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                    </div>
+                    <div class="modal-body">
+
+                        <div class="row">
+                            <div class="col-4">
+                                <label for="PrenomPersonne" class="label label-primary">Prenom</label>
+                            </div>
+                            <div class="col-8">
+                                <input required id="PrenomPersonne">
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-4">
+                                <label for="NomPersonne" class="label label-primary">Nom</label>
+                            </div>
+                            <div class="col-8">
+                                <input required  id="NomPersonne">
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-4">
+                                <label for="DataPersonne" class="label label-primary">Date de naissance</label>
+                            </div>
+                            <div class="col-8">
+                                <input required id="DataPersonne" value="01/01/2022">
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-4">
+                                <label for="PoidsPersonne" class="label label-primary">Poids</label>
+                            </div>
+                            <div class="col-8">
+                                <input required id="PoidsPersonne">
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-4">
+                                <label for="AdresseEmailPersonne" class="label label-primary">Adresse Email</label>
+                            </div>
+                            <div class="col-8">
+                                <input required  id="AdresseEmailPersonne">
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-4">
+                                <label  for="AdressePersonne" class="label label-primary">Adresse</label>
+                            </div>
+                            <div class="col-8">
+                                <input required  id="AdressePersonne">
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-4">
+                                <label for="CodePostalPersonne" class="label label-primary">Code Postal</label>
+                            </div>
+                            <div class="col-8">
+                                <input required  id="CodePostalPersonne">
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-4">
+                                <label for="VillePersonne" class="label label-primary">Ville</label>
+                            </div>
+                            <div class="col-8">
+                                <input required id="VillePersonne">
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-4">
+                                <label for="TelPersonne" class="label label-primary">Numero de téléphone</label>
+                            </div>
+                            <div class="col-8">
+                                <input required id="TelPersonne">
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-4">
+                                <label for="EstClient" class="label label-primary">Client ?</label>
+                            </div>
+                            <div class="col-8">
+                                <input required id="EstClient">
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-4">
+                                <label for="EstMoniteur" class="label label-primary">Moniteur ?</label>
+                            </div>
+                            <div class="col-8">
+                                <input required id="EstMoniteur">
+                            </div>
+                        </div>
+
+                    </div>
+                    <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Fermer</button>
+                    <button type="button" class="btn btn-success" id="ajouterPersonne2">Créer</button>
+                    </div>
+                </div>
+                </div>
+            </div>
+        </form>
+    </section>
+    <div></div>
+</body>
+<script>
+    function isNumeric(str) {
+        if (typeof str != "string") return false // we only process strings!  
+        return !isNaN(str) && // use type coercion to parse the _entirety_ of the string (`parseFloat` alone does not do this)...
+                !isNaN(parseFloat(str)) // ...and ensure strings of whitespace fail
+}
+    var row = null;
+    
+        
+
+        $("#buttonmodalSupr").prop("disabled",true)
+
+        $(document).ready(function() {
+ 
+        var table = $('#personnes').DataTable({
+            ajax: '/api/datapersonnes',
+            columns: [
+                {data: 'idp',className: "dt-center"},
+                {data: 'nomp',className: "dt-center"},
+                {data: 'prenomp',className: "dt-center"},
+                {data: 'ddn',className: "dt-center",orderable:false,"render" : function (data) { 
+    
+                    let m = new Date(data);
+                    return moment(m).format("M/D/YYYY");}
+                },
+                {data: 'adressemail',orderable:false,className: "dt-center"},
+                {data: 'numerotel',orderable:false,className: "dt-center"},
+        ],
+            info:true,
+            scroller:true,
+            scrollY:500,
+            paging: false,
+            info: false,
+            "searching": false,
+      });
+        const container = document.getElementById("modalAjouterPersonne");
+        const modal = new bootstrap.Modal(container);
+        document.getElementById("ajouterPersonne").addEventListener("click", function () {
+            modal.show();
+        });
+        document.getElementById("ajouterPersonne2").addEventListener("click", function () {
+            var prenom = $("#PrenomPersonne").val()
+            var nom = $("#NomPersonne").val()
+            var poids = $("#PoidsPersonne").val()
+            var adresseemail = $("#AdresseEmailPersonne").val()
+            var adresse = $("#AdressePersonne").val()
+            var codepostal = $("#CodePostalPersonne").val()
+            var ville = $("#VillePersonne").val()
+            var tel = $("#TelPersonne").val()
+            var datepicker = $("#DataPersonne").data("kendoDatePicker");
+
+            if(prenom != "" && nom != "" && poids != ""&& isNumeric(poids) && adresseemail != "" && adresse != "" && codepostal != ""&& isNumeric(codepostal) && ville != "" && tel != ""&& isNumeric(tel)&& datepicker._value != null){
+
+                modal.hide();
+            }
+      });
+  
+        
+        $("#ajouterPersonne2").on("click",function(){
+            var prenom = $("#PrenomPersonne").val()
+            var nom = $("#NomPersonne").val()
+            var poids = $("#PoidsPersonne").val()
+            var adresseemail = $("#AdresseEmailPersonne").val()
+            var adresse = $("#AdressePersonne").val()
+            var codepostal = $("#CodePostalPersonne").val()
+            var ville = $("#VillePersonne").val()
+            var tel = $("#TelPersonne").val()
+            var est_client = $("#EstClient").val() == "Oui"?true:false;
+            var est_moniteur = $("#EstMoniteur").val() == "Oui"?true:false;
+            prenom == ""?$("#PrenomPersonne").css("border","1px solid red"):$("#PrenomPersonne").css("border","");
+            nom == ""?$("#NomPersonne").css("border","1px solid red"):$("#NomPersonne").css("border","");
+            var datepicker = $("#DataPersonne").data("kendoDatePicker");
+            datepicker._value == null?$('#DataPersonne').css("border","1px solid red"):$("#DataPersonne").css("border","");
+            
+            poids == ""  || !isNumeric(poids)?$("#PoidsPersonne").css("border","1px solid red"):$("#PoidsPersonne").css("border","");
+            adresseemail == ""?$("#AdresseEmailPersonne").css("border","1px solid red"):$("#AdresseEmailPersonne").css("border","");
+            adresse == ""?$("#AdressePersonne").css("border","1px solid red"):$("#AdressePersonne").css("border","");
+            codepostal == "" || !isNumeric(codepostal) ?$("#CodePostalPersonne").css("border","1px solid red"):$("#CodePostalPersonne").css("border","");
+            ville == ""?$("#VillePersonne").css("border","1px solid red"):$("#VillePersonne").css("border","");
+            tel == "" || !isNumeric(tel)?$("#TelPersonne").css("border","1px solid red"):$("#TelPersonne").css("border","");
+
+            if(prenom != "" && nom != "" && poids != ""&& isNumeric(poids) && adresseemail != "" && adresse != "" && codepostal != ""&& isNumeric(codepostal) && ville != "" && tel != ""&& isNumeric(tel)&& datepicker._value != null){
+                $.ajax({
+                url:'{{url_for("AddPersonne")}}',
+                type:'POST',
+                data:{prenom : prenom,
+                    nom : nom,
+                    datepicker : datepicker._value.toLocaleDateString(),
+                    poids : poids,
+                    adresseemail : adresseemail,
+                    adresse:adresse,
+                    codepostal:codepostal,
+                    ville:ville,
+                    tel:tel,
+                    est_client:est_client,
+                    est_moniteur:est_moniteur,
+                    },
+            success: function(){ 
+                console.log("reussi")
+                table.ajax.reload();
+
+                } 
+            });
+        }     
+        });
+
+        $("#PrenomPersonne").kendoTextBox({
+            placeholder: "Prenom",
+            fillMode: "solid",
+            size:"large"
+        });
+
+        $("#NomPersonne").kendoTextBox({
+            placeholder: "Nom",
+            fillMode: "solid",
+            size:"large"
+        });
+
+        $("#DataPersonne").kendoDatePicker({
+            start: "year",
+            format: "dd/MM/yyyy",
+            size:"large"
+        });
+
+        $("#PoidsPersonne").kendoTextBox({
+            placeholder: "Poids",
+            fillMode: "solid",
+            size:"large"
+        });
+
+        $("#AdresseEmailPersonne").kendoTextBox({
+            placeholder: "Adresse Email",
+            fillMode: "solid",
+            size:"large"
+        });
+
+        $("#AdressePersonne").kendoTextBox({
+            placeholder: "Adresse",
+            fillMode: "solid",
+            size:"large"
+        });
+
+        $("#CodePostalPersonne").kendoTextBox({
+            placeholder: "Code Postal",
+            fillMode: "solid",
+            size:"large"
+        });
+
+        $("#VillePersonne").kendoTextBox({
+            placeholder: "Ville",
+            fillMode: "solid",
+            size:"large"
+        });
+
+        $("#TelPersonne").kendoTextBox({
+            placeholder: "Numéro de téléphone",
+            fillMode: "solid",
+            size:"large"
+        });
+
+
+        $("#EstClient").kendoComboBox({
+            dataTextField: "text",
+            dataValueField: "value",
+            dataSource: [
+                { text: "Oui", value: "1" },
+                { text: "Non", value: "2" },
+            ],
+            filter: "contains",
+            suggest: true,
+            clearButton: false,
+            index: 1
+        });
+
+        $("#EstMoniteur").kendoComboBox({
+            dataTextField: "text",
+            dataValueField: "value",
+            dataSource: [
+                { text: "Oui", value: "1" },
+                { text: "Non", value: "2" },
+            ],
+            filter: "contains",
+            suggest: true,
+            clearButton: false,
+            index: 1
+        });
+
+        $("#personnes").on("click", "tr", function() {
+            if(row !=null){
+                $(row).css('background-color', "");     
+            }
+            $("#buttonmodalSupr").prop("disabled",false)
+            row = this;
+            $(this).css('background-color', "#AFE1AF");
+            $("#personnesupprimer").html($(row)[0].childNodes[1].innerHTML+ " " + $(row)[0].childNodes[2].innerHTML)
+        });
+        
+
+        $("#personnes").on("dblclick", "tr", function() {
+            const id = $(row)[0].childNodes[0].innerHTML
+            const url = '{{url_for("Personne",id="idPersonne")}}'.replace("idPersonne",id)
+            $.ajax({
+                type:"POST",
+                data:{"id":id},
+                url:url,
+                success:function(response){ window.location.href = "/Personne/"+id;
+} 
+               
+
+            });
+        });
+                
+        $("#deletePersonne").on("click",function(){
+            $.ajax({
+                url:'{{url_for("deletePersonne")}}',
+                type:'POST',
+                data:{id:$(row)[0].childNodes[0].innerHTML},
+            success: function(){
+                table.ajax.reload();
+                } 
+            });       
+        });
+
+        });
+
+</script>
+</html>

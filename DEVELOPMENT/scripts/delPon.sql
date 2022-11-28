@@ -1,0 +1,12 @@
+drop table if exists RESERVER;
+drop table if exists PONEYS;
+drop table if exists COURS;
+drop table if exists CLIENT;
+drop table if exists MONITEUR;
+drop table if exists PERSONNE;
+drop table if exists ANCIEN_RESERVER;
+drop table if exists ANCIEN_PONEYS;
+drop table if exists ANCIEN_COURS;
+drop table if exists ANCIEN_CLIENT;
+drop table if exists ANCIEN_MONITEUR;
+drop table if exists ANCIEN_PERSONNE;
