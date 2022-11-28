@@ -13,6 +13,7 @@ app.config["SQLALCHEMY_DATABASE_URI"] = 'mysql+pymysql://faucher:Thierry45.@serv
 #app.config["SQLALCHEMY_DATABASE_URI"] = 'mysql+pymysql://root:root@localhost/DB'
 
 db = SQLAlchemy(app)
+
 app.app_context().push()
 
 

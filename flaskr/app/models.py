@@ -4,48 +4,8 @@ from .app import db
 from flask_login import UserMixin
 
 
-class Client(db.Model):
-    id = db.Column(db.Integer,ForeignKey("personne.id"),primary_key = True)
-    cotisationa = db.Column(db.BOOLEAN)
-    personne = relationship("Personne")
-
-    def __init__(self, idp, cotisationA) -> None:
-        self.id = idp
-        self.cotisationa = cotisationA
-    
-    def __repr__(self) -> str:
-        return str(self.id) + " " + "a cotisé" if self.cotisationa else str(self.id) + " " +"n'a pas cotisé"
-
-class Cours(db.Model):
-    idc = db.Column(db.Integer, primary_key = True)
-    nomc = db.Column(db.String(20))
-    descc = db.Column(db.String(100))
-    typec = db.Column(db.String(20))
-    prix = db.Column(db.DECIMAL)
-    moniteur_id = db.Column(db.Integer,ForeignKey("moniteur.id"))
-    cours = relationship("Moniteur")
-    
-    def __init__(self, idc, nomc,descc,typec,prix) -> None:
-        self.idc = idc
-        self.nomc = nomc
-        self.descc = descc
-        self.typec = typec
-        self.prix = prix
-    
-    def __repr__(self) -> str:
-        return str(self.idc) + " " + self.nomc + " : " + self.descc + " " + self.typec + " coute : " + str(self.prix)
-
-class Moniteur(db.Model):
-    id = db.Column(db.Integer,ForeignKey("personne.id"), primary_key = True)
-    personne = relationship("Personne")
-    def __init__(self, idp) -> None:
-        self.id = idp
-    
-    def __repr__(self) -> str:
-        return str(self.id)
-
-
 class Personne(db.Model,UserMixin):
+    __tablename__ = 'personne'
     id = db.Column(db.Integer, primary_key = True)
     nomp = db.Column(db.String)
     prenomp = db.Column(db.String)
@@ -74,6 +34,7 @@ class Personne(db.Model,UserMixin):
         return str(self.id) + " " + self.nomp + " " + self.prenomp+ " " + str(self.ddn)+ " " + str(self.poids)+ " " + self.adressemail + " " + self.adresse+ " " + str(self.code_postal)+ " " + self.ville+ " " + self.numerotel+ " " + self.mdp
 
 class Client(db.Model):
+    __tablename__ = 'client'
     id          = db.Column(db.Integer,db.ForeignKey("personne.id"),primary_key = True)
     cotisationa = db.Column(db.BOOLEAN)
     personne    = db.relationship ("Personne",backref =db.backref("personnes", lazy="dynamic"))

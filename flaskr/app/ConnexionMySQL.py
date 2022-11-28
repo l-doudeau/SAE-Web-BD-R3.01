@@ -48,6 +48,7 @@ def ouvrir_connexion(user,passwd,host,database):
 #connexion ,engine = ouvrir_connexion("faucher","Thierry45.","servinfo-mariadb", "DBfaucher")
 #Session = sessionmaker(bind=engine)
 #session = Session()
+db.metadata.clear()
 init_db()
 
 def get_personne(id):
