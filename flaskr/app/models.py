@@ -3,6 +3,48 @@ from sqlalchemy.orm import declarative_base,relationship
 from .app import db
 from flask_login import UserMixin
 
+
+class Client(db.Model):
+    id = db.Column(db.Integer,ForeignKey("personne.id"),primary_key = True)
+    cotisationa = db.Column(db.BOOLEAN)
+    personne = relationship("Personne")
+
+    def __init__(self, idp, cotisationA) -> None:
+        self.id = idp
+        self.cotisationa = cotisationA
+    
+    def __repr__(self) -> str:
+        return str(self.id) + " " + "a cotisé" if self.cotisationa else str(self.id) + " " +"n'a pas cotisé"
+
+class Cours(db.Model):
+    idc = db.Column(db.Integer, primary_key = True)
+    nomc = db.Column(db.String(20))
+    descc = db.Column(db.String(100))
+    typec = db.Column(db.String(20))
+    prix = db.Column(db.DECIMAL)
+    moniteur_id = db.Column(db.Integer,ForeignKey("moniteur.id"))
+    cours = relationship("Moniteur")
+    
+    def __init__(self, idc, nomc,descc,typec,prix) -> None:
+        self.idc = idc
+        self.nomc = nomc
+        self.descc = descc
+        self.typec = typec
+        self.prix = prix
+    
+    def __repr__(self) -> str:
+        return str(self.idc) + " " + self.nomc + " : " + self.descc + " " + self.typec + " coute : " + str(self.prix)
+
+class Moniteur(db.Model):
+    id = db.Column(db.Integer,ForeignKey("personne.id"), primary_key = True)
+    personne = relationship("Personne")
+    def __init__(self, idp) -> None:
+        self.id = idp
+    
+    def __repr__(self) -> str:
+        return str(self.id)
+
+
 class Personne(db.Model,UserMixin):
     id = db.Column(db.Integer, primary_key = True)
     nomp = db.Column(db.String)
@@ -89,11 +131,12 @@ class Poney(db.Model):
 class Reserver(db.Model):
     jmahms = db.Column(db.DATETIME, primary_key = True)
     id = db.Column(db.Integer, primary_key=True)
-    idc = db.Column(db.Integer, primary_key=True)
-    idpo = db.Column(db.Integer)
+    idc = db.Column(db.Integer,ForeignKey("cours.idc"), primary_key=True)
+    idpo = db.Column(db.Integer,ForeignKey("poney.idpo"))
     duree = db.Column(db.TIME)
     a_paye = db.Column(db.BOOLEAN)
-
+    poney = relationship("Poney")
+    cours = relationship("Cours") 
     def __init__(self, jmahms,id,idc,idpo,duree,a_paye) -> None:
         self.jmahms = jmahms
         self.id = id
