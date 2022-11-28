@@ -20,6 +20,8 @@ Installation des différent composites necessaire au fonctionnement de l'applica
     5/ pip3 install mysql-connector-python
     6/ pip install flask_login
     7/ pip install flask_sqlalchemy
+    8/ pip install pymysql
+    
 Lancer le projet :
 
     1/ Placer vous dans le repertoire 'scripts' qui se trouve dans le dossier DEVELOPMENT à la racine du projet : 
