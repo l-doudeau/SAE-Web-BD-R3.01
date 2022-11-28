@@ -8,13 +8,13 @@ public class ConnectionDB{
     public ConnectionDB() throws ClassNotFoundException{
         this.mysql = null;
         this.isConnected = false;
-        Class.forName("com.mysql.cj.jdbc.Driver");
-
+        // Class.forName("com.mysql.cj.jdbc.Driver");
+        Class.forName("org.mariadb.jdbc.Driver");
     }
     public void connecter(String database, String username, String password) throws SQLException{
         this.mysql = null;
         this.isConnected = false;
-        this.mysql = DriverManager.getConnection("jdbc:mysql://localhost/" + database, username , password); 
+        this.mysql = DriverManager.getConnection("jdbc:mysql://servinfo-mariadb/" + database, username , password); 
         this.isConnected = true;
     }
 

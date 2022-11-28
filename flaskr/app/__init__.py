@@ -1,3 +1,3 @@
-from flask import Flask
-
-from .views import app
+import app.ConnexionMySQL
+import app.views
+import app.models

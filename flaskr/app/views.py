@@ -1,20 +1,11 @@
-from flask import Flask, render_template, request,redirect,url_for
-from .ConnexionMySQL import get_personne,session,get_moniteur,get_client,get_personne_email,\
-    get_info_all_clients,deleteclient,ajout_client,ajout_poney,deletePoney,get_info_all_poney,\
-        get_info_all_cours,get_info_all_reservations,deletereservation,ajout_reservation,rollback
-
-from sqlalchemy.orm import sessionmaker
+from .app import app, login_manager
+from .models import * 
+from .ConnexionMySQL import *
+from flask import render_template
 from flask_login import LoginManager,login_user,login_required,logout_user,current_user
-from secrets import token_urlsafe
-import json
+from flask import Flask,redirect,url_for,request
+from flask_sqlalchemy import SQLAlchemy
 
-app = Flask(__name__)
-
-app.config['SECRET_KEY'] = token_urlsafe(16) #Générer une clé au hasard
-
-login_manager = LoginManager()
-login_manager.init_app(app)
-login_manager.login_view="login"
 
 @login_manager.user_loader
 def load_user(user_id):
@@ -63,7 +54,6 @@ def login():
 @app.route('/Clients')
 @login_required
 def Clients():
-    print(login_manager.login_message + "\n")
     return render_template('gerer_client.html')
 
 @app.route('/Poneys')

@@ -201,6 +201,7 @@
             info: false,
             "searching": false,
       });
+
         const container = document.getElementById("modalAjouterClient");
         const modal = new bootstrap.Modal(container);
         document.getElementById("ajouterClient").addEventListener("click", function () {
@@ -218,7 +219,6 @@
             var datepicker = $("#DateClient").data("kendoDatePicker");
 
             if(prenom != "" && nom != "" && poids != ""&& isNumeric(poids) && adresseemail != "" && adresse != "" && codepostal != ""&& isNumeric(codepostal) && ville != "" && tel != ""&& isNumeric(tel)&& datepicker._value != null){
-
                 modal.hide();
             }
       });
@@ -248,10 +248,12 @@
             tel == "" || !isNumeric(tel)?$("#TelClient").css("border","1px solid red"):$("#TelClient").css("border","");
 
             if(prenom != "" && nom != "" && poids != ""&& isNumeric(poids) && adresseemail != "" && adresse != "" && codepostal != ""&& isNumeric(codepostal) && ville != "" && tel != ""&& isNumeric(tel)&& datepicker._value != null){
+                
                 $.ajax({
                 url:'{{url_for("AddClient")}}',
                 type:'POST',
-                data:{prenom : prenom,
+                data:{
+                    prenom : prenom,
                     nom : nom,
                     date : datepicker._value.toLocaleDateString(),
                     poids : poids,

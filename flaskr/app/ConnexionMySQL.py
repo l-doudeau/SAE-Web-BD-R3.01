@@ -1,15 +1,24 @@
 import sqlalchemy
 from sqlalchemy.sql.expression import func
-from sqlalchemy.orm import sessionmaker
-from .Personne import Personne
-from .Client import  Client
-from .Cours import Cours
-from .Personne import Personne
-from .Moniteur import Moniteur
-from .Reserver import Reserver
-from .Poney import Poney
+from sqlalchemy.orm import sessionmaker,scoped_session
+from .models import *
 from secrets import token_urlsafe
 import datetime
+from sqlalchemy import create_engine
+from sqlalchemy.ext.declarative import declarative_base
+
+engine = create_engine('mysql+mysqlconnector://faucher:Thierry45.@servinfo-mariadb/DBfaucher', convert_unicode=True)
+db_session = scoped_session(sessionmaker(autocommit=False,
+                                         autoflush=False,
+                                         bind=engine))
+Base = declarative_base()
+Base.query = db_session.query_property()
+
+def init_db():
+    from .models import Personne,Client,Moniteur,Poney,Cours,Reserver
+    Base.metadata.create_all(bind=engine)
+    print("****************************************************************************Database Initiated********************************************")
+
 
 def ouvrir_connexion(user,passwd,host,database):
     """
@@ -32,13 +41,14 @@ def ouvrir_connexion(user,passwd,host,database):
     print("connexion réussie")
     return cnx,engine
 #connexion ,engine = ouvrir_connexion("root","root","localhost", "GRAND_GALOP")
-connexion ,engine = ouvrir_connexion("faucher","Thierry45.","servinfo-mariadb", "DBfaucher")
-Session = sessionmaker(bind=engine)
-session = Session()
+#connexion ,engine = ouvrir_connexion("faucher","Thierry45.","servinfo-mariadb", "DBfaucher")
+#Session = sessionmaker(bind=engine)
+#session = Session()
+init_db()
 
+def get_personne(id):
+    return Personne.query.get(int(id))
 
-def get_personne(session,id):
-    return session.query(Personne).get(int(id))
 def get_personne_email(session,email):
     return session.query(Personne).filter(Personne.adressemail == email).first()
 def get_info_all_clients(session):
@@ -126,3 +136,4 @@ def ajout_reservation(session,date,id,idpo,idc,duree,a_paye):
     session.add(reservation)
     if(not session.commit()):
         session.rollback()
+
