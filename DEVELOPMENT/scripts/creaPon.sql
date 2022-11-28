@@ -3,24 +3,23 @@
 --USE GRAND_GALOP;
 
 -- supression des tables avant des les créées
-
-drop table if exists RESERVER;
-drop table if exists PONEYS;
-drop table if exists COURS;
-drop table if exists CLIENT;
-drop table if exists MONITEUR;
-drop table if exists PERSONNE;
-drop table if exists ANCIEN_RESERVER;
-drop table if exists ANCIEN_PONEYS;
-drop table if exists ANCIEN_COURS;
-drop table if exists ANCIEN_CLIENT;
-drop table if exists ANCIEN_MONITEUR;
-drop table if exists ANCIEN_PERSONNE;
+drop table if exists reserver;
+drop table if exists poney;
+drop table if exists cours;
+drop table if exists client;
+drop table if exists moniteur;
+drop table if exists personne;
+drop table if exists ancien_reserver;
+drop table if exists ancien_poney;
+drop table if exists ancien_cours;
+drop table if exists ancien_client;
+drop table if exists ancien_moniteur;
+drop table if exists ancien_personne;
 
 -- création des tables
 
 
-CREATE TABLE PERSONNE (
+CREATE TABLE personne (
   id int,
   nomp VARCHAR(42),
   prenomp VARCHAR(42),
@@ -36,20 +35,20 @@ CREATE TABLE PERSONNE (
 ) ENGINE=InnoDB DEFAULT CHARSET=UTF8MB4;
 
 
-CREATE TABLE MONITEUR (
+CREATE TABLE moniteur (
   id int,
   PRIMARY KEY (id)
 ) ENGINE=InnoDB DEFAULT CHARSET=UTF8MB4;
 
 
-CREATE TABLE CLIENT (
+CREATE TABLE client (
   id int,
   cotisationA boolean,
   PRIMARY KEY (id)
 ) ENGINE=InnoDB DEFAULT CHARSET=UTF8MB4;  
 
 
-CREATE TABLE COURS (
+CREATE TABLE cours (
   idc int,
   nomc VARCHAR(42),
   descc VARCHAR(300),
@@ -60,7 +59,7 @@ CREATE TABLE COURS (
 ) ENGINE=InnoDB DEFAULT CHARSET=UTF8MB4;
 
 
-CREATE TABLE PONEYS (
+CREATE TABLE poney (
   idpo int,
   nomp VARCHAR(42),
   poidssup decimal(3.3),
@@ -68,7 +67,7 @@ CREATE TABLE PONEYS (
 ) ENGINE=InnoDB DEFAULT CHARSET=UTF8MB4;
 
 
-CREATE TABLE RESERVER (
+CREATE TABLE reserver (
   jmahms datetime,
   id int,
   idc int,
@@ -78,7 +77,7 @@ CREATE TABLE RESERVER (
   PRIMARY KEY (jmahms, id, idpo)
 ) ENGINE=InnoDB DEFAULT CHARSET=UTF8MB4;
 
-CREATE TABLE ANCIEN_PERSONNE (
+CREATE TABLE ancien_personne (
   id int,
   nomp VARCHAR(42),
   prenomp VARCHAR(42),
@@ -94,20 +93,20 @@ CREATE TABLE ANCIEN_PERSONNE (
 ) ENGINE=InnoDB DEFAULT CHARSET=UTF8MB4;
 
 
-CREATE TABLE ANCIEN_MONITEUR (
+CREATE TABLE ancien_moniteur (
   id int,
   PRIMARY KEY (id)
 ) ENGINE=InnoDB DEFAULT CHARSET=UTF8MB4;
 
 
-CREATE TABLE ANCIEN_CLIENT (
+CREATE TABLE ancien_client (
   id int,
   cotisationA boolean,
   PRIMARY KEY (id)
 ) ENGINE=InnoDB DEFAULT CHARSET=UTF8MB4;  
 
 
-CREATE TABLE ANCIEN_COURS (
+CREATE TABLE ancien_cours (
   idc int,
   nomc VARCHAR(42),
   descc VARCHAR(300),
@@ -118,7 +117,7 @@ CREATE TABLE ANCIEN_COURS (
 ) ENGINE=InnoDB DEFAULT CHARSET=UTF8MB4;
 
 
-CREATE TABLE ANCIEN_PONEYS (
+CREATE TABLE ancien_poney (
   idpo int,
   nomp VARCHAR(42),
   poidssup decimal(3.3),
@@ -126,7 +125,7 @@ CREATE TABLE ANCIEN_PONEYS (
 ) ENGINE=InnoDB DEFAULT CHARSET=UTF8MB4;
 
 
-CREATE TABLE ANCIEN_RESERVER (
+CREATE TABLE ancien_reserver (
 
   jmahms datetime,
   id int,
@@ -139,13 +138,13 @@ CREATE TABLE ANCIEN_RESERVER (
 
 -- les contraintes
 
-ALTER TABLE MONITEUR ADD FOREIGN KEY (id) REFERENCES PERSONNE (id);
-ALTER TABLE CLIENT ADD FOREIGN KEY (id) REFERENCES PERSONNE (id);
-ALTER TABLE COURS ADD FOREIGN KEY (id) REFERENCES MONITEUR (id);
+ALTER TABLE moniteur ADD FOREIGN KEY (id) REFERENCES personne (id);
+ALTER TABLE client ADD FOREIGN KEY (id) REFERENCES personne (id);
+ALTER TABLE cours ADD FOREIGN KEY (id) REFERENCES moniteur (id);
 
 
-ALTER TABLE RESERVER ADD FOREIGN KEY (idpo) REFERENCES PONEYS (idpo);
-ALTER TABLE RESERVER ADD FOREIGN KEY (idc) REFERENCES COURS (idc);
+ALTER TABLE reserver ADD FOREIGN KEY (idpo) REFERENCES poney (idpo);
+ALTER TABLE reserver ADD FOREIGN KEY (idc) REFERENCES cours (idc);
 
 
 -- suppressions des triggers 
@@ -180,13 +179,13 @@ delimiter |
 
 -- trigger permettant de verifier que le client ait reserver un poney pouvant soutenir son poids (insert)
 
-create trigger verifPoids before insert on RESERVER for each row
+create trigger verifPoids before insert on reserver for each row
     begin 
         declare poidsup decimal(3.3);
         declare poidsPersonne decimal(3.3);
         declare msg VARCHAR(300);
-        select poids into poidsPersonne from PERSONNE where id = new.id;
-        select poidssup into poidsup from PONEYS where idpo = new.idpo;
+        select poids into poidsPersonne from personne where id = new.id;
+        select poidssup into poidsup from poney where idpo = new.idpo;
         if poidsup < poidsPersonne then
             set msg = concat(" Réservation impossible car le poids supporté par le poney d'id : ", new.idpo," est inférieur au poids de la personne d'id : ", new.id);
             signal SQLSTATE '45000' set MESSAGE_TEXT = msg;
@@ -196,13 +195,13 @@ create trigger verifPoids before insert on RESERVER for each row
 
 -- trigger permettant de verifier que le client ait reserver un poney pouvant soutenir son poids (update)
 
-create trigger verifPoidsUpdate before update on RESERVER for each row
+create trigger verifPoidsUpdate before update on reserver for each row
     begin 
         declare poidsup decimal(3.3);
         declare poidsPersonne decimal(3.3);
         declare msg VARCHAR(300);
-        select poids into poidsPersonne from PERSONNE where id = new.id;
-        select poidssup into poidsup from PONEYS where idpo = new.idpo;
+        select poids into poidsPersonne from personne where id = new.id;
+        select poidssup into poidsup from poney where idpo = new.idpo;
         if poidsup < poidsPersonne then
             set msg = concat(" Réservation impossible car le poids supporté par le poney d'id : ", new.idpo," est inférieur au poids de la personne d'id : ", new.id);
             signal SQLSTATE '45000' set MESSAGE_TEXT = msg;
@@ -212,13 +211,13 @@ create trigger verifPoidsUpdate before update on RESERVER for each row
 
 -- verifie que les horaires de la reservation du cours sont conformes au horaires du club (insert)
 
-create trigger verifHeureReservation before insert on RESERVER for each ROW
+create trigger verifHeureReservation before insert on reserver for each ROW
 begin
   declare heureNew int;
   declare msg VARCHAR(300);
   declare fini INT default false;
   declare lesReservations cursor for
-  select TIME(new.jmahms) as heureNew from RESERVER;
+  select TIME(new.jmahms) as heureNew from reserver;
   DECLARE CONTINUE HANDLER FOR NOT FOUND SET fini = TRUE;
 
   OPEN lesReservations;
@@ -238,13 +237,13 @@ end |
 
 -- verifie que les horaires de la reservation du cours sont conformes au horaires du club (update)
 
-create trigger verifHeureReservationUpdate before update on RESERVER for each ROW
+create trigger verifHeureReservationUpdate before update on reserver for each ROW
 begin
   declare heureNew int;
   declare msg VARCHAR(300);
   declare fini INT default false;
   declare lesReservations cursor for
-  select TIME(new.jmahms) as heureNew from RESERVER;
+  select TIME(new.jmahms) as heureNew from reserver;
   DECLARE CONTINUE HANDLER FOR NOT FOUND SET fini = TRUE;
 
   OPEN lesReservations;
@@ -264,13 +263,13 @@ end |
 
 -- trigger qui permet de verifier la duree du cours, qu'elle ne soit comprise entre 30min et 2h (insert)
 
-create trigger verifHeuresMaxCours before insert on RESERVER for each row
+create trigger verifHeuresMaxCours before insert on reserver for each row
 BEGIN
   declare msg VARCHAR(300);
   declare fini int DEFAULT false;
   declare dureeNew int;
   declare lesReservations cursor for
-  select TIME(new.duree) as dureeNew from RESERVER;
+  select TIME(new.duree) as dureeNew from reserver;
 
   DECLARE CONTINUE handler for not found set fini = TRUE;
 
@@ -292,13 +291,13 @@ end |
 
 -- trigger qui permet de verifier la duree du cours, qu'elle ne soit comprise entre 30min et 2h (update)
 
-create trigger verifHeuresMaxCoursUpdate before update on RESERVER for each row
+create trigger verifHeuresMaxCoursUpdate before update on reserver for each row
 BEGIN
   declare msg VARCHAR(300);
   declare fini int DEFAULT false;
   declare dureeNew int;
   declare lesReservations cursor for
-  select TIME(new.duree) as dureeNew from RESERVER;
+  select TIME(new.duree) as dureeNew from reserver;
 
   DECLARE CONTINUE handler for not found set fini = TRUE;
 
@@ -320,14 +319,14 @@ end |
 
 -- trigger permettant que si le cours est un cours collectif, le nombre de personne max est de 10 (insert)
 
-create trigger ajoutPersonneCollectif before insert on RESERVER for each row
+create trigger ajoutPersonneCollectif before insert on reserver for each row
 begin
   declare nbmax int default 10;
   declare nbPersonnes int;
   declare typeCours VARCHAR(42);
   declare mes VARCHAR(100);
-  select IFNULL(count(id),0) into nbPersonnes from RESERVER where idc = new.idc and jmahms = new.jmahms;
-  select typec into typeCours from COURS where idc = new.idc;
+  select IFNULL(count(id),0) into nbPersonnes from reserver where idc = new.idc and jmahms = new.jmahms;
+  select typec into typeCours from cours where idc = new.idc;
   if typeCours = "Collectif" then
     if nbPersonnes + 1 > nbmax then
       set mes = concat ("Inscription impossible à l'activité avec l'id : ", new.idc, " car elle est complète");
@@ -345,14 +344,14 @@ end |
 
 -- trigger permettant que si le cours est un cours collectif, le nombre de personne max est de 10 (update)
 
-create trigger ajoutPersonneCollectifUpdate before update on RESERVER for each row
+create trigger ajoutPersonneCollectifUpdate before update on reserver for each row
 begin
   declare nbmax int default 10;
   declare nbPersonnes int;
   declare typeCours VARCHAR(42);
   declare mes VARCHAR(100);
-  select IFNULL(count(id),0) into nbPersonnes from RESERVER where idc = new.idc and jmahms = new.jmahms;
-  select typec into typeCours from COURS where idc = new.idc;
+  select IFNULL(count(id),0) into nbPersonnes from reserver where idc = new.idc and jmahms = new.jmahms;
+  select typec into typeCours from cours where idc = new.idc;
   if typeCours = "Collectif" then
     if nbPersonnes + 1 > nbmax then
       set mes = concat ("Inscription impossible à l'activité avec l'id : ", new.idc, " car elle est complète");
@@ -370,7 +369,7 @@ end |
 
 -- permet de vérifier que le client n'a pas déja un cours au horaire de sa nouvelle réservation (insert)
 
-CREATE TRIGGER ajoutPersonneHoraire BEFORE INSERT ON RESERVER FOR EACH ROW
+CREATE TRIGGER ajoutPersonneHoraire BEFORE INSERT ON reserver FOR EACH ROW
 BEGIN
     DECLARE done INT DEFAULT FALSE;
     declare msg VARCHAR(300);
@@ -379,7 +378,7 @@ BEGIN
     declare debutNew time;
     declare dureeNew time;
     DECLARE lesReservations CURSOR FOR select TIME(jmahms) as debutAncien, TIME(duree) as dureeAncien, TIME(new.jmahms) as debutNew, TIME(new.duree) as dureeNew 
-    from RESERVER 
+    from reserver 
     where id = new.id and year(jmahms) = year(new.jmahms) and month(jmahms) = month(new.jmahms) and day(jmahms) = day(new.jmahms);
     DECLARE CONTINUE HANDLER FOR NOT FOUND SET done = TRUE;
 
@@ -399,7 +398,7 @@ END |
 
 
 
--- CREATE TRIGGER ajoutMoniteurHoraire BEFORE INSERT ON RESERVER FOR EACH ROW
+-- CREATE TRIGGER ajoutMoniteurHoraire BEFORE INSERT ON reserver FOR EACH ROW
 -- BEGIN
 --     DECLARE done INT DEFAULT FALSE;
 --     declare msg VARCHAR(300);
@@ -408,8 +407,8 @@ END |
 --     declare debutNew time;
 --     declare dureeNew time;
 --     DECLARE lesReservations CURSOR FOR select TIME(jmahms) as debutAncien, TIME(duree) as dureeAncien, TIME(new.jmahms) as debutNew, TIME(new.duree) as dureeNew 
---     from RESERVER inner join COURS
---     where COURS.idc = RESERVER.idc and year(jmahms) = year(new.jmahms) and month(jmahms) = month(new.jmahms) and day(jmahms) = day(new.jmahms);
+--     from reserver inner join cours
+--     where cours.idc = reserver.idc and year(jmahms) = year(new.jmahms) and month(jmahms) = month(new.jmahms) and day(jmahms) = day(new.jmahms);
 --     DECLARE CONTINUE HANDLER FOR NOT FOUND SET done = TRUE;
 
 --     OPEN lesReservations;
@@ -429,7 +428,7 @@ END |
 
 -- permet de vérifier que le client n'a pas déja un cours au horaire de sa nouvelle réservation (update)
 
-CREATE TRIGGER ajoutPersonneHoraireUpdate BEFORE update ON RESERVER FOR EACH ROW
+CREATE TRIGGER ajoutPersonneHoraireUpdate BEFORE update ON reserver FOR EACH ROW
 BEGIN
     DECLARE done INT DEFAULT FALSE;
     declare msg VARCHAR(300);
@@ -437,7 +436,7 @@ BEGIN
     declare dureeAncien time;
     declare debutNew time;
     declare dureeNew time;
-    DECLARE lesReservations CURSOR FOR select TIME(jmahms) as debutAncien, TIME(duree) as dureeAncien, TIME(new.jmahms) as debutNew, TIME(new.duree) as dureeNew from RESERVER where id = new.id and year(jmahms) = year(new.jmahms) and month(jmahms) = month(new.jmahms) and day(jmahms) = day(new.jmahms);
+    DECLARE lesReservations CURSOR FOR select TIME(jmahms) as debutAncien, TIME(duree) as dureeAncien, TIME(new.jmahms) as debutNew, TIME(new.duree) as dureeNew from reserver where id = new.id and year(jmahms) = year(new.jmahms) and month(jmahms) = month(new.jmahms) and day(jmahms) = day(new.jmahms);
     DECLARE CONTINUE HANDLER FOR NOT FOUND SET done = TRUE;
 
     OPEN lesReservations;
@@ -456,7 +455,7 @@ END |
 
 -- trigger qui vérifie lors d'une reservation que le repos du poney est respecté (insert)
 
-create trigger verifHeureRepos before insert on RESERVER for each row
+create trigger verifHeureRepos before insert on reserver for each row
 begin
   declare msg VARCHAR(300);
   declare debutAncien time;
@@ -466,7 +465,7 @@ begin
   declare fini int DEFAULT FALSE;
   declare heureRepos cursor for 
   select TIME(duree) as dureeAncien, TIME(new.jmahms) as debutNew, TIME(jmahms) as debutAncien, TIME(new.duree) as dureeNew
-  from RESERVER 
+  from reserver 
   where idpo = new.idpo and year(jmahms) = year(new.jmahms) 
   and month(jmahms) = month(new.jmahms) and day(jmahms) = day(new.jmahms);
 
@@ -502,7 +501,7 @@ end |
 
 -- trigger qui vérifie lors d'une reservation que le repos du poney est respecté (update)
 
-create trigger verifHeureReposUpdate before update on RESERVER for each row
+create trigger verifHeureReposUpdate before update on reserver for each row
 begin
   declare msg VARCHAR(300);
   declare debutAncien time;
@@ -512,7 +511,7 @@ begin
   declare fini int DEFAULT FALSE;
   declare heureRepos cursor for 
   select TIME(duree) as dureeAncien, TIME(new.jmahms) as debutNew, TIME(jmahms) as debutAncien, TIME(new.duree) as dureeNew
-  from RESERVER 
+  from reserver 
   where idpo = new.idpo and year(jmahms) = year(new.jmahms)
   and month(jmahms) = month(new.jmahms) and day(jmahms) = day(new.jmahms);
 
@@ -541,7 +540,7 @@ begin
 end |
 
 
--- create trigger verifUniquePoneyParCours before insert on RESERVER for each row
+-- create trigger verifUniquePoneyParCours before insert on reserver for each row
 --   begin 
 --     declare msg VARCHAR(300);
 
@@ -550,7 +549,7 @@ end |
 
 -- trigger permettant de vérifier que lors d'une réservation, le client a bien payé sa cotisation annuel et son cours (insert) 
 
-create trigger verifPayement before insert on RESERVER for each row
+create trigger verifPayement before insert on reserver for each row
 begin
   declare msg VARCHAR(300);
   declare cotistationAnnuelle boolean;
@@ -558,7 +557,7 @@ begin
   declare fini int DEFAULT FALSE;
   declare lesReservations cursor for 
   select cotisationA as cotistationAnnuelle, new.a_paye as payementCours
-  from CLIENT
+  from client
   where id = new.id;
 
   DECLARE CONTINUE HANDLER FOR NOT FOUND SET fini = TRUE;
@@ -588,7 +587,7 @@ end |
 
 -- trigger permettant de vérifier que lors de la modification d'une réservation, le client a bien payé sa cotisation annuel et son cours (update)
 
-create trigger verifPayementUpdate before update on RESERVER for each row
+create trigger verifPayementUpdate before update on reserver for each row
 begin
   declare msg VARCHAR(300);
   declare cotistationAnnuelle boolean;
@@ -596,7 +595,7 @@ begin
   declare fini int DEFAULT FALSE;
   declare lesReservations cursor for 
   select cotisationA as cotistationAnnuelle, new.a_paye as payementCours
-  from CLIENT
+  from client
   where id = new.id;
 
   DECLARE CONTINUE HANDLER FOR NOT FOUND SET fini = TRUE;
@@ -626,12 +625,12 @@ end |
 
 -- trigger verifiant que la personne qui souhaite réserver un cours, soit bien inscrite en tant que cliente (insert)
 
-create trigger verifPersonneReserveDansClient before insert on RESERVER for each row
+create trigger verifPersonneReserveDansClient before insert on reserver for each row
   begin 
     declare msg VARCHAR(300);
     declare dansClient int;
     declare pasDansClient int default 0;
-    select ifnull(count(new.id), 0) as dansClient into dansClient from CLIENT where new.id = id;
+    select ifnull(count(new.id), 0) as dansClient into dansClient from client where new.id = id;
 
     if pasDansClient = dansClient then
       set msg = concat ("Inscription impossible à l'activité car la personne : ", new.id, " n'est pas inscrite en tant que cliente");
@@ -642,12 +641,12 @@ create trigger verifPersonneReserveDansClient before insert on RESERVER for each
 
 -- trigger verifiant que la personne qui souhaite réserver un cours, soit bien inscrite en tant que cliente (update)
 
-create trigger verifPersonneReserveDansClientUpdate before update on RESERVER for each row
+create trigger verifPersonneReserveDansClientUpdate before update on reserver for each row
   begin 
     declare msg VARCHAR(300);
     declare dansClient int;
     declare pasDansClient int default 0;
-    select ifnull(count(new.id), 0) as dansClient into dansClient from CLIENT where new.id = id;
+    select ifnull(count(new.id), 0) as dansClient into dansClient from client where new.id = id;
 
     if pasDansClient = dansClient then
       set msg = concat ("Inscription impossible à l'activité car la personne : ", new.id, " n'est pas inscrite en tant que cliente");
@@ -659,40 +658,40 @@ create trigger verifPersonneReserveDansClientUpdate before update on RESERVER fo
 -- trigger qui ajoute dans les table de conservation (ancienne table), lorsqu'il y a une suppression de donnée
 
 
-create trigger ajouteTableAncienPersonne before delete on PERSONNE for each row
+create trigger ajouteTableAncienPersonne before delete on personne for each row
   begin
-    INSERT INTO ANCIEN_PERSONNE(id, nomp, prenomp, ddn, poids, adressemail, adresse, code_postal, ville, numerotel, mdp)
+    INSERT INTO ancien_personne(id, nomp, prenomp, ddn, poids, adressemail, adresse, code_postal, ville, numerotel, mdp)
     VALUES (old.id, old.nomp, old.prenomp, old.ddn, old.poids, old.adressemail, old.adresse, old.code_postal, old.ville, old.numerotel, old.mdp);
   END |
 
 
-create trigger ajouteTableAncienClient before delete on CLIENT for each row
+create trigger ajouteTableAncienClient before delete on client for each row
   begin
-      INSERT INTO ANCIEN_CLIENT(id, cotisationA) VALUES(old.id, old.cotisationA);
+      INSERT INTO ancien_client(id, cotisationA) VALUES(old.id, old.cotisationA);
   END |
 
 
-create trigger ajouteTableAncienMoniteur before delete on MONITEUR for each row
+create trigger ajouteTableAncienMoniteur before delete on moniteur for each row
   begin
-      INSERT INTO ANCIEN_MONITEUR(id) VALUES(old.id);
+      INSERT INTO ancien_moniteur(id) VALUES(old.id);
   END |
 
 
-create trigger ajouteTableAncienCours before delete on COURS for each row
+create trigger ajouteTableAncienCours before delete on cours for each row
   begin
-      INSERT INTO ANCIEN_COURS(idc, nomc, descc, typec, prix) VALUES(old.idc, old.nomc, odl.descc, old.typec, old.prix);
+      INSERT INTO ancien_cours(idc, nomc, descc, typec, prix) VALUES(old.idc, old.nomc, odl.descc, old.typec, old.prix);
   END |
 
 
-create trigger ajouteTableAncienPoney before delete on PONEYS for each row
+create trigger ajouteTableAncienPoney before delete on poney for each row
   begin
-      INSERT INTO ANCIEN_PONEYS(idpo, nomp, poidssup) VALUES(old.idpo, old.nomp, old.poidssup);
+      INSERT INTO ancien_poney(idpo, nomp, poidssup) VALUES(old.idpo, old.nomp, old.poidssup);
   END |
 
 
-create trigger ajouteTableAncienReserver before delete on RESERVER for each row
+create trigger ajouteTableAncienReserver before delete on reserver for each row
   begin
-      INSERT INTO ANCIEN_RESERVER(jmahms, id, idc, idpo, duree, a_paye) VALUES(old.jmahms, old.id, old.idc, old.idpo, old.duree, old.a_paye);
+      INSERT INTO ancien_reserver(jmahms, id, idc, idpo, duree, a_paye) VALUES(old.jmahms, old.id, old.idc, old.idpo, old.duree, old.a_paye);
   END |
 
 delimiter ;

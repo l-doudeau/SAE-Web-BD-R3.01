@@ -51,9 +51,9 @@ def ouvrir_connexion(user,passwd,host,database):
 init_db()
 
 def get_personne(id):
-    return Personne.query.get(int(id))
+    return Client.query.get(int(id))
 
-print(get_personne(1).personne)
+print(get_personne(2).personne)
 def get_personne_email(session,email):
     return session.query(Personne).filter(Personne.adressemail == email).first()
 def get_info_all_moniteur(session):
