@@ -26,6 +26,9 @@ def logout():
     logout_user()
     return redirect(url_for("index"))
 
+@app.route("/TEST")
+def test():
+    return render_template("accueil.html")
 
 @app.route('/login',methods=["POST","GET"])
 def login():

@@ -654,6 +654,17 @@ create trigger verifPersonneReserveDansClientUpdate before update on reserver fo
     end if; 
   end |
 
+create trigger verifCoursPasCommence before update on reserver for each row
+  begin
+    declare msg VARCHAR(300);
+    declare dateCours datetime;
+    select jmahms into dateCours from reserver where jmahms = new.jmahms and idpo = new.idpo and id = new.id;
+
+    if dateCours > now() then
+      set msg = concat ("Inscription impossible de la réservation car la date est dépasée");
+      signal SQLSTATE '45000' set MESSAGE_TEXT = msg;
+    end if;
+  end |
 
 -- trigger qui ajoute dans les table de conservation (ancienne table), lorsqu'il y a une suppression de donnée
 
