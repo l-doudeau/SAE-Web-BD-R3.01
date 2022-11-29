@@ -654,14 +654,25 @@ create trigger verifPersonneReserveDansClientUpdate before update on reserver fo
     end if; 
   end |
 
-create trigger verifCoursPasCommence before update on reserver for each row
+-- trigger qui vérifie lors d'une réservation que la date du cours n'est pas dépasée (insert)
+delimiter |
+create trigger verifCoursPasCommence before insert on reserver for each row
   begin
     declare msg VARCHAR(300);
-    declare dateCours datetime;
-    select jmahms into dateCours from reserver where jmahms = new.jmahms and idpo = new.idpo and id = new.id;
+    if new.jmahms < now() then
+      set msg = concat ("Inscription impossible de la réservation car la date est dépasée", new.jmahms);
+      signal SQLSTATE '45000' set MESSAGE_TEXT = msg;
+    end if;
+  end |
+delimiter ;
 
-    if dateCours > now() then
-      set msg = concat ("Inscription impossible de la réservation car la date est dépasée");
+-- trigger qui vérifie lors d'une réservation que la date du cours n'est pas dépasée (update)
+
+create trigger verifCoursPasCommenceUpdate before update on reserver for each row
+  begin
+    declare msg VARCHAR(300);
+    if new.jmahms < now() then
+      set msg = concat ("Inscription impossible de la réservation car la date est dépasée", new.jmahms);
       signal SQLSTATE '45000' set MESSAGE_TEXT = msg;
     end if;
   end |
