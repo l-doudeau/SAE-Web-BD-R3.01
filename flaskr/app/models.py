@@ -4,7 +4,7 @@ from .app import db
 from flask_login import UserMixin
 
 
-class Personne(db.Model,UserMixin):
+class Personne(UserMixin,db.Model):
     __tablename__ = 'personne'
     id = db.Column(db.Integer, primary_key = True)
     nomp = db.Column(db.String)
