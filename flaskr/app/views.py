@@ -1,4 +1,4 @@
-from .app import app, login_manager
+from .app import app,login_manager
 from .models import * 
 from .ConnexionMySQL import *
 from flask import render_template
