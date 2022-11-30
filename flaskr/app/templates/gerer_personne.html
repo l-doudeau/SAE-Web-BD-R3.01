@@ -26,6 +26,7 @@
                         <th>Date de naissance</th>
                         <th>Adresse Email</th>
                         <th>Numero de téléphone</th>
+                        <th>Role</th>
                     </tr>
                 </thead>
                 <tbody></tbody>
@@ -199,6 +200,7 @@
                 },
                 {data: 'adressemail',orderable:false,className: "dt-center"},
                 {data: 'numerotel',orderable:false,className: "dt-center"},
+                {data: 'est',orderable:false,className: "dt-center"},
         ],
             info:true,
             scroller:true,
@@ -239,8 +241,8 @@
             var codepostal = $("#CodePostalPersonne").val()
             var ville = $("#VillePersonne").val()
             var tel = $("#TelPersonne").val()
-            var est_client = $("#EstClient").val() == "Oui"?true:false;
-            var est_moniteur = $("#EstMoniteur").val() == "Oui"?true:false;
+            var est_client = $("#EstClient").val() == "1"?true:false;
+            var est_moniteur = $("#EstMoniteur").val() == "1"?true:false;
             prenom == ""?$("#PrenomPersonne").css("border","1px solid red"):$("#PrenomPersonne").css("border","");
             nom == ""?$("#NomPersonne").css("border","1px solid red"):$("#NomPersonne").css("border","");
             var datepicker = $("#DataPersonne").data("kendoDatePicker");

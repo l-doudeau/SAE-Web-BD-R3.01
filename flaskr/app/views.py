@@ -36,10 +36,12 @@ def login():
         try:
             email = request.form["email"]
             password = request.form["password"]
-            user = get_personne_email( email)
+            user = get_personne_email(email)
+            print(user)
             if user:
                 if user.mdp == password:
                     login_user(user)
+                    print(user)
                     if(request.args.get("next")):
                         print(request.args.get("next"))
                         return redirect(request.args.get("next"))
@@ -59,11 +61,29 @@ def login():
 def Clients():
     return render_template('gerer_client.html')
 
+@app.route('/Moniteurs')
+@login_required
+def Moniteurs():
+    print(login_manager.login_message + "\n")
+    return render_template('gerer_moniteur.html')
+
+@app.route('/Cours')
+@login_required
+def Cours():
+    return render_template('gerer_cours.html')
+
 @app.route('/Poneys')
 @login_required
 def Poneys():
     print(login_manager.login_message + "\n")
     return render_template('gerer_poneys.html')
+
+@app.route('/Personnes')
+@login_required
+def Personnes():
+    return render_template('gerer_personne.html')
+
+
 @app.route('/Reservations')
 @login_required
 def Reservations():
@@ -72,17 +92,17 @@ def Reservations():
 @app.route('/api/dataclients')
 def data_client():
     data = {"data":[]}
-    lignes = get_info_all_clients()
-    for ligne in lignes:
+    clients = get_info_all_clients()
+    for client in clients:
 
         data["data"].append({
-            "idp": ligne[0],
-            "nomp":ligne[1],
-            "prenomp":ligne[2],
-            "ddn":ligne[3],
-            "adressemail":ligne[4],
-            "numerotel":ligne[5],
-            "cotisation":ligne[6]
+            "idp": client.id,
+            "nomp":client.personne.nomp,
+            "prenomp":client.personne.prenomp,
+            "ddn":client.personne.ddn,
+            "adressemail":client.personne.adressemail,
+            "numerotel":client.personne.numerotel,
+            "cotisation":client.cotisationa
         })
     return data
 
@@ -113,6 +133,26 @@ def data_cours():
         })
     return data
 
+@app.route('/api/datamoniteurs')
+def data_moniteurs():
+    """
+    Il prend une liste de tuples et renvoie un dictionnaire avec une liste de dictionnaires
+    :return: Un dictionnaire avec une clé "data" et une valeur d'une liste de dictionnaires.
+    """
+    data = {"data":[]}
+    lignes = get_info_all_moniteur()
+    for ligne in lignes:
+        data["data"].append({
+            "idp": ligne[0],
+            "nomp":ligne[1],
+            "prenomp":ligne[2],
+            "ddn":ligne[3],
+            "adressemail":ligne[4],
+            "numerotel":ligne[5],
+        })
+    return data
+
+
     
 @app.route('/api/datareservation',methods=["POST","GET"])
 def data_reservations():
@@ -132,10 +172,43 @@ def data_reservations():
         })
     return data
 
+@app.route('/api/datapersonnes')
+def data_personne():
+    """
+    Il prend une liste de tuples et renvoie un dictionnaire avec une liste de dictionnaires
+    :return: Un dictionnaire avec une clé "data" et une valeur d'une liste de dictionnaires.
+    """
+    data = {"data":[]}
+    personnes = get_info_all_personnes()
+    for personne in personnes:
+        if get_moniteur(personne.id) is not None : 
+            role = "Moniteur" 
+            if get_client(personne.id) is not None:
+                role  +=  " Client"
+        elif get_client(personne.id) is not None:
+            role = "Client"
+        else :
+            role = ""
+
+        data["data"].append({
+            "idp": personne.id,
+            "nomp":personne.nomp,
+            "prenomp":personne.prenomp,
+            "ddn":personne.ddn,
+            "adressemail":personne.adressemail,
+            "numerotel":personne.numerotel,
+            "est": role
+        })
+    return data
+
 
 
 @app.route('/Client/<id>',methods=['POST',"GET"])
 def Client(id):
+    return render_template("index.html",id=id)#TODO
+
+@app.route('/Personne/<id>',methods=['POST',"GET"])
+def Personne(id):
     return render_template("index.html",id=id)#TODO
 
 @app.route('/Poney/<id>',methods=['POST',"GET"])
@@ -143,6 +216,10 @@ def Poney(id):
     return render_template("index.html",id=id)#TODO
 @app.route('/Reservation/<jmahms><id><idpo>',methods=['POST',"GET"])
 def Reservation(jmahms,id,idpo):
+    return render_template("index.html",id=id)#TODO
+
+@app.route('/Moniteur/<id>',methods=['POST',"GET"])
+def Moniteur(id):
     return render_template("index.html",id=id)#TODO
 
 
@@ -158,7 +235,8 @@ def AddClient():
     ville = request.form["ville"]
     numerotel = request.form["tel"]
     cotise = request.form["cotise"]
-    ajout_client(prenom,nom,ddn,poids,adresseemail,adresse,code_postal,ville,numerotel,cotise)
+    id = ajoute_personne(nom,prenom,ddn,poids,adresseemail,adresse,code_postal,ville,numerotel)
+    ajout_client(id,cotise)
     return ""
 
 @app.route('/AddPoney',methods=['POST'])
@@ -193,4 +271,79 @@ def DeleteClient():
 @app.route('/DeleteReservation',methods=['POST'])
 def DeleteReservation():
     deletereservation(request.form["jmahms"],request.form["id"],request.form["idpo"])
+    return ""
+
+@app.route('/AddMoniteur',methods=['POST'])
+def AddMoniteur():
+    """
+    Il prend les données de formulaire de la page html et les insère dans la base de données
+    :return: Rien.
+    """
+    prenom = request.form["prenom"]
+    nom = request.form["nom"]
+    ddn = request.form["ddn"]
+    poids = int(request.form["poids"])
+    adresseemail = request.form["adresseemail"]
+    adresse = request.form["adresse"]
+    code_postal = int(request.form["codepostal"])
+    ville = request.form["ville"]
+    numerotel = request.form["tel"]
+
+    id = ajoute_personne(prenom, nom, ddn, poids, adresseemail, adresse, code_postal, ville, numerotel)
+    ajoute_moniteur(id)
+    return ""
+
+@app.route('/AddCours',methods=['POST'])
+def AddCours():
+    """
+    Il prend les données du formulaire de la requête, et les passe à la fonction ajouteCours
+    :return: Rien.
+    """
+    nom = request.form["nom"]
+    descc = request.form["descc"]
+    prix = request.form["prix"]
+    type = request.form["type"]
+    ajouteCours(nom, descc, prix, type)
+    return ""
+
+@app.route('/AddPersonne',methods=['POST'])
+def AddPersonne():
+    """
+    Il prend les données du formulaire de la requête, et les passe à la fonction ajoutePersonne
+    :return: Rien.
+    """
+    nomp = request.form["nomp"]
+    prenomp = request.form["prenomp"]
+    ddn = request.form["ddn"]
+    poids = request.form["poids"]
+    adressemail = request.form["adressemail"]
+    adresse = request.form["adresse"]
+    code_postal = request.form["code_postal"]
+    ville = request.form["ville"]
+    numerotel = request.form["numerotel"]
+    est_client = request.form["client"]
+    est_moniteur = request.form["moniteur"]
+    
+    id = ajoute_personne( nomp, prenomp, ddn, poids, adressemail, adresse, code_postal, ville, numerotel)
+    if est_client == "true" : 
+        ajout_client(    id)
+    if est_moniteur == "true" :
+        ajoute_moniteur( id)   
+         
+    return ""
+
+@app.route('/DeleteMoniteur', methods=['POST'])
+def DeleteMoniteur():
+    id = int(request.form["id"])
+    delete_moniteur(id)
+    return ""   
+
+@app.route('/deleteCours',methods=['POST'])
+def deleteCours():
+    deletecours(request.form["id"])
+    return ""
+
+@app.route('/deletePersonne',methods=['POST'])
+def deletePersonne():
+    delete_personne(request.form["id"])
     return ""

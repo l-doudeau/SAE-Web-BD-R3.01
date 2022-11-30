@@ -12,8 +12,8 @@ from sqlalchemy import create_engine
 from sqlalchemy.ext.declarative import declarative_base
 
 
-engine = create_engine('mysql+mysqlconnector://faucher:Thierry45.@servinfo-mariadb/DBfaucher', convert_unicode=True)
-#engine = create_engine('mysql+mysqlconnector://root:root@localhost/GRAND_GALOP', convert_unicode=True)
+#engine = create_engine('mysql+mysqlconnector://faucher:Thierry45.@servinfo-mariadb/DBfaucher', convert_unicode=True)
+engine = create_engine('mysql+mysqlconnector://root:root@localhost/GRAND_GALOP', convert_unicode=True)
 #engine = create_engine('mysql+mysqlconnector://doudeau:doudeau@localhost/GRAND_GALOP', convert_unicode=True)
 
 db_session = scoped_session(sessionmaker(autocommit=False,
@@ -58,7 +58,13 @@ init_db()
 def get_personne(id):
     return Personne.query.get(int(id))
 
+def get_client(id):
+    return Client.query.get(id)
+
+def get_moniteur(id):
+    return Moniteur.query.get(id)
 def get_personne_email(email):
+    print(email)
     return Personne.query.filter(Personne.adressemail == email).first()
 
 # des que l'on fait une jointure avec d'autre tables, on a soit pas les infos soit avec le add_columns des tuples et on peut plus faire ligne.id par exemple
@@ -172,6 +178,12 @@ def deletecours(idc):
     
 def delete_personne(id) : 
     personne = Personne.query.get(id)
+    client = Client.query.filter(Client.id == id).first()
+    reservations = Reserver.query.filter(Reserver.id == id)
+    for reservation in reservations:
+        db.session.delete(reservation)
+        db.session.commit()
+    db.session.delete(client)
     db.session.delete(personne)
     try : 
         db.session.commit()
@@ -185,9 +197,9 @@ def get_max_id_personne():
     return db.session.query(func.max(Personne.id)).first()[0]
 
 def get_max_id_cours():
-    return db.session.query(func.max(Cours.id)).first()[0]
+    return db.session.query(func.max(Cours.idc)).first()[0]
 def get_max_id_poney():
-    return db.session.query(func.max(Poney.id)).first()[0]
+    return db.session.query(func.max(Poney.idpo)).first()[0]
     
 def ajout_client(idp, cotise):
     """
@@ -221,6 +233,7 @@ def ajout_poney(nom,poids):
     """
     idpo = get_max_id_poney() + 1
     poney = Poney(idpo,nom,poids)
+    print(poney)
     db.session.add(poney)
     try:
         db.session.commit()
@@ -309,7 +322,7 @@ def delete_moniteur(id):
     
     
 def ajoute_personne(nomp, prenomp, ddn, poids, adressemail, adresse, code_postal, ville, numerotel) : 
-    idp = get_max_id_personne().id +1
+    idp = get_max_id_personne() +1
     print(idp)
     mdp = token_urlsafe(6)
     liste = ddn.split("/")
