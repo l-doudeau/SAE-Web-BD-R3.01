@@ -182,11 +182,12 @@ def delete_personne(id) :
     
 
 def get_max_id_personne():
-    return db.session.query(Personne,func.max(Personne.id)).first()[0]
+    return db.session.query(func.max(Personne.id)).first()[0]
+
 def get_max_id_cours():
-    return  db.session.query(Cours,func.max(Cours.idc)).first()[0]
+    return db.session.query(func.max(Cours.id)).first()[0]
 def get_max_id_poney():
-    return  db.session.query(Poney,func.max(Poney.idpo)).first()[0]
+    return db.session.query(func.max(Poney.id)).first()[0]
     
 def ajout_client(idp, cotise):
     """
