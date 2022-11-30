@@ -9,14 +9,14 @@ from flask_sqlalchemy import SQLAlchemy
 
 @login_manager.user_loader
 def load_user(user_id):
-    return get_personne(session,user_id)
+    return get_personne(user_id)
 
 @app.route("/")
 @login_required
 def index():
-    if(get_moniteur(session,current_user.id)):
+    if(get_moniteur(current_user.id)):
         return render_template("index.html",role="Moniteur")
-    elif(get_client(session,current_user.id)):
+    elif(get_client(current_user.id)):
         return render_template("index.html",role="Client")
     else:
         return render_template("index.html",role="")
@@ -36,7 +36,7 @@ def login():
         try:
             email = request.form["email"]
             password = request.form["password"]
-            user = get_personne_email(session, email)
+            user = get_personne_email( email)
             if user:
                 if user.mdp == password:
                     login_user(user)
@@ -72,7 +72,7 @@ def Reservations():
 @app.route('/api/dataclients')
 def data_client():
     data = {"data":[]}
-    lignes = get_info_all_clients(session)
+    lignes = get_info_all_clients()
     for ligne in lignes:
 
         data["data"].append({
@@ -89,7 +89,7 @@ def data_client():
 @app.route('/api/dataponeys')
 def data_poneys():
     data = {"data":[]}
-    lignes = get_info_all_poney(session)
+    lignes = get_info_all_poney()
     for ligne in lignes:
         data["data"].append({
             "idpo": ligne.idpo,
@@ -102,7 +102,7 @@ def data_poneys():
 @app.route('/api/datacours')
 def data_cours():
     data = {"data":[]}
-    lignes = get_info_all_cours(session)
+    lignes = get_info_all_cours()
     for ligne in lignes:
         data["data"].append({
             "idc": ligne.idc,
@@ -117,7 +117,7 @@ def data_cours():
 @app.route('/api/datareservation',methods=["POST","GET"])
 def data_reservations():
     data = {"data":[]}
-    lignes = get_info_all_reservations(session)
+    lignes = get_info_all_reservations()
     for ligne in lignes:
         data["data"].append({
             "jmahms": ligne.jmahms,
@@ -158,14 +158,14 @@ def AddClient():
     ville = request.form["ville"]
     numerotel = request.form["tel"]
     cotise = request.form["cotise"]
-    ajout_client(session,prenom,nom,ddn,poids,adresseemail,adresse,code_postal,ville,numerotel,cotise)
+    ajout_client(prenom,nom,ddn,poids,adresseemail,adresse,code_postal,ville,numerotel,cotise)
     return ""
 
 @app.route('/AddPoney',methods=['POST'])
 def AddPoney():
     nom = request.form["nom"]
     poids = int(request.form["poids"])
-    ajout_poney(session,nom,poids)
+    ajout_poney(nom,poids)
     return ""
 @app.route('/AddReservation',methods=['POST'])
 def AddReservation():
@@ -175,22 +175,22 @@ def AddReservation():
     idc = request.form["idc"]
     duree = request.form["duree"]
     a_paye = request.form["a_paye"]
-    ajout_reservation(session,jmahms,id,idpo,idc,duree,a_paye)
+    ajout_reservation(jmahms,id,idpo,idc,duree,a_paye)
     return ""
 
 @app.route('/DeletePoney',methods=['POST'])
 def DeletePoney():
-    deletePoney(session,int(request.form["id"]))
+    deletePoney(int(request.form["id"]))
     return ""
 @app.route('/DeleteClient',methods=['POST'])
 def DeleteClient():
     new_freq = request.get_data()
     id_brute = new_freq.decode("utf-8")
     id = id_brute.split("=")[1]
-    deleteclient(session,id)
+    deleteclient(id)
     return ""
 
 @app.route('/DeleteReservation',methods=['POST'])
 def DeleteReservation():
-    deletereservation(session,request.form["jmahms"],request.form["id"],request.form["idpo"])
+    deletereservation(request.form["jmahms"],request.form["id"],request.form["idpo"])
     return ""
