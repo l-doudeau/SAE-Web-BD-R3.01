@@ -69,7 +69,7 @@ def Moniteurs():
 
 @app.route('/Cours')
 @login_required
-def Cours():
+def cours():
     return render_template('gerer_cours.html')
 
 @app.route('/Poneys')
@@ -130,6 +130,7 @@ def data_cours():
             "descc":ligne.descc,
             "typec": ligne.typec,
             "prix": ligne.prix,
+            "id" : ligne.id
         })
     return data
 
@@ -143,15 +144,14 @@ def data_moniteurs():
     lignes = get_info_all_moniteur()
     for ligne in lignes:
         data["data"].append({
-            "idp": ligne[0],
-            "nomp":ligne[1],
-            "prenomp":ligne[2],
-            "ddn":ligne[3],
-            "adressemail":ligne[4],
-            "numerotel":ligne[5],
+            "idp": ligne.id,
+            "nomp":ligne.personne.nomp,
+            "prenomp":ligne.personne.prenomp,
+            "ddn":ligne.personne.ddn,
+            "adressemail":ligne.personne.adressemail,
+            "numerotel":ligne.personne.numerotel,
         })
     return data
-
 
     
 @app.route('/api/datareservation',methods=["POST","GET"])
@@ -163,10 +163,10 @@ def data_reservations():
             "jmahms": ligne.jmahms,
             "id":ligne.id,
             "idpo":ligne.idpo,
-            "nomp":ligne.nomp,
-            "prenomp":ligne.prenomp,
-            "nomc": ligne.nomc,
-            "nompo": ligne.nomp,
+            "nomp":ligne.personne.nomp,
+            "prenomp":ligne.personne.prenomp,
+            "nomc": ligne.cours.nomc,
+            "nompo": ligne.poney.nomp,
             "duree": str(ligne.duree),
             "a_paye": ligne.a_paye
         })
@@ -247,7 +247,7 @@ def AddPoney():
     return ""
 @app.route('/AddReservation',methods=['POST'])
 def AddReservation():
-    jmahms = request.form["jmahms"]
+    jmahms = request.form["datepicker"]
     id = request.form["id"]
     idpo = request.form["idpo"]
     idc = request.form["idc"]
@@ -281,7 +281,7 @@ def AddMoniteur():
     """
     prenom = request.form["prenom"]
     nom = request.form["nom"]
-    ddn = request.form["ddn"]
+    ddn = request.form["date"]
     poids = int(request.form["poids"])
     adresseemail = request.form["adresseemail"]
     adresse = request.form["adresse"]
@@ -301,9 +301,14 @@ def AddCours():
     """
     nom = request.form["nom"]
     descc = request.form["descc"]
-    prix = request.form["prix"]
     type = request.form["type"]
-    ajouteCours(nom, descc, prix, type)
+    prix = request.form["prix"]
+    id = request.form["id"]
+    if type == "1" : 
+        type = "Individuel"
+    elif type == "2":
+        type = "Collectif"
+    ajouteCours(nom, descc, type, prix, id)
     return ""
 
 @app.route('/AddPersonne',methods=['POST'])
@@ -312,23 +317,23 @@ def AddPersonne():
     Il prend les données du formulaire de la requête, et les passe à la fonction ajoutePersonne
     :return: Rien.
     """
-    nomp = request.form["nomp"]
-    prenomp = request.form["prenomp"]
-    ddn = request.form["ddn"]
+    nomp = request.form["nom"]
+    prenomp = request.form["prenom"]
+    ddn = request.form["datepicker"]
     poids = request.form["poids"]
-    adressemail = request.form["adressemail"]
+    adressemail = request.form["adresseemail"]
     adresse = request.form["adresse"]
-    code_postal = request.form["code_postal"]
+    code_postal = request.form["codepostal"]
     ville = request.form["ville"]
-    numerotel = request.form["numerotel"]
-    est_client = request.form["client"]
-    est_moniteur = request.form["moniteur"]
+    numerotel = request.form["tel"]
+    est_client = request.form["est_client"]
+    est_moniteur = request.form["est_moniteur"]
     
     id = ajoute_personne( nomp, prenomp, ddn, poids, adressemail, adresse, code_postal, ville, numerotel)
     if est_client == "true" : 
-        ajout_client(    id)
+        ajout_client(id, False)
     if est_moniteur == "true" :
-        ajoute_moniteur( id)   
+        ajoute_moniteur(id)   
          
     return ""
 

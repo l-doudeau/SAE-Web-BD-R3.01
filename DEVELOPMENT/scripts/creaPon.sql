@@ -1,6 +1,6 @@
--- DROP DATABASE IF EXISTS GRAND_GALOP;
---CREATE DATABASE IF NOT EXISTS GRAND_GALOP DEFAULT CHARACTER SET utf8 COLLATE utf8_general_ci;
---USE GRAND_GALOP;
+DROP DATABASE IF EXISTS GRAND_GALOP;
+CREATE DATABASE IF NOT EXISTS GRAND_GALOP DEFAULT CHARACTER SET utf8 COLLATE utf8_general_ci;
+USE GRAND_GALOP;
 
 -- supression des tables avant des les créées
 drop table if exists reserver;
@@ -655,7 +655,7 @@ create trigger verifPersonneReserveDansClientUpdate before update on reserver fo
   end |
 
 -- trigger qui vérifie lors d'une réservation que la date du cours n'est pas dépasée (insert)
-delimiter |
+
 create trigger verifCoursPasCommence before insert on reserver for each row
   begin
     declare msg VARCHAR(300);
@@ -664,7 +664,7 @@ create trigger verifCoursPasCommence before insert on reserver for each row
       signal SQLSTATE '45000' set MESSAGE_TEXT = msg;
     end if;
   end |
-delimiter ;
+
 
 -- trigger qui vérifie lors d'une réservation que la date du cours n'est pas dépasée (update)
 
@@ -701,7 +701,7 @@ create trigger ajouteTableAncienMoniteur before delete on moniteur for each row
 
 create trigger ajouteTableAncienCours before delete on cours for each row
   begin
-      INSERT INTO ancien_cours(idc, nomc, descc, typec, prix) VALUES(old.idc, old.nomc, odl.descc, old.typec, old.prix);
+      INSERT INTO ancien_cours(idc, nomc, descc, typec, prix) VALUES(old.idc, old.nomc, old.descc, old.typec, old.prix);
   END |
 
 

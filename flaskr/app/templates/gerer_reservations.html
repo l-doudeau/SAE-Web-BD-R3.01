@@ -151,8 +151,10 @@
                     let m = new Date(data);
                     var date = moment.utc(m).format('DD/MM/YYYY HH:mm:ss');
                     return date
-                }},
-                {data: 'nomp',orderable:false,className: "dt-center",id : {data:"id"}},
+                }
+            },
+                {data: 'nomp',orderable:false,className: "dt-center",id : {data:"id"}
+            },
                 {data: 'prenomp',orderable:false,className: "dt-center"},
                 {data: 'nomc',orderable:false,className: "dt-center"},
                 {data: 'nompo',orderable:false,className: "dt-center"},
@@ -199,7 +201,6 @@
   
         
         $("#addReservation").on("click",function(){
-            var datepicker = $("#DateReservation").data("kendoDatePicker");
             var personne = $("#PersonneReservation").val()
             var cours = $("#CoursReservation").val()
             var poney = $("#PoneyReservation").val()
@@ -208,6 +209,7 @@
             
             personne == ""?$("#PersonneReservation").css("border","1px solid red"):$("#PersonneReservation").css("border","");
             cours == ""?$("#CoursReservation").css("border","1px solid red"):$("#CoursReservation").css("border","");
+            var datepicker = $("#DateReservation").data("kendoDatePicker");
             datepicker._value == null?$('#DateReservation').css("border","1px solid red"):$("#DateReservation").css("border","");
             poney == ""  || !isNumeric(poids)?$("#PoneyReservation").css("border","1px solid red"):$("#PoneyReservation").css("border","");
             duree == ""?$("#DuréeReservation").css("border","1px solid red"):$("#DuréeReservation").css("border","");

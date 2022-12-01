@@ -25,6 +25,7 @@
                         <th>Description</th>
                         <th>Type</th>
                         <th>Prix</th>
+                        <th>Moniteur</th>
                 </thead>
                 <tbody></tbody>
             </table>
@@ -94,6 +95,14 @@
                                 <input required id="prixCours">
                             </div>
                         </div>
+                        <div class="row">
+                            <div class="col-4">
+                                <label for="idMoniteur" class="label label-primary">Moniteur</label>
+                            </div>
+                            <div class="col-8">
+                                <input required id="idMoniteur">
+                            </div>
+                        </div>
                     </div>
                     <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Fermer</button>
@@ -128,6 +137,7 @@
                 {data: 'descc',className: "dt-center"},
                 {data: 'typec',className: "dt-center"},
                 {data: 'prix',className: "dt-center"},
+                {data: 'id',className: "dt-center"},
         ],
             info:true,
             scroller:true,
@@ -137,15 +147,16 @@
             "searching": false,
       });
         const container = document.getElementById("modalAjouterCours");
-        const modal = new bootstrap.Modal(container);
+        const modal = new bootstrap.Modal(container)
         document.getElementById("ajouterCours").addEventListener("click", function () {
             modal.show();
         });
         document.getElementById("ajouterCours2").addEventListener("click", function () {
             var nom = $("#nomCours").val()
             var descc = $("#descCours").val()
+            var type = $("#TypeCours").val()
             var prix = $("#prixCours").val()
-            var type = $("#TypeCours").val();
+            var id = $("#idMoniteur").val()
 
             if(nom != "" && descc != "" && prix != ""&& isNumeric(prix) && type != ""){
                 modal.hide();
@@ -156,8 +167,9 @@
         $("#ajouterCours2").on("click",function(){
             var nom = $("#nomCours").val()
             var descc = $("#descCours").val()
-            var prix = $("#prixCours").val()
             var type = $("#TypeCours").val();
+            var prix = $("#prixCours").val()
+            var id = $("#idMoniteur").val();
 
             nom == ""?$("#nomCours").css("border","1px solid red"):$("#nomCours").css("border","");
             descc == ""?$("#descCours").css("border","1px solid red"):$("#descCours").css("border","");
@@ -170,8 +182,9 @@
                 type:'POST',
                 data:{nom : nom,
                     descc : descc,
-                    prix : prix,
                     type : type,
+                    prix : prix,
+                    id : id
                     },
             success: function(){ 
                 console.log("reussi");
@@ -196,6 +209,12 @@
 
         $("#prixCours").kendoTextBox({
             placeholder: "Prix",
+            fillMode: "solid",
+            size:"large"
+        });
+
+        $("#idMoniteur").kendoComboBox({
+            placeholder: "Michel Charpentier",
             fillMode: "solid",
             size:"large"
         });
@@ -226,12 +245,12 @@
 
         $("#cours").on("dblclick", "tr", function() {
             const id = $(row)[0].childNodes[0].innerHTML
-            const url = '{{url_for("Cours",id="idCours")}}'.replace("idCours",id)
+            const url = '{{url_for("cours",id="idCours")}}'.replace("idCours",id)
             $.ajax({
                 type:"POST",
                 data:{"id":id},
                 url:url,
-                success:function(response){ window.location.href = "/Cours/"+id;
+                success:function(response){ window.location.href = "/cours/"+id;
 } 
                
 

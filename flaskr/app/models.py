@@ -55,19 +55,23 @@ class Cours(db.Model):
     descc = db.Column(db.String)
     typec = db.Column(db.String)
     prix = db.Column(db.DECIMAL)
+    id = db.Column(db.Integer, ForeignKey("moniteur.id"))
+    moniteur = relationship("Moniteur")
     
-    def __init__(self, idc, nomc,descc,typec,prix) -> None:
+    def __init__(self, idc, nomc,descc,typec,prix, id) -> None:
         self.idc = idc
         self.nomc = nomc
         self.descc = descc
         self.typec = typec
         self.prix = prix
+        self.id = id
     
     def __repr__(self) -> str:
-        return str(self.idc) + ", " + self.nomc + ", " + self.descc + ", " + self.typec + " coute : " + str(self.prix)
+        return str(self.idc) + ", " + self.nomc + ", " + self.descc + ", " + self.typec + " coute : " + str(self.prix) + ", Moniteur d'id : "+ str(self.id)
 
 class Moniteur(db.Model):
-    id = db.Column(db.Integer, primary_key = True)
+    id = db.Column(db.Integer,db.ForeignKey("personne.id"), primary_key = True)
+    personne    = db.relationship ("Personne",backref =db.backref("personnes_", lazy="dynamic"))
     
     def __init__(self, idp) -> None:
         self.id = idp
@@ -91,13 +95,15 @@ class Poney(db.Model):
 
 class Reserver(db.Model):
     jmahms = db.Column(db.DATETIME, primary_key = True)
-    id = db.Column(db.Integer, primary_key=True)
+    id = db.Column(db.Integer, ForeignKey("personne.id"), primary_key=True)
     idc = db.Column(db.Integer,ForeignKey("cours.idc"), primary_key=True)
     idpo = db.Column(db.Integer,ForeignKey("poney.idpo"))
     duree = db.Column(db.TIME)
     a_paye = db.Column(db.BOOLEAN)
     poney = relationship("Poney")
+    personne = db.relationship ("Personne",backref =db.backref("personnes__", lazy="dynamic"))
     cours = relationship("Cours") 
+    
     def __init__(self, jmahms,id,idc,idpo,duree,a_paye) -> None:
         self.jmahms = jmahms
         self.id = id

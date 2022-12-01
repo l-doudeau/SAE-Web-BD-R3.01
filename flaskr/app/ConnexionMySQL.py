@@ -13,8 +13,8 @@ from sqlalchemy.ext.declarative import declarative_base
 
 
 #engine = create_engine('mysql+mysqlconnector://faucher:Thierry45.@servinfo-mariadb/DBfaucher', convert_unicode=True)
-engine = create_engine('mysql+mysqlconnector://root:root@localhost/GRAND_GALOP', convert_unicode=True)
-#engine = create_engine('mysql+mysqlconnector://doudeau:doudeau@localhost/GRAND_GALOP', convert_unicode=True)
+#engine = create_engine('mysql+mysqlconnector://root:root@localhost/GRAND_GALOP', convert_unicode=True)
+engine = create_engine('mysql+mysqlconnector://doudeau:doudeau@localhost/GRAND_GALOP', convert_unicode=True)
 
 db_session = scoped_session(sessionmaker(autocommit=False,
                                          autoflush=False,
@@ -48,10 +48,7 @@ def ouvrir_connexion(user,passwd,host,database):
         raise err
     print("connexion réussie")
     return cnx,engine
-#connexion ,engine = ouvrir_connexion("root","root","localhost", "GRAND_GALOP")
-#connexion ,engine = ouvrir_connexion("faucher","Thierry45.","servinfo-mariadb", "DBfaucher")
-#Session = sessionmaker(bind=engine)
-#session = Session()
+
 db.metadata.clear()
 init_db()
 
@@ -64,7 +61,6 @@ def get_client(id):
 def get_moniteur(id):
     return Moniteur.query.get(id)
 def get_personne_email(email):
-    print(email)
     return Personne.query.filter(Personne.adressemail == email).first()
 
 # des que l'on fait une jointure avec d'autre tables, on a soit pas les infos soit avec le add_columns des tuples et on peut plus faire ligne.id par exemple
@@ -164,6 +160,10 @@ def deletecours(idc):
     :param idc: l'identifiant du cours à supprimer
     :return: Une valeur booléenne.
     """
+    reservations = Reserver.query.filter(Reserver.idc == idc)
+    for reserv in reservations : 
+        db.session.delete(reserv)
+
     cours = Cours.query.get(idc)
     db.session.delete(cours)
     try:
@@ -176,19 +176,28 @@ def deletecours(idc):
     
     
     
-def delete_personne(id) : 
+def delete_personne(id):
     personne = Personne.query.get(id)
     client = Client.query.filter(Client.id == id).first()
-    reservations = Reserver.query.filter(Reserver.id == id)
-    for reservation in reservations:
-        db.session.delete(reservation)
-        db.session.commit()
-    db.session.delete(client)
+    moniteur = Moniteur.query.filter(Moniteur.id == id).first()
+    cours = Cours.query.filter(Cours.id == id).all()
+    reservations = Reserver.query.all()
+    for c in cours:
+        for reservation in reservations:
+            if reservation.cours.idc == c.idc :
+                db.session.delete(reservation)
+    
+    if client is not None:
+        db.session.delete(client) 
+    elif moniteur is not None:
+        for c in cours:
+            db.session.delete(c)
+        db.session.delete(moniteur)
     db.session.delete(personne)
-    try : 
+    try: 
         db.session.commit()
         return True
-    except : 
+    except:
         db.session.rollback()
         return False
     
@@ -205,7 +214,7 @@ def ajout_client(idp, cotise):
     """
     Il ajoute un client à la base de données
     
-    :param idp: int
+    :param idp: intreservation
     :param cotise: booléen
     """
     
@@ -233,7 +242,6 @@ def ajout_poney(nom,poids):
     """
     idpo = get_max_id_poney() + 1
     poney = Poney(idpo,nom,poids)
-    print(poney)
     db.session.add(poney)
     try:
         db.session.commit()
@@ -269,7 +277,7 @@ def ajout_reservation(date,id,idpo,idc,duree,a_paye):
         return False
 
 
-def ajouteCours(nomc, descc, typec, prix):
+def ajouteCours(nomc, descc, typec, prix, id):
     """
     Il ajoute un nouveau cours à la base de données
     
@@ -279,7 +287,7 @@ def ajouteCours(nomc, descc, typec, prix):
     :param prix: float
     :return: une valeur booléenne.
     """
-    cours = Cours(get_max_id_cours()+1, nomc, descc, typec, prix)
+    cours = Cours(get_max_id_cours()+1, nomc, descc, typec, prix, id)
     db.session.add(cours)
     try:
         db.session.commit()
@@ -323,19 +331,16 @@ def delete_moniteur(id):
     
 def ajoute_personne(nomp, prenomp, ddn, poids, adressemail, adresse, code_postal, ville, numerotel) : 
     idp = get_max_id_personne() +1
-    print(idp)
     mdp = token_urlsafe(6)
     liste = ddn.split("/")
     date_naissance = datetime.date(int(liste[2]),int(liste[1]),int(liste[0]))
     personne = Personne(idp, nomp, prenomp, date_naissance, poids, adressemail, adresse, code_postal, ville, numerotel, mdp)
     db.session.add(personne)
-    print(personne)
     try :
         db.session.commit()
         
         return idp
     except :
         db.session.rollback()
-        print("pas envoye")
         return False
     
