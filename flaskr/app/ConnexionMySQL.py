@@ -14,7 +14,8 @@ from sqlalchemy.ext.declarative import declarative_base
 
 #engine = create_engine('mysql+mysqlconnector://faucher:Thierry45.@servinfo-mariadb/DBfaucher', convert_unicode=True)
 #engine = create_engine('mysql+mysqlconnector://root:root@localhost/GRAND_GALOP', convert_unicode=True)
-engine = create_engine('mysql+mysqlconnector://doudeau:doudeau@localhost/GRAND_GALOP', convert_unicode=True)
+engine = create_engine('mysql+mysqlconnector://doudeau:doudeau@servinfo-mariadb/DBdoudeau', convert_unicode=True)
+#engine = create_engine('mysql+mysqlconnector://doudeau:doudeau@localhost/GRAND_GALOP', convert_unicode=True)
 
 db_session = scoped_session(sessionmaker(autocommit=False,
                                          autoflush=False,
@@ -98,6 +99,11 @@ def deleteclient(id):
     :param id: l'identifiant du client à supprimer
     :return: La valeur de retour est une valeur booléenne.
     """
+    reservations = Reserver.query.filter(Reserver.id == id)
+    for reserv in reservations : 
+        db.session.delete(reserv)
+        db.session.commit()
+
     user = Client.query.get(id)
     db.session.delete(user)
     try : 
@@ -181,25 +187,24 @@ def delete_personne(id):
     client = Client.query.filter(Client.id == id).first()
     moniteur = Moniteur.query.filter(Moniteur.id == id).first()
     cours = Cours.query.filter(Cours.id == id).all()
-    reservations = Reserver.query.all()
-    for c in cours:
-        for reservation in reservations:
-            if reservation.cours.idc == c.idc :
-                db.session.delete(reservation)
     
     if client is not None:
-        db.session.delete(client) 
+        deleteclient(id)
+        db.session.commit()
     elif moniteur is not None:
         for c in cours:
-            db.session.delete(c)
+            deletecours(c.idc)
+            db.session.commit()
         db.session.delete(moniteur)
+   
     db.session.delete(personne)
-    try: 
+    try :
         db.session.commit()
         return True
-    except:
+    except : 
         db.session.rollback()
         return False
+
     
 
 def get_max_id_personne():
@@ -319,12 +324,18 @@ def delete_moniteur(id):
     :param id: l'identifiant du client à supprimer
     :return: La valeur de retour est une valeur booléenne.
     """
-    user = Moniteur.query.get(id)
-    db.session.delete(user)
-    try:
+    moniteur = Moniteur.query.get(id)
+    cours = Cours.query.filter(Cours.id == id).all()
+    
+    for c in cours:
+        deletecours(c.idc)
+        db.session.commit()
+    db.session.delete(moniteur)
+
+    try :
         db.session.commit()
         return True
-    except:
+    except : 
         db.session.rollback()
         return False
     
