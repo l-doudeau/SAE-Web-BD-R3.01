@@ -1,5 +1,5 @@
 from .app import app,login_manager
-from .models import * 
+from .models import *
 from .ConnexionMySQL import *
 from flask import render_template
 from flask_login import LoginManager,login_user,login_required,logout_user,current_user
@@ -87,12 +87,29 @@ def Personnes():
 @app.route('/Reservations')
 @login_required
 def Reservations():
-    return render_template("gerer_reservations.html")
+    Personne = []
+    Cours = []
+    Poneys = []
+    for p in get_info_all_personnes("","","","","",""):
+        Personne.append(str(p.id) + " " + p.nomp + " " + p.prenomp)
+    for c in get_info_all_cours("","","","",""):
+        Cours.append(str(c.idc) + " " + c.nomc)
+    for po in get_info_all_poney("","",""):
+        Poneys.append(str(po.idpo)+ " " + po.nomp )
+    return render_template("gerer_reservations.html",Personnes = Personne, cours = Cours, poneys = Poneys)
 
-@app.route('/api/dataclients')
+@app.route('/api/dataclients',methods=["POST"])
 def data_client():
     data = {"data":[]}
-    clients = get_info_all_clients()
+    
+    id = request.form["id"]
+    naissance = request.form["naissance"]
+    nom = request.form["nom"]
+    adresseEmail = request.form["adresseEmail"]
+    prenom = request.form["prenom"]
+    telephone = request.form["telephone"]
+    a_paye = request.form["a_paye"]
+    clients = get_info_all_clients(id,nom,prenom,naissance,telephone,adresseEmail,a_paye)
     for client in clients:
 
         data["data"].append({
@@ -106,10 +123,14 @@ def data_client():
         })
     return data
 
-@app.route('/api/dataponeys')
+@app.route('/api/dataponeys',methods = ["POST"])
 def data_poneys():
     data = {"data":[]}
-    lignes = get_info_all_poney()
+    id = request.form["id"]
+    nom = request.form["nom"]
+    poids  = request.form["poids"]
+    lignes = get_info_all_poney(id,nom,poids)
+
     for ligne in lignes:
         data["data"].append({
             "idpo": ligne.idpo,
@@ -119,10 +140,18 @@ def data_poneys():
     return data
 
 
-@app.route('/api/datacours')
+@app.route('/api/datacours',methods=["POST"])
 def data_cours():
     data = {"data":[]}
-    lignes = get_info_all_cours()
+    print(request.form)
+    idc = request.form["idc"]
+    nomc = request.form["nomc"]
+    type = request.form["typec"]
+    prix = request.form["prix"]
+    nomMoniteur = request.form["nomMoniteur"]
+    
+    lignes = get_info_all_cours(idc,nomc,type,prix,nomMoniteur)
+
     for ligne in lignes:
         data["data"].append({
             "idc": ligne.idc,
@@ -130,18 +159,24 @@ def data_cours():
             "descc":ligne.descc,
             "typec": ligne.typec,
             "prix": ligne.prix,
-            "id" : ligne.id
+            "id" : ligne.moniteur.personne.nomp
         })
     return data
 
-@app.route('/api/datamoniteurs')
+@app.route('/api/datamoniteurs',methods=["POST"])
 def data_moniteurs():
     """
     Il prend une liste de tuples et renvoie un dictionnaire avec une liste de dictionnaires
     :return: Un dictionnaire avec une clé "data" et une valeur d'une liste de dictionnaires.
     """
     data = {"data":[]}
-    lignes = get_info_all_moniteur()
+    id = request.form["id"]
+    naissance = request.form["naissance"]
+    nom = request.form["nom"]
+    adresseEmail = request.form["adresseEmail"]
+    prenom = request.form["prenom"]
+    telephone = request.form["telephone"]
+    lignes = get_info_all_moniteur(id,nom,prenom,naissance,telephone,adresseEmail)
     for ligne in lignes:
         data["data"].append({
             "idp": ligne.id,
@@ -154,10 +189,18 @@ def data_moniteurs():
     return data
 
     
-@app.route('/api/datareservation',methods=["POST","GET"])
+@app.route('/api/datareservation',methods=["POST"])
 def data_reservations():
     data = {"data":[]}
-    lignes = get_info_all_reservations()
+    jmahms = request.form["jmahms"]
+    id = request.form["id"]
+    idpo = request.form["idpo"]
+    idc = request.form["idc"]
+    duree = request.form["duree"]
+    a_paye = request.form["a_paye"]
+
+
+    lignes = get_info_all_reservations(jmahms,id,idc,idpo,duree,a_paye)
     for ligne in lignes:
         data["data"].append({
             "jmahms": ligne.jmahms,
@@ -170,15 +213,53 @@ def data_reservations():
             "duree": str(ligne.duree),
             "a_paye": ligne.a_paye
         })
+
     return data
 
-@app.route('/api/datapersonnes')
+@app.route('/api/datapersonnes',methods=["POST"])
 def data_personne():
     """
     Il prend une liste de tuples et renvoie un dictionnaire avec une liste de dictionnaires
     :return: Un dictionnaire avec une clé "data" et une valeur d'une liste de dictionnaires.
     """
     data = {"data":[]}
+    id = request.form["id"]
+    naissance = request.form["naissance"]
+    nom = request.form["nom"]
+    adresseEmail = request.form["adresseEmail"]
+    prenom = request.form["prenom"]
+    telephone = request.form["telephone"]
+    personnes = get_info_all_personnes(id,nom,prenom,naissance,adresseEmail,telephone)
+    roleFiltre = request.form["role"]
+    
+    for personne in personnes:
+        if get_moniteur(personne.id) is not None and  get_client(personne.id) is not None: 
+            role = "Moniteur Client" 
+        elif get_moniteur(personne.id) is not None:
+            role = "Moniteur" 
+        elif get_client(personne.id) is not None:
+            role = "Client"
+        else :
+            role = ""
+        if(roleFiltre == "" or roleFiltre in role):
+            data["data"].append({
+                "idp": personne.id,
+                "nomp":personne.nomp,
+                "prenomp":personne.prenomp,
+                "ddn":personne.ddn,
+                "adressemail":personne.adressemail,
+                "numerotel":personne.numerotel,
+                "est": role
+            })
+    return data
+
+@app.route('/api/datapersonnescombobox')
+def data_personneCombo():
+    """
+    Il prend une liste de tuples et renvoie un dictionnaire avec une liste de dictionnaires
+    :return: Un dictionnaire avec une clé "data" et une valeur d'une liste de dictionnaires.
+    """
+    data = []
     personnes = get_info_all_personnes()
     for personne in personnes:
         if get_moniteur(personne.id) is not None : 
@@ -189,40 +270,42 @@ def data_personne():
             role = "Client"
         else :
             role = ""
-
-        data["data"].append({
-            "idp": personne.id,
-            "nomp":personne.nomp,
-            "prenomp":personne.prenomp,
-            "ddn":personne.ddn,
-            "adressemail":personne.adressemail,
-            "numerotel":personne.numerotel,
-            "est": role
-        })
+        data.append(str(personne.id) + " " + personne.nomp + " " + personne.prenomp)
+        
     return data
 
-
-
-@app.route('/Client/<id>',methods=['POST',"GET"])
-def Client(id):
-    return render_template("index.html",id=id)#TODO
-
+@login_required
 @app.route('/Personne/<id>',methods=['POST',"GET"])
-def Personne(id):
-    return render_template("index.html",id=id)#TODO
+def PersonneDetail(id):
+    return render_template("personneDetail.html",Personne = get_personne(id))
 
+@login_required
 @app.route('/Poney/<id>',methods=['POST',"GET"])
-def Poney(id):
-    return render_template("index.html",id=id)#TODO
+def PoneyDetail(id):
+    return render_template("poneyDetails.html",id=id)
+
+@login_required
+@app.route("/Cours/<id>",methods=["POST","GET"])
+def CoursDetails(id):
+    Moniteurs = []
+    if(request.method == "POST"):
+        idm = request.form["id"]
+    else:
+        idm = get_cours(id).moniteur.id
+        
+    for moniteur in get_info_all_moniteur("","","","","",""):
+        Moniteurs.append(str(moniteur.id) + " " + moniteur.personne.nomp + " " + moniteur.personne.prenomp)
+    print(get_moniteur(idm))
+    return render_template("CoursDetails.html",Cours = get_cours(id),Moniteurs = Moniteurs,Moniteur = get_moniteur(idm))
+
+@login_required
 @app.route('/Reservation/<jmahms><id><idpo>',methods=['POST',"GET"])
-def Reservation(jmahms,id,idpo):
-    return render_template("index.html",id=id)#TODO
-
-@app.route('/Moniteur/<id>',methods=['POST',"GET"])
-def Moniteur(id):
+def ReservationDetail(jmahms,id,idpo):
     return render_template("index.html",id=id)#TODO
 
 
+
+@login_required
 @app.route('/AddClient',methods=['POST'])
 def AddClient():
     prenom = request.form["prenom"]
@@ -238,6 +321,53 @@ def AddClient():
     id = ajoute_personne(nom,prenom,ddn,poids,adresseemail,adresse,code_postal,ville,numerotel)
     ajout_client(id,cotise)
     return ""
+
+
+@app.route("/Cours/Update",methods=["POST"])
+def UpdateCours():
+    descc = request.form["descc"]
+    idmoniteur = request.form["idmoniteur"]
+    nomc = request.form["nomc"]
+    idc = request.form["idc"]
+    type = request.form["type"]
+    prix = request.form["prix"]
+    c = Cours(idc,nomc,descc,type,prix,idmoniteur)
+    save = modifier_cours(c)
+    return "true" if save else "false"
+
+@app.route('/Personne/Update',methods=['POST'])
+def UpdatePersonne():
+    id = request.form["id"]
+    prenom = request.form["prenom"]
+    nom = request.form["nom"]
+    email = request.form["email"]
+    ddn = request.form["ddn"]
+    poids = int(request.form["poids"])
+    adresse = request.form["adresse"]
+    code_postal = int(request.form["code_postal"])
+    ville = request.form["ville"]
+    tel = request.form["tel"]
+    password = request.form["password"]
+    p = Personne(id,nom,prenom,ddn,poids,email,adresse,code_postal,ville,tel,password)
+    save = modifier_Personne(p)
+    return "true" if save else "false"
+
+@app.route('/Client/Update',methods=['POST'])
+def UpdateClient():
+    id = request.form["id"]
+    cotisation = request.form["cotisation"]
+    save = update_client(id,cotisation)
+    return "true" if save else "false"
+
+@app.route("/Reservation/Update",methods=["POST"])
+def UpdateReservation():
+    id = request.form["id"]
+    jmahms = request.form["jmahms"]
+    idpo = request.form["idpo"]
+    est_paye = request.form["est_paye"]
+    save = update_reservation(jmahms,id,idpo,est_paye)
+    return "true" if save else "false"
+
 
 @app.route('/AddPoney',methods=['POST'])
 def AddPoney():

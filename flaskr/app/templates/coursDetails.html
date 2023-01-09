@@ -1,0 +1,212 @@
+{% include 'banner.html' %}
+<style>
+    @import url('https://fonts.googleapis.com/css2?family=Source+Sans+Pro&display=swap');
+    *{font-size: 101% !important}
+    h2{
+        font-size: 150% !important;
+    }
+</style> 
+
+<div class="container-fluid" style="margin-top: 1em;">
+    <div class="row">
+    <div class="col-md-4" style="display: flex;align-items: center;">
+        <img src="https://www.centre-equestre-marina.com/wp-content/uploads/stage-equitation-cours-anglais.jpg" alt="Cours De Saut" style="width:100%;">
+    </div>
+    <div class="col-md-7" style="width: 60%;">
+    <div class="row" style="border-bottom: solid 1px">
+        <h1 for="InfoCours"  >Cours</h1>
+    </div>
+
+    <div class="row" style="border-bottom: solid 1px;padding: 1em;">
+        <div class="col-sm-4">
+            <h2 for="InfoP" style="color: gray;">Informations du cours</h2>
+        </div>
+        <div class="col-sm-8">
+            <div class="row">
+                <textarea id="DescriptionCours"></textarea>
+            </div>
+        </div>
+        <div class="row"  style="margin-top: 1em;">
+            <div class="col-md-4"><label for="NomCours" class="k-label"> Nom Cours : </label></div>
+            <div class="col-md-8">
+                <input id="NomCours">
+            </div>
+        </div>
+        <div class="row" style="margin-top: 1em;">
+            <div class="col-md-4"><label for="TypeComboBox" class="k-label"> Type : </label></div>
+            <div class="col-md-8">
+                <input id="TypeComboBox">
+            </div>
+        </div>
+        <div class="row"  style="margin-top: 1em;">
+            <div class="col-md-4"><label for="PrixCours" class="k-label"> Prix : </label></div>
+            <div class="col-md-8">
+                <input id="PrixCours">
+            </div>
+        </div>
+    </div>
+    <div class="row" style="border-bottom: solid 1px;padding: 1em;">
+        <div class="col-sm-4">
+            <h2 for="InfoP" style="color: gray;">Moniteur</h2>
+        </div>
+        <div class="col-sm-8">
+            <div class="row">
+                <div class="col-md-3"><label for="MoniteursComboBox" class="k-label"> Moniteurs : </label></div>
+                <div class="col-md-9">
+                    <p id="MoniteursComboBox"></p>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-3"><label for="NomPersonne" class="k-label"> Nom : </label></div>
+                <div class="col-md-9">
+                    <p id="NomPersonne"></p>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-3"><label for="PrenomPersonne" class="k-label"> Prénom : </label></div>
+                <div class="col-md-9">
+                    <p id="PrenomPersonne"></p>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-3"><label for="TelephonePersonne" class="k-label"> Numero de téléphone : </label></div>
+                <div class="col-md-9" style="display: flex;align-items: center;">
+                    <p id="TelephonePersonne"></p>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-3"><label for="AdressePersonne" class="k-label"> Adresse Email : </label></div>
+                <div class="col-md-9">
+                    <p id="AdresseEmailPersonne"></p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row" style="margin: 1em 0;">
+        <div class="col-8"></div>
+        <div class="col-4 d-flex justify-content-end">
+            <button id="save" type="button" class="btn btn-success">Sauvegarder</button>
+        </div>
+
+    </div>
+</div>
+<div class="col-md-1"></div>
+</div>
+</div>
+<div id="loader-background" style="display: none;">
+    <img id="loader" src="{{url_for('static', filename='img/loader.svg')}}"/>
+</div>
+<script>
+    
+
+    $(document).ready(function() {
+
+        $("#NomCours").kendoTextBox({
+            value: '{{Cours.nomc}}',
+        })
+
+        $("#DescriptionCours").kendoTextArea({
+            value: '{{Cours.descc}}'.replace("&#39;","'"),
+            rows:5
+        })
+
+        $("#TypeComboBox").kendoComboBox({
+                dataSource: ["Individuel","Collectif"],
+                value: '{{Cours.typec}}'
+                
+            });
+
+        $("#PrixCours").kendoNumericTextBox({
+            value: '{{Cours.prix}}',
+            min:0,
+        })
+
+
+        $("#MoniteursComboBox").kendoComboBox({
+            dataSource: [],
+            dataTextField: "name",
+            dataValueField: "name",
+            change: function(e) {
+                var value = this.value();
+                $.ajax({
+                    url: "/api/datamoniteurs",
+                    type:"POST",
+                    data: {
+                        'id': value.split(" ")[0],
+                        naissance : "",
+                        nom : "",
+                        prenom : "",
+                        adresseEmail : "",
+                        telephone : "",
+                        },
+                    success:function(d){
+                        console.log(d.data[0])
+                        $("#NomPersonne").html(d.data[0].nomp)
+                        $("#PrenomPersonne").html(d.data[0].prenomp)
+                        $("#TelephonePersonne").html(d.data[0].numerotel)
+                        $("#AdresseEmailPersonne").html(d.data[0].adressemail)
+
+                    }
+                })
+               
+            }
+        });
+
+        var listeMoniteurs = "{{Moniteurs}}".replaceAll("&#39;","").replaceAll("[","").replaceAll("]","").replaceAll(", ",",").split(",")
+        for(let i = 0; i<listeMoniteurs.length;i++){
+            $("#MoniteursComboBox").data("kendoComboBox").dataSource.add({name :listeMoniteurs[i]})
+        }
+        
+        var combobox = $("#MoniteursComboBox").data("kendoComboBox");
+        combobox.value('{{Cours.idc}}' + " " + '{{Cours.moniteur.personne.nomp}}' + " " + '{{Cours.moniteur.personne.prenomp}}') ;
+
+        $("#NomPersonne").html('{{Moniteur.personne.nomp}}')
+        $("#PrenomPersonne").html('{{Moniteur.personne.prenomp}}')
+        $("#TelephonePersonne").html('{{Moniteur.personne.numerotel}}')
+        $("#AdresseEmailPersonne").html('{{Moniteur.personne.adressemail}}')
+
+
+
+        $("#save").on("click",function(){
+            if(checkfield()){
+                $("#loader-background").show()
+                var descc = $("#DescriptionCours").val()
+                var typec = $("#TypeComboBox").data("kendoComboBox").text() 
+                var prix = $("#PrixCours").val()
+                var nom = $("#NomCours").val()
+                var idmoniteur =   $("#MoniteursComboBox").val().split(" ")[0]
+                var idc = "{{Cours.idc}}"
+                $.ajax({
+                    url : '{{url_for("UpdateCours")}}',
+                    data:{
+                        "descc":descc,
+                        "idmoniteur":idmoniteur,
+                        "idc":idc,
+                        "prix" : prix,
+                        "type" : typec,
+                        "nomc" : nom
+
+                    },
+                    type:'POST',
+                    success:function(response){
+                        if(response == "false"){
+                            alert("Problème lors de la sauvegarde")
+                        }else{
+                            window.location = '{{url_for("cours")}}'
+                        }
+                    }
+                });
+            }
+        })
+        
+    });
+    function checkfield(){
+        hasDesc = $("#DescriptionCours").val() != "" ?true : false;
+        hasName = $("#NomCours").val() != ""?true : false;
+        hasType =  $("#TypeCours").val() != ""?true : false;
+        hasPrice = $("#PrixCours").val() != ""?true : false;
+        hasMoniteur =$("#MoniteursComboBox").val().split(" ")[0] != ""?true : false;
+        return hasDesc && hasName && hasType && hasPrice && hasMoniteur
+    }
+</script>

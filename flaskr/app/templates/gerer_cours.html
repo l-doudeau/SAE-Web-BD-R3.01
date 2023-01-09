@@ -4,6 +4,22 @@
     .row{
         margin: 1em;
     }
+    #loader-background {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-color: rgba(82, 82, 82, 0.1); /* Opacité de 50% */
+        z-index: 999; /* Place l'élément en arrière-plan */
+    }
+
+    #loader {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%); /* Centre l'SVG du loader */
+    }
 </style>
 <body>
     <section>
@@ -13,6 +29,7 @@
                     <div class="col-12 col-md-8"></div>
                     <div class="col-6 col-md-4">
                         <button id="ajouterCours" type="button" class="btn btn-success">Ajouter</button>
+                        <button id="FiltreCours" type="button" class="btn btn-success">Filtres</button>
                         <button id="buttonmodalSupr" type="button" class="btn btn-danger" data-toggle="modal" data-target="#modalSupprimer">Supprimer</button>
                     </div>
                 </div>
@@ -112,9 +129,75 @@
                 </div>
             </div>
         </form>
+        <div class="modal" id="modalFiltreCours" tabindex="2" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Filtre<h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-5">
+                            <label for="IDFiltre" class="k-label">ID Cours</label>
+                        </div>
+                        <div class="col-7">
+                            <input id="IDFiltre">
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-5">
+                            <label for="NomFiltre" class="k-label">Nom du cours</label>
+                        </div>
+                        <div class="col-7">
+                            <input id="NomFiltre">
+                        </div>
+                    </div>
+    
+                    <div class="row">
+                        <div class="col-5">
+                            <label for="TypeFiltre" class="label label-primary">Type du cours</label>
+                        </div>
+                        <div class="col-7">
+                            <input  id="TypeFiltre">
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-5">
+                            <label for="PrixFiltre" class="label label-primary">Prix du cours</label>
+                        </div>
+                        <div class="col-7">
+                            <input id="PrixFiltre">
+                        </div>
+                    </div>
+    
+                    <div class="row">
+                        <div class="col-5">
+                            <label for="NomMoniteurFiltre" class="label label-primary">Nom du moniteur</label>
+                        </div>
+                        <div class="col-7">
+                            <input  id="NomMoniteurFiltre">
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Fermer</button>
+                <button type="button" class="btn btn-success" id="savefilter">Sauvegarder</button>
+                </div>
+            </div>
+            </div>
+        </div>
+        
     </section>
-    <div></div>
+    <div id="loader-background" style="display: none;">
+        <img id="loader" src="{{url_for('static', filename='img/loader.svg')}}"/>
+    </div>
 </body>
+<script src="https://kendo.cdn.telerik.com/2022.3.1109/js/cultures/kendo.culture.fr-FR.min.js"></script>
+
 <script>
     function isNumeric(str) {
         if (typeof str != "string") return false // we only process strings!  
@@ -122,15 +205,59 @@
                 !isNaN(parseFloat(str)) // ...and ensure strings of whitespace fail
 }
     var row = null;
-    
+        var table = null;
         
 
         $("#buttonmodalSupr").prop("disabled",true)
 
         $(document).ready(function() {
- 
+            
+            $("#IDFiltre").kendoNumericTextBox({
+                culture: "fr-FR",
+                min:0,
+                placeholder: "Entrer l'id du cours",
+                format: "{0:n0}"
+            });
+
+            $("#NomFiltre").kendoTextBox({
+                placeholder: "Entrer le nom du cours",
+            });
+
+            $("#TypeFiltre").kendoComboBox({
+                dataTextField: "text",
+                        dataValueField: "value",
+                        dataSource: [
+                            { text: "", value: "1" },
+                            { text: "Collectif", value: "2" },
+                            { text: "Individuel", value: "3" },
+                            
+                        ]
+                    });
+            $("#PrixFiltre").kendoNumericTextBox({
+                culture: "fr-FR",
+                min:0,
+                placeholder: "Entrer le prix du cours",
+                format: "{0:c2}"
+            });
+
+            $("#NomMoniteurFiltre").kendoTextBox({
+                placeholder: "Entrer le nom du moniteur cours",
+            });
+
         var table = $('#cours').DataTable({
-            ajax: '/api/datacours',
+            ajax: {
+                url:'/api/datacours',
+                type:"POST",
+                data:function(c){
+                    if(c != undefined) {
+                        c.idc = $("#IDFiltre").val(),
+                        c.nomc = $("#NomFiltre").val(),
+                        c.typec = $("#TypeFiltre").data("kendoComboBox").text(),
+                        c.prix =   $("#PrixFiltre").val()
+                        c.nomMoniteur =  $("#NomMoniteurFiltre").val()
+                    }
+                }
+            },
             columns: [
                 {data: 'idc',className: "dt-center"},
                 {data: 'nomc',className: "dt-center"},
@@ -245,29 +372,32 @@
 
         $("#cours").on("dblclick", "tr", function() {
             const id = $(row)[0].childNodes[0].innerHTML
-            const url = '{{url_for("cours",id="idCours")}}'.replace("idCours",id)
-            $.ajax({
-                type:"POST",
-                data:{"id":id},
-                url:url,
-                success:function(response){ window.location.href = "/cours/"+id;
-} 
-               
+            const url = '{{url_for("CoursDetails",id="idCours")}}'.replace("idCours",id)
+            window.location.href = "/Cours/"+id; 
 
-            });
         });
                 
         $("#deleteCours").on("click",function(){
+            $("#loader-background").show()
             $.ajax({
                 url:'{{url_for("deleteCours")}}',
                 type:'POST',
                 data:{id:$(row)[0].childNodes[0].innerHTML},
             success: function(){
                 table.ajax.reload();
+                row = null;
+                $("#loader-background").hide()
+                $("#buttonmodalSupr").prop("disabled",true)
                 } 
             });       
         });
-
+        $("#FiltreCours").on("click",function(){
+            $("#modalFiltreCours").modal("show")
+        })
+        $("#savefilter").on("click",function(){
+            table.ajax.reload();
+            $("#modalFiltreCours").modal("hide")
+        });
         });
 
 </script>

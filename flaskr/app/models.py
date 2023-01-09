@@ -71,7 +71,7 @@ class Cours(db.Model):
 
 class Moniteur(db.Model):
     id = db.Column(db.Integer,db.ForeignKey("personne.id"), primary_key = True)
-    personne    = db.relationship ("Personne",backref =db.backref("personnes_", lazy="dynamic"))
+    personne = db.relationship ("Personne",backref =db.backref("personnes_", lazy="dynamic"))
     
     def __init__(self, idp) -> None:
         self.id = idp

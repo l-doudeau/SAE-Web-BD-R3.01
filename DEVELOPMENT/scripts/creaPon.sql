@@ -1,6 +1,6 @@
---DROP DATABASE IF EXISTS GRAND_GALOP;
---CREATE DATABASE IF NOT EXISTS GRAND_GALOP DEFAULT CHARACTER SET utf8 COLLATE utf8_general_ci;
---USE GRAND_GALOP;
+DROP DATABASE IF EXISTS GRAND_GALOP;
+CREATE DATABASE IF NOT EXISTS GRAND_GALOP DEFAULT CHARACTER SET utf8 COLLATE utf8_general_ci;
+USE GRAND_GALOP;
 
 -- supression des tables avant des les créées
 drop table if exists reserver;
@@ -342,31 +342,6 @@ begin
 end |
 
 
--- trigger permettant que si le cours est un cours collectif, le nombre de personne max est de 10 (update)
-
-create trigger ajoutPersonneCollectifUpdate before update on reserver for each row
-begin
-  declare nbmax int default 10;
-  declare nbPersonnes int;
-  declare typeCours VARCHAR(42);
-  declare mes VARCHAR(100);
-  select IFNULL(count(id),0) into nbPersonnes from reserver where idc = new.idc and jmahms = new.jmahms;
-  select typec into typeCours from cours where idc = new.idc;
-  if typeCours = "Collectif" then
-    if nbPersonnes + 1 > nbmax then
-      set mes = concat ("Inscription impossible à l'activité avec l'id : ", new.idc, " car elle est complète");
-      signal SQLSTATE '45000' set MESSAGE_TEXT = mes;
-    end if;
-  end if;
-  if typeCours = "Individuel" then
-    if nbPersonnes <> 0 then
-    set mes = concat ("Inscription impossible à l'activité avec l'id : ", new.idc, " car elle est complète");
-    signal SQLSTATE '45000' set MESSAGE_TEXT = mes;
-    end if;
-  end if;
-end |
-
-
 -- permet de vérifier que le client n'a pas déja un cours au horaire de sa nouvelle réservation (insert)
 
 CREATE TRIGGER ajoutPersonneHoraire BEFORE INSERT ON reserver FOR EACH ROW
@@ -571,15 +546,7 @@ begin
         if cotistationAnnuelle = false and payementCours = true then
           set msg = concat ("Impossible de réserver l'activité : ", new.idc, ", car la cotisation annuel n'est pas réglé");
           signal SQLSTATE '45000' set MESSAGE_TEXT = msg;
-        end if;
-        if cotistationAnnuelle = true and payementCours = false then
-          set msg = concat ("Impossible de réserver l'activité : ", new.idc, ", car le payement du cours n'est pas réglé");
-          signal SQLSTATE '45000' set MESSAGE_TEXT = msg;
-        end if;
-        if cotistationAnnuelle = false and payementCours = false then
-          set msg = concat ("Impossible de réserver l'activité : ", new.idc, ", car la cotisation annuel et le payement du cours ne sont pas réglés");
-          signal SQLSTATE '45000' set MESSAGE_TEXT = msg;
-        end if;
+      end if;
     END LOOP;
   CLOSE lesReservations;
 end |
@@ -608,14 +575,6 @@ begin
       END IF;
         if cotistationAnnuelle = false and payementCours = true then
           set msg = concat ("Impossible de réserver l'activité : ", new.idc, ", car la cotisation annuel n'est pas réglé");
-          signal SQLSTATE '45000' set MESSAGE_TEXT = msg;
-        end if;
-        if cotistationAnnuelle = true and payementCours = false then
-          set msg = concat ("Impossible de réserver l'activité : ", new.idc, ", car le payement du cours n'est pas réglé");
-          signal SQLSTATE '45000' set MESSAGE_TEXT = msg;
-        end if;
-        if cotistationAnnuelle = false and payementCours = false then
-          set msg = concat ("Impossible de réserver l'activité : ", new.idc, ", car la cotisation annuel et le payement du cours ne sont pas réglés");
           signal SQLSTATE '45000' set MESSAGE_TEXT = msg;
         end if;
     END LOOP;

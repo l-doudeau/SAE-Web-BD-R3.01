@@ -4,8 +4,22 @@
     .row{
         margin: 1em;
     }
-.a{
-        display: none;
+
+    #loader-background {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-color: rgba(82, 82, 82, 0.1); /* Opacité de 50% */
+        z-index: 999; /* Place l'élément en arrière-plan */
+    }
+
+    #loader {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%); /* Centre l'SVG du loader */
     }
 </style>
 <body>
@@ -16,6 +30,7 @@
                     <div class="col-12 col-md-8"></div>
                     <div class="col-6 col-md-4">
                         <button id="ajouterReservation" type="button" class="btn btn-success">Ajouter</button>
+                        <button id="filtres" type="button" class="btn btn-success">Filtres</button>
                         <button id="buttonmodalSupr" type="button" class="btn btn-danger" data-toggle="modal" data-target="#modalSupprimer">Supprimer</button>
                     </div>
                 </div>
@@ -57,81 +72,175 @@
               </div>
             </div>
         </div>
-        <form method="POST">
-            <div class="modal fade" id="modalAjouterReservation" tabindex="2" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                <div class="modal-dialog modal-dialog-centered" role="document">
-                <div class="modal-content">
-                    <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalLabel">Nouvelle Reservation<h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                    </div>
-                    <div class="modal-body">
-                        <div class="row">
-                            <div class="col-4">
-                                <label for="DateReservation" class="label label-primary">Date de reservation</label>
-                            </div>
-                            <div class="col-8">
-                                <input required id="DateReservation" value="01/01/2022">
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-4">
-                                <label for="PersonneReservation" class="label label-primary">Personne</label>
-                            </div>
-                            <div class="col-8">
-                                <input required id="PersonneReservation">
-                            </div>
-                        </div>
-
-                        <div class="row">
-                            <div class="col-4">
-                                <label for="CoursReservation" class="label label-primary">Cours</label>
-                            </div>
-                            <div class="col-8">
-                                <input required  id="CoursReservation">
-                            </div>
-                        </div>
-                        
-                        <div class="row">
-                            <div class="col-4">
-                                <label for="PoneyReservation" class="label label-primary">Poney</label>
-                            </div>
-                            <div class="col-8">
-                                <input required id="PoneyReservation">
-                            </div>
-                        </div>
-
-                        <div class="row">
-                            <div class="col-4">
-                                <label for="DuréeReservation" class="label label-primary">Durée</label>
-                            </div>
-                            <div class="col-8">
-                                <input required  id="DuréeReservation">
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-4">
-                                <label for="CotiseReservation" class="label label-primary">Déjà cotisé ?</label>
-                            </div>
-                            <div class="col-8">
-                                <input required id="CotiseReservation">
-                            </div>
-                        </div>
-
-                    </div>
-                    <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Fermer</button>
-                    <button type="button" class="btn btn-success" id="addReservation">Créer</button>
-                    </div>
-                </div>
-                </div>
-            </div>
-        </form>
     </section>
-    <div></div>
+    <div class="modal" tabindex="-1" role="dialog">
+        <div class="modal-dialog" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title">Modifier Client</h5>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div class="modal-body">
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-primary">Save changes</button>
+              <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    <div id="loader-background" style="display: none;">
+        <img id="loader" src="{{url_for('static', filename='img/loader.svg')}}"/>
+    </div>
+
+    
+    <div class="modal fade" id="modalAjouterReservation" tabindex="2" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+            <h5 class="modal-title" id="exampleModalLabel">Nouvelle Reservation<h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-4">
+                        <label for="DateReservation" class="label label-primary">Date de reservation</label>
+                    </div>
+                    <div class="col-8">
+                        <input required id="DateReservation" value="01/01/2022">
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-4">
+                        <label for="PersonneReservation" class="label label-primary">Personne</label>
+                    </div>
+                    <div class="col-8">
+                        <input required id="PersonneReservation">
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-4">
+                        <label for="CoursReservation" class="label label-primary">Cours</label>
+                    </div>
+                    <div class="col-8">
+                        <input required  id="CoursReservation">
+                    </div>
+                </div>
+                
+                <div class="row">
+                    <div class="col-4">
+                        <label for="PoneyReservation" class="label label-primary">Poney</label>
+                    </div>
+                    <div class="col-8">
+                        <input required id="PoneyReservation">
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-4">
+                        <label for="DuréeReservation" class="label label-primary">Durée</label>
+                    </div>
+                    <div class="col-8">
+                        <input required  id="DuréeReservation">
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-4">
+                        <label for="CotiseReservation" class="label label-primary">Déjà cotisé ?</label>
+                    </div>
+                    <div class="col-8">
+                        <input required id="CotiseReservation">
+                    </div>
+                </div>
+
+            </div>
+            <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Fermer</button>
+            <button type="button" class="btn btn-success" id="addReservation">Créer</button>
+            </div>
+        </div>
+        </div>
+    </div>
+<form>
+    <div class="modal fade" id="modalFiltreReservation" tabindex="2" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+            <h5 class="modal-title" id="exampleModalLabel">Filtre<h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-4">
+                        <label for="DateReservation" class="label label-primary">Date de reservation</label>
+                    </div>
+                    <div class="col-8">
+                        <input id="DateReservation1">
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-4">
+                        <label for="PersonneReservation" class="label label-primary">Personne</label>
+                    </div>
+                    <div class="col-8">
+                        <input id="PersonneReservation1">
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-4">
+                        <label for="CoursReservation" class="label label-primary">Cours</label>
+                    </div>
+                    <div class="col-8">
+                        <input  id="CoursReservation1">
+                    </div>
+                </div>
+                
+                <div class="row">
+                    <div class="col-4">
+                        <label for="PoneyReservation" class="label label-primary">Poney</label>
+                    </div>
+                    <div class="col-8">
+                        <input id="PoneyReservation1">
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-4">
+                        <label for="DuréeReservation" class="label label-primary">Durée</label>
+                    </div>
+                    <div class="col-8">
+                        <input  id="DuréeReservation1">
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-4">
+                        <label for="CotiseReservation" class="label label-primary">Est payé ?</label>
+                    </div>
+                    <div class="col-8">
+                        <input id="CotiseReservation1">
+                    </div>
+                </div>
+
+            </div>
+            <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Fermer</button>
+            <button type="button" class="btn btn-success" id="savefilter">Sauvegarder</button>
+            </div>
+        </div>
+        </div>
+    </div>
+</form>
 </body>
+<script src="https://kendo.cdn.telerik.com/2022.3.1109/js/cultures/kendo.culture.fr-FR.min.js"></script>
+
 <script>
     function isNumeric(str) {
         if (typeof str != "string") return false // we only process strings!  
@@ -139,13 +248,130 @@
                 !isNaN(parseFloat(str)) // ...and ensure strings of whitespace fail
 }
     var row = null;
-    
+    var table = null;
         $("#buttonmodalSupr").prop("disabled",true)
 
         $(document).ready(function() {
- 
-        var table = $('#reservations').DataTable({
-            ajax: '/api/datareservation',
+        
+            $("#PersonneReservation").kendoComboBox({
+            dataSource: [],
+            dataTextField: "name",
+            dataValueField: "name"
+        });
+
+        $("#CoursReservation").kendoComboBox({dataSource: [],
+            dataTextField: "name",
+            dataValueField: "name"});
+
+        $("#DateReservation").kendoDateTimePicker({
+            culture:"fr-FR",
+        });
+
+        $("#PoneyReservation").kendoComboBox({
+            dataSource: [],
+                    dataTextField: "name",
+                    dataValueField: "name"
+        });
+        $("#PersonneReservation1").kendoComboBox({
+            dataSource: [],
+            dataTextField: "name",
+            dataValueField: "name"
+        });
+
+        $("#CoursReservation1").kendoComboBox({dataSource: [],
+            dataTextField: "name",
+            dataValueField: "name"});
+
+        $("#DateReservation1").kendoDateTimePicker({
+            culture:"fr-FR",
+        });
+
+        $("#PoneyReservation1").kendoComboBox({
+            dataSource: [],
+                    dataTextField: "name",
+                    dataValueField: "name"
+        });
+        $("#DuréeReservation1").kendoTimePicker({
+            culture:"fr-FR",
+            interval:5,
+            max: new Date(2000, 0, 1, 2, 0, 0)
+            
+                    });
+        $("#CotiseReservation1").kendoComboBox({
+                        dataTextField: "text",
+                        dataValueField: "value",
+                        dataSource: [
+                            { text: "", value: "1" },
+                            { text: "Oui", value: "2" },
+                            { text: "Non", value: "3" },
+                            
+                        ]
+                    });
+        $("#DuréeReservation").kendoTimePicker({
+            culture:"fr-FR",
+            interval:5,
+            max: new Date(2000, 0, 1, 2, 0, 0)
+            
+                    });
+        $("#CotiseReservation").kendoComboBox({
+                        dataTextField: "text",
+                        dataValueField: "value",
+                        dataSource: [
+                            { text: "Oui", value: "1" },
+                            { text: "Non", value: "2" },
+                            
+                        ],
+                        filter: "contains",
+                        suggest: true,
+                        clearButton: false,
+                        index: 1
+                    });
+        
+
+
+        var personnes =  $("#PersonneReservation").data("kendoComboBox");
+        var listePersonne = "{{Personnes}}".replaceAll("&#39;","").replaceAll("[","").replaceAll("]","").replaceAll(", ",",").split(",")
+        var listeCours = "{{cours}}".replaceAll("&#39;","").replaceAll("[","").replaceAll("]","").replaceAll(", ",",").split(",")
+        var listePoneys = "{{poneys}}".replaceAll("&#39;","").replaceAll("[","").replaceAll("]","").replaceAll(", ",",").split(",")
+
+        
+        for(let i = 0; i<listePersonne.length;i++){
+            $("#PersonneReservation").data("kendoComboBox").dataSource.add({name :listePersonne[i]})
+            $("#PersonneReservation1").data("kendoComboBox").dataSource.add({name :listePersonne[i]})
+        }
+        for(let i = 0; i<listeCours.length;i++){
+            $("#CoursReservation").data("kendoComboBox").dataSource.add({name :listeCours[i]})
+            $("#CoursReservation1").data("kendoComboBox").dataSource.add({name :listeCours[i]})
+        }
+        for(let i = 0; i<listePoneys.length;i++){
+            $("#PoneyReservation").data("kendoComboBox").dataSource.add({name :listePoneys[i]})
+            $("#PoneyReservation1").data("kendoComboBox").dataSource.add({name :listePoneys[i]})
+        }
+
+        $("#filtres").on("click",function(){
+            $("#modalFiltreReservation").modal("show")
+        })
+       
+       
+       
+        
+        table = $('#reservations').DataTable({
+            ajax: {
+                url:'/api/datareservation', 
+                type:"POST",
+                data:function(d){
+                    if(d!=undefined){
+                        d.jmahms = $("#DateReservation1").val();
+                        d.id = $("#PersonneReservation1").val().split(" ")[0];
+                        d.idpo = $("#PoneyReservation1").val().split(" ")[0];
+                        d.idc = $("#CoursReservation1").val().split(" ")[0];
+                        d.duree = $("#DuréeReservation1").val();
+                        d.a_paye = $("#CotiseReservation1").data("kendoComboBox").text() 
+                        return d
+                    }
+                }
+            },
+                
             columns: [
                 {data: 'jmahms',className: "dt-center",orderable:false,"render" : function (data) { 
                     let m = new Date(data);
@@ -160,14 +386,9 @@
                 {data: 'nompo',orderable:false,className: "dt-center"},
                 {data: 'duree',orderable:false,className: "dt-center"},
                 {data: 'a_paye',orderable:false,className: "dt-center", "render":function (data, type, row) {
-                          return (data === true) ? '<input class="form-check-input" type="checkbox" value="" id="flexCheckChecked" checked disabled>':'<input class="form-check-input" type="checkbox" value="" id="flexCheckChecked" disabled>'}},
+                          return (data === true) ? '<input class="form-check-input" type="checkbox" value="" onclick="save(this)" id="flexCheckChecked" checked>':'<input class="form-check-input" onclick="save(this)" type="checkbox" value="" id="flexCheckChecked">'} },
                 {data: "id",className:"a"},
                 {data:"idpo",className:"a"}
-        
-
-           
-            
-           
            ,
         ],
             info:true,
@@ -235,77 +456,7 @@
         }     
         });
 
-
-        var dataSource = new kendo.data.DataSource({
-                transport: {
-                    read: {
-                    url: "/api/datareservation",
-                    dataType: "json"
-                    }
-                }
-            });
-        var personnes = $("#PersonneReservation").kendoComboBox({
-            dataSource: dataSource,
-            dataTextField: "nomp",
-            dataValueField: "id"
-});
-
-
-
-
-        $("#CoursReservation").kendoComboBox({
-            dataTextField: "text",
-                        dataValueField: "value",
-                        dataSource: {transport: {
-                                    read: {
-                                    url: "/api/datacours",
-                                    dataType: "json"
-                                    }
-                                }
-                            },
-                        filter: "contains",
-                        suggest: true,
-                        clearButton: false,
-                        index: 1
-                    });
-
-        $("#DateReservation").kendoDateTimePicker({
-            value: new Date(),
-                dateInput: true
-        });
-
-        $("#PoneyReservation").kendoComboBox({
-            dataTextField: "text",
-                        dataValueField: "value",
-                        dataSource: {transport: {
-                                    read: {
-                                    url: "/api/dataponeys",
-                                    dataType: "json"
-                                    }
-                                }
-                            },
-                        filter: "contains",
-                        suggest: true,
-                        clearButton: false,
-                        index: 1
-                    });
-
-        $("#DuréeReservation").kendoTimePicker({
-                        dateInput: true
-                    });
-        $("#CotiseReservation").kendoComboBox({
-                        dataTextField: "text",
-                        dataValueField: "value",
-                        dataSource: [
-                            { text: "Oui", value: "1" },
-                            { text: "Non", value: "2" },
-                        ],
-                        filter: "contains",
-                        suggest: true,
-                        clearButton: false,
-                        index: 1
-                    });
-
+       
 
         $("#reservations").on("click", "tr", function() {
             if(row !=null){
@@ -318,21 +469,23 @@
         });
         
 
-        $("#reservations").on("dblclick", "tr", function() {
-            const id = $(row)[0].childNodes[0].innerHTML
-            const url = '{{url_for("Client",id="idClient")}}'.replace("idClient",id)
+        /*$("#reservations").on("dblclick", "tr", function() {
+            var date = $(row)[0].childNodes[0].innerHTML
+            var id = $(row)[0].childNodes[0].innerHTML;
+            
             $.ajax({
                 type:"POST",
                 data:{"id":id},
                 url:url,
                 success:function(response){ window.location.href = "/Client/"+id;
-} 
+
                
 
             });
         });
-                
+                } */
         $("#deleteReservation").on("click",function(){
+            $("#loader-background").show()
             $.ajax({
                 url:'{{url_for("DeleteReservation")}}',
                 type:'POST',
@@ -341,11 +494,34 @@
                     idpo:$(row)[0].childNodes[8].innerHTML},
             success: function(){
                 table.ajax.reload();
+                row = null;
+                $("#loader-background").hide()
+                $("#buttonmodalSupr").prop("disabled",true)
                 } 
             });       
         });
-
+        var test = $("#savefilter").on("click",function(){
+            table.ajax.reload();
+        });
         });
 
+    function save(checkbox){
+        var ligne = ($(checkbox).parents()[1])
+        $.ajax({
+            url:'{{url_for("UpdateReservation")}}',
+            type:'POST',
+            data:{
+                    est_paye :$(checkbox)[0].checked,
+                    jmahms : ligne.children[0].innerHTML,
+                    id : table.row($(checkbox).parents()).data()["id"],
+                    idpo : table.row($(checkbox).parents()).data()["idpo"]
+                },
+        success: function(response){
+                if(response == "false"){
+                    alert("Erreur lors de l'update")
+            }   
+        }
+        });    
+    }
 </script>
 </html>

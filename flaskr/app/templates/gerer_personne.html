@@ -4,6 +4,22 @@
     .row{
         margin: 1em;
     }
+    #loader-background {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-color: rgba(82, 82, 82, 0.1); /* Opacité de 50% */
+        z-index: 999; /* Place l'élément en arrière-plan */
+    }
+
+    #loader {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%); /* Centre l'SVG du loader */
+    }
 </style>
 <body>
     <section>
@@ -13,6 +29,7 @@
                     <div class="col-12 col-md-8"></div>
                     <div class="col-6 col-md-4">
                         <button id="ajouterPersonne" type="button" class="btn btn-success">Ajouter</button>
+                        <button id="Filtres" type="button" class="btn btn-success">Filtres</button>
                         <button id="buttonmodalSupr" type="button" class="btn btn-danger" data-toggle="modal" data-target="#modalSupprimer">Supprimer</button>
                     </div>
                 </div>
@@ -171,8 +188,159 @@
             </div>
         </form>
     </section>
-    <div></div>
+    <div id="loader-background" style="display: none;">
+        <img id="loader" src="{{url_for('static', filename='img/loader.svg')}}"/>
+    </div>
+    <div class="modal" id="modalFiltrePersonnes" tabindex="2" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+            <h5 class="modal-title" id="exampleModalLabel">Filtre<h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-4">
+                        <label for="IDFiltre" class="k-label">ID</label>
+                    </div>
+                    <div class="col-8">
+                        <input id="IDFiltre">
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-4">
+                        <label for="NomFiltre" class="k-label">Nom</label>
+                    </div>
+                    <div class="col-8">
+                        <input id="NomFiltre">
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-4">
+                        <label for="PrenomFiltre" class="label label-primary">Prénom</label>
+                    </div>
+                    <div class="col-8">
+                        <input  id="PrenomFiltre">
+                    </div>
+                </div>
+                
+                <div class="row">
+                    <div class="col-4">
+                        <label for="NaissanceFiltre" class="label label-primary">Date de naissance</label>
+                    </div>
+                    <div class="col-8">
+                        <input id="NaissanceFiltre">
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-4">
+                        <label for="AdresseEmailFiltre" class="label label-primary">Adresse Email</label>
+                    </div>
+                    <div class="col-8">
+                        <input  id="AdresseEmailFiltre">
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-4">
+                        <label for="TelephoneFiltre" class="label label-primary">Numéro de téléphone</label>
+                    </div>
+                    <div class="col-8">
+                        <input id="TelephoneFiltre">
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-4">
+                        <label for="RoleFiltre" class="label label-primary">Role</label>
+                    </div>
+                    <div class="col-8">
+                        <input id="RoleFiltre">
+                    </div>
+                </div>
+
+            </div>
+            <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Fermer</button>
+            <button type="button" class="btn btn-success" id="savefilter">Sauvegarder</button>
+            </div>
+        </div>
+        </div>
+    </div>
+    <div class="modal" id="modalFiltreMoniteurs" tabindex="2" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Filtre<h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-5">
+                            <label for="IDFiltre" class="k-label">ID</label>
+                        </div>
+                        <div class="col-7">
+                            <input id="IDFiltre">
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-5">
+                            <label for="NomFiltre" class="k-label">Nom</label>
+                        </div>
+                        <div class="col-7">
+                            <input id="NomFiltre">
+                        </div>
+                    </div>
+    
+                    <div class="row">
+                        <div class="col-5">
+                            <label for="PrenomFiltre" class="label label-primary">Prénom</label>
+                        </div>
+                        <div class="col-7">
+                            <input  id="PrenomFiltre">
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-5">
+                            <label for="NaissanceFiltre" class="label label-primary">Date de naissance</label>
+                        </div>
+                        <div class="col-7">
+                            <input id="NaissanceFiltre">
+                        </div>
+                    </div>
+    
+                    <div class="row">
+                        <div class="col-5">
+                            <label for="AdresseEmailFiltre" class="label label-primary">Adresse Email</label>
+                        </div>
+                        <div class="col-7">
+                            <input  id="AdresseEmailFiltre">
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-5">
+                            <label for="TelephoneFiltre" class="label label-primary">Numéro de téléphone</label>
+                        </div>
+                        <div class="col-7">
+                            <input id="TelephoneFiltre">
+                        </div>
+                    </div>    
+                </div>
+                <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Fermer</button>
+                <button type="button" class="btn btn-success" id="savefilter">Sauvegarder</button>
+                </div>
+            </div>
+            </div>
+        </div>
 </body>
+<script src="https://kendo.cdn.telerik.com/2022.3.1109/js/cultures/kendo.culture.fr-FR.min.js"></script>
+
 <script>
     function isNumeric(str) {
         if (typeof str != "string") return false // we only process strings!  
@@ -181,14 +349,68 @@
 }
     var row = null;
     
-        
+    var table = null;
 
         $("#buttonmodalSupr").prop("disabled",true)
 
         $(document).ready(function() {
  
+            $("#IDFiltre").kendoNumericTextBox({
+                culture: "fr-FR",
+                min:0,
+                placeholder: "Entrer l'id d'une personne",
+                format: "{0:n0}"
+            });
+            $("#NomFiltre").kendoTextBox({
+                placeholder: "Entrer le nom d'une personne",
+            });
+            
+            $("#PrenomFiltre").kendoTextBox({
+                placeholder: "Entrer le prénom d'une personne",
+            });
+
+            $("#NaissanceFiltre").kendoDatePicker({
+                culture: "fr-FR",
+            });
+
+            $("#AdresseEmailFiltre").kendoTextBox({
+                placeholder: "Entrer l'adresse email d'une personne",
+            });
+            $("#TelephoneFiltre").kendoTextBox({
+                placeholder: "Entrer le numéro de téléphone d'une personne",
+            });
+
+            $("#RoleFiltre").kendoComboBox({
+                dataTextField: "text",
+                placeholder: "Entrer le rôle d'une personne",
+
+                        dataValueField: "value",
+                        dataSource: [
+                            { text: "", value: "1" },
+                            { text: "Moniteur", value: "2" },
+                            { text: "Client", value: "3" },
+                            { text: "Moniteur Client", value: "3" },
+                            
+                        ]
+                    });
+
+
         var table = $('#personnes').DataTable({
-            ajax: '/api/datapersonnes',
+            ajax: {
+                url:'/api/datapersonnes',
+                type:"POST",
+                data: function(p){
+                    if(p != undefined){
+                        p.id = $("#IDFiltre").val();
+                        p.nom = $("#NomFiltre").val();
+                        p.prenom = $("#PrenomFiltre").val();
+                        p.naissance = $("#NaissanceFiltre").val();
+                        p.adresseEmail = $("#AdresseEmailFiltre").val();
+                        p.telephone = $("#TelephoneFiltre").val();
+                        p.role = $("#RoleFiltre").data("kendoComboBox").text();
+                    }
+                }
+            },
             columns: [
                 {data: 'idp',className: "dt-center"},
                 {data: 'nomp',className: "dt-center"},
@@ -196,11 +418,10 @@
                 {data: 'ddn',className: "dt-center",orderable:false,"render" : function (data) { 
     
                     let m = new Date(data);
-                    return moment(m).format("M/D/YYYY");}
-                },
+                    return moment(m).format("DD/MM/YYYY");}                },
                 {data: 'adressemail',orderable:false,className: "dt-center"},
                 {data: 'numerotel',orderable:false,className: "dt-center"},
-                {data: 'est',orderable:false,className: "dt-center"},
+                {data: 'est',orderable:true,className: "dt-center"},
         ],
             info:true,
             scroller:true,
@@ -254,7 +475,7 @@
             codepostal == "" || !isNumeric(codepostal) ?$("#CodePostalPersonne").css("border","1px solid red"):$("#CodePostalPersonne").css("border","");
             ville == ""?$("#VillePersonne").css("border","1px solid red"):$("#VillePersonne").css("border","");
             tel == "" || !isNumeric(tel)?$("#TelPersonne").css("border","1px solid red"):$("#TelPersonne").css("border","");
-
+            $("#loader-background").show()
             if(prenom != "" && nom != "" && poids != ""&& isNumeric(poids) && adresseemail != "" && adresse != "" && codepostal != ""&& isNumeric(codepostal) && ville != "" && tel != ""&& isNumeric(tel)&& datepicker._value != null){
                 $.ajax({
                 url:'{{url_for("AddPersonne")}}',
@@ -274,7 +495,7 @@
             success: function(){ 
                 console.log("reussi")
                 table.ajax.reload();
-
+                $("#loader-background").hide()
                 } 
             });
         }     
@@ -374,30 +595,42 @@
 
         $("#personnes").on("dblclick", "tr", function() {
             const id = $(row)[0].childNodes[0].innerHTML
-            const url = '{{url_for("Personne",id="idPersonne")}}'.replace("idPersonne",id)
+            const url = '{{url_for("PersonneDetail",id="idPersonne")}}'.replace("idPersonne",id)
+            $("#loader-background").show()
             $.ajax({
                 type:"POST",
                 data:{"id":id},
                 url:url,
-                success:function(response){ window.location.href = "/Personne/"+id;
-} 
+                success:function(response){
+                    window.location.href = "/Personne/"+id; 
+                } 
                
 
             });
+
         });
-                
+
+        $("#Filtres").on("click",function(){
+            $("#modalFiltrePersonnes").modal("show")
+        })
         $("#deletePersonne").on("click",function(){
+            $("#loader-background").show()
             $.ajax({
                 url:'{{url_for("deletePersonne")}}',
                 type:'POST',
                 data:{id:$(row)[0].childNodes[0].innerHTML},
             success: function(){
                 table.ajax.reload();
+                row = null;
+                $("#loader-background").hide()
+                $("#buttonmodalSupr").prop("disabled",true)
                 } 
             });       
         });
-
+        $("#savefilter").on("click",function(){
+            table.ajax.reload();
+            $("#modalFiltrePersonnes").modal("hide")
         });
-
+        });
 </script>
 </html>

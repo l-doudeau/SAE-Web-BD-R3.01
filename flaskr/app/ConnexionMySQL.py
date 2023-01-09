@@ -13,8 +13,8 @@ from sqlalchemy.ext.declarative import declarative_base
 
 
 #engine = create_engine('mysql+mysqlconnector://faucher:Thierry45.@servinfo-mariadb/DBfaucher', convert_unicode=True)
-#engine = create_engine('mysql+mysqlconnector://root:root@localhost/GRAND_GALOP', convert_unicode=True)
-engine = create_engine('mysql+mysqlconnector://doudeau:doudeau@servinfo-mariadb/DBdoudeau', convert_unicode=True)
+engine = create_engine('mysql+mysqlconnector://root:root@localhost/GRAND_GALOP', convert_unicode=True)
+#engine = create_engine('mysql+mysqlconnector://doudeau:doudeau@servinfo-mariadb/DBdoudeau', convert_unicode=True)
 #engine = create_engine('mysql+mysqlconnector://doudeau:doudeau@localhost/GRAND_GALOP', convert_unicode=True)
 
 db_session = scoped_session(sessionmaker(autocommit=False,
@@ -55,7 +55,8 @@ init_db()
 
 def get_personne(id):
     return Personne.query.get(int(id))
-
+def get_cours(id):
+    return Cours.query.get(int(id))
 def get_client(id):
     return Client.query.get(id)
 
@@ -66,24 +67,149 @@ def get_personne_email(email):
 
 # des que l'on fait une jointure avec d'autre tables, on a soit pas les infos soit avec le add_columns des tuples et on peut plus faire ligne.id par exemple
 
-def get_info_all_moniteur():
-    return Moniteur.query.all()
+def get_info_all_moniteur(id,nom,prenom,naissance,telephone,adresseEmail):
+    res = Moniteur.query
+    if(id!= "" and id != "0"):
+        res = res.filter(Moniteur.id == id)
+    if(nom!= ""):
+        print(res)
+        res = res.filter(Moniteur.personne.has(Personne.nomp == nom))
 
-def get_info_all_clients():
-    return Client.query.all()
+    if(prenom!= ""):
+        res = res.filter(Moniteur.personne.has(Personne.prenomp == prenom))
+
+    if(naissance!= ""):
+        jour = naissance.split("/")[0]
+        mois = naissance.split("/")[1]
+        annee = naissance.split("/")[2]
+        date = datetime.date(int(annee),int(mois),int(jour))
+        res = res.filter(Moniteur.personne.has(Personne.ddn == date))
+    if(adresseEmail!= ""):
+            res = res.filter(Moniteur.personne.has(Personne.adressemail == adresseEmail))
+
+    if(telephone!= ""):
+        res = res.filter(Moniteur.personne.has(Personne.numerotel == telephone))
+   
+    return res
+
+def get_info_all_clients(id,nom,prenom,naissance,telephone,adresseEmail,a_paye):
+    res = Client.query
+    
+    if(id!= "" and id != "0"):
+        res = res.filter(Client.id == id)
+    if(nom!= ""):
+        print(res)
+        res = res.filter(Client.personne.has(Personne.nomp == nom))
+
+    if(prenom!= ""):
+        res = res.filter(Client.personne.has(Personne.prenomp == prenom))
+
+    if(naissance!= ""):
+        jour = naissance.split("/")[0]
+        mois = naissance.split("/")[1]
+        annee = naissance.split("/")[2]
+        date = datetime.date(int(annee),int(mois),int(jour))
+        res = res.filter(Client.personne.has(Personne.ddn == date))
+    if(adresseEmail!= ""):
+            res = res.filter(Client.personne.has(Personne.adressemail == adresseEmail))
+
+    if(telephone!= ""):
+        res = res.filter(Client.personne.has(Personne.numerotel == telephone))
+        
+    if(a_paye != ""):
+        if(a_paye == "Oui"):
+            res = res.filter(Client.cotisationa == True)
+
+        else:
+            res = res.filter(Client.cotisationa == False)
+    return res
 
 
-def get_info_all_personnes():
-    return Personne.query.all()
+def get_info_all_personnes(id,nom,prenom,naissance,adresseEmail,telephone):
+    res = Personne.query
+    if(id!= "" and id != "0"):
+        res = res.filter(Personne.id == id)
+    if(nom!= ""):
+        res = res.filter(Personne.nomp == nom)
 
-def get_info_all_poney():
-    return Poney.query.all()
+    if(prenom!= ""):
+        res = res.filter(Personne.prenomp == prenom)
 
-def get_info_all_cours():
-    return Cours.query.all()
+    if(naissance!= ""):
+        jour = naissance.split("/")[0]
+        mois = naissance.split("/")[1]
+        annee = naissance.split("/")[2]
+        date = datetime.date(int(annee),int(mois),int(jour))
+        print(date)
+        res = res.filter(Personne.ddn == date).all()
+        print(res)
+    if(adresseEmail!= ""):
+            res = res.filter(Personne.adressemail == adresseEmail)
 
-def get_info_all_reservations():
-    return Reserver.query.all()
+    if(telephone!= ""):
+        res = res.filter(Personne.numerotel == telephone)
+    return res
+
+def get_info_all_poney(id,nom,poids):
+    res = Poney.query
+    print(nom)
+    if(id != ""and id != "0"):
+        res = res.filter(Poney.idpo == id)
+        print(res)
+    if(nom != ""):
+        
+        res = res.filter(Poney.nomp == nom)
+    if(poids != "" and poids != "0"):
+        res = res.filter(Poney.poidssup > poids)
+    return res
+def get_info_all_cours(idc,nomc,type,prix,nomMoniteur):
+    res = Cours.query
+    if(idc != ""  and idc != "0"):
+        res = res.filter(Cours.idc == idc)
+    if(nomc != ""):
+        res = res.filter(Cours.nomc == nomc)
+
+    if(type != ""):
+        res = res.filter(Cours.typec == type)
+
+    if(prix != ""):
+        res = res.filter(Cours.prix == prix)
+
+    if(nomMoniteur != ""):   
+        res = res.filter(Cours.moniteur.personne.nomp == nomMoniteur)
+    return res
+def get_info_all_reservations(dateReservation,idp,idc,idpo,duree,a_cotise):
+    res = Reserver.query
+    if(dateReservation != ""):
+        
+        date = dateReservation.split(' ')[0]
+        temps = dateReservation.split(' ')[1]
+        jour = date.split("/")[0]
+        mois = date.split("/")[1]
+        annee = date.split("/")[2]
+        heure = temps.split(":")[0]
+        minute = temps.split(":")[1]
+        seconde = 0 
+        datetime1 = datetime.datetime(int(annee),int(mois),int(jour),int(heure),int(minute),int(seconde))
+        res =  res.filter(Reserver.jmahms == datetime1)
+        
+    if(idp != ""):
+        res =  res.filter(Reserver.id == idp)
+   
+    if(idc != ""):
+        res =   res.filter(Reserver.idc == idc)
+    if(idpo != ""):
+        
+        res =   res.filter(Reserver.idpo == idpo)
+    if(duree != ""):
+        res =  res.filter(Reserver.duree == duree)
+    if(a_cotise != ""):
+        if(a_cotise == "Oui"):
+            res  =  res.filter(Reserver.a_paye == True)
+        else: 
+            res =  res.filter(Reserver.a_paye == False)
+
+    return res.all()
 
 
 def get_moniteur(id):
@@ -132,7 +258,40 @@ def deletePoney(id):
     except : 
         db.session.rollback()
         return False
-
+def update_client(id, cotisation):
+    c = Client.query.get(id)
+    c.cotisation = cotisation
+    try : 
+        db.session.commit()
+        return True
+    except : 
+        db.session.rollback()
+        return False
+    
+def update_reservation(jmahms,id,idpo,est_paye):
+    
+    date = jmahms.split(' ')[0]
+    temps = jmahms.split(' ')[1]
+    jour = date.split("/")[0]
+    mois = date.split("/")[1]
+    annee = date.split("/")[2]
+    heure = temps.split(":")[0]
+    minute = temps.split(":")[1]
+    seconde = 0 
+    datetime1 = datetime.datetime(int(annee),int(mois),int(jour),int(heure),int(minute),int(seconde))
+  
+    reservation = Reserver.query.filter(Reserver.idpo == idpo and Reserver.id == id and Reserver.jmahms == datetime1).first()
+    print(reservation)
+    reservation.a_paye = True if est_paye == "false" else False
+    try : 
+        db.session.commit()
+        
+        return True
+    except Exception as e : 
+        db.session.rollback()
+        print(e)
+        return False
+    
 def deletereservation(date,id,idpo):
     """
     Il prend une date, un id et un idpo et supprime la réservation qui correspond à la date, l'id et
@@ -214,7 +373,41 @@ def get_max_id_cours():
     return db.session.query(func.max(Cours.idc)).first()[0]
 def get_max_id_poney():
     return db.session.query(func.max(Poney.idpo)).first()[0]
-    
+def modifier_Personne(personne):
+    p = Personne.query.get(personne.id)
+    p.adressemail = personne.adressemail
+    p.prenomp =  personne.prenomp
+    p.nomp =  personne.nomp
+    p.ddn =  datetime.datetime(int(personne.ddn.split("/")[2]),int(personne.ddn.split("/")[1]),int(personne.ddn.split("/")[0]))
+    p.poids =  personne.poids
+    p.code_postal =  personne.code_postal
+    p.adresse =  personne.adresse
+    p.ville =  personne.ville
+    p.numerotel =  personne.numerotel
+    p.mdp =  personne.mdp
+    try :
+        db.session.commit()
+        return True
+    except Exception as e: 
+        print(e)
+        db.session.rollback()
+        return False
+
+def modifier_cours(cours):
+    c = Cours.query.get(cours.idc)
+    c.nomc = cours.nomc
+    c.descc = cours.descc
+    c.typec = cours.typec
+    c.prix = cours.prix
+    c.id = cours.id
+    try :
+        db.session.commit()
+        return True
+    except Exception as e: 
+        print(e)
+        db.session.rollback()
+        return False
+
 def ajout_client(idp, cotise):
     """
     Il ajoute un client à la base de données

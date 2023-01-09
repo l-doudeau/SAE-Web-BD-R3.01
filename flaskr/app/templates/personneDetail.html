@@ -1,0 +1,206 @@
+{% include 'banner.html' %}
+<style>
+    @import url('https://fonts.googleapis.com/css2?family=Source+Sans+Pro&display=swap');
+    </style> 
+<style>
+    .k-input-inner {font-size: 120%;}
+    h1,h2{
+        font-weight: bold;
+        font-family: 'Source Sans Pro', sans-serif;
+        
+    }
+    .k-label{
+        margin: 0;
+        padding: 0;
+    }
+    #loader-background {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-color: rgba(82, 82, 82, 0.1); /* Opacité de 50% */
+        z-index: 999; /* Place l'élément en arrière-plan */
+    }
+
+    #loader {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%); /* Centre l'SVG du loader */
+    }
+</style>
+<div class="container" style="margin-top: 1em;">
+    <div class="row" style="border-bottom: solid 1px">
+        <h1 for="InfoP"  >Compte</h1>
+    </div>
+
+    <div class="row" style="border-bottom: solid 1px;padding: 1em;">
+        <div class="col-sm-4">
+            <h4 for="InfoP" style="color: gray;">Informations Connexion</h4>
+        </div>
+        <div class="col-sm-8">
+            <div class="row">
+                <input id="EmailPersonne"/>
+            </div>
+            <div class="row">
+                <input id="PasswordPersonne"/>
+            </div>
+            <div class="row">
+                <input id="idPersonne"/>
+            </div>
+        </div>
+    </div>
+    <div class="row" style="border-bottom: solid 1px;padding: 1em;">
+        <div class="col-sm-4">
+            <h4 for="InfoP" style="color: gray;">Informations Personnel</h4>
+        </div>
+        <div class="col-sm-8">
+            <div class="row">
+                <input id="NomPersonne"/>
+            </div>
+            <div class="row">
+                <input id="PrenomPersonne"/>
+            </div>
+            <div class="row">
+                <input id="DdnPersonne"/>
+            </div>
+            <div class="row">
+                <input id="TelPersonne"/>
+            </div>
+            <div class="row">
+                <input id="PoidsPersonne"/>
+            </div>
+        </div>
+    </div>
+
+    <div class="row" style="border-bottom: solid 1px;padding: 1em;">
+        <div class="col-sm-4">
+            <h4 for="InfoP"style="color: gray;" >Adresse de Facturation</h4>
+        </div>
+        <div class="col-sm-8">
+            <div class="row">
+                <input id="AdressePersonne"/>
+            </div>
+            <div class="row">
+                <input id="CodePostalPersonne"/>
+            </div>
+            <div class="row">
+                <input id="VillePersonne"/>
+            </div>
+        </div>
+    </div>
+    
+    
+    <div class="row" style="margin: 1em 0;">
+        <div class="col-8"></div>
+        <div class="col-4 d-flex justify-content-end">
+            <button id="save" type="button" class="btn btn-success">Sauvegarder</button>
+        </div>
+
+    </div>
+</div>
+
+<div id="loader-background" style="display: none;">
+    <img id="loader" src="{{url_for('static', filename='img/loader.svg')}}"/>
+</div>
+
+<script src="https://kendo.cdn.telerik.com/2022.3.1109/js/cultures/kendo.culture.fr-FR.min.js"></script>
+<script>
+
+    $(document).ready(function(){
+        $("#EmailPersonne").kendoTextBox({
+            label: "Email",
+            value: '{{Personne.adressemail}}',
+            size: "full",
+            rounded: "medium",
+
+        });
+
+        $("#PasswordPersonne").kendoTextBox({
+            label: "Mot de passe",
+            value: '{{Personne.mdp}}',
+        });
+
+        $("#idPersonne").kendoTextBox({
+            label: "ID",
+            value: '{{Personne.id}}',
+            enable: false,
+        });
+        $("#NomPersonne").kendoTextBox({
+            label: "Nom",
+            value: '{{Personne.nomp}}',
+            
+        });
+        $("#PrenomPersonne").kendoTextBox({
+            label: "Prenom",
+            value: '{{Personne.prenomp}}',
+        });
+        $("#DdnPersonne").kendoDatePicker({
+            label: "Date de naissance",
+            value: '{{Personne.ddn}}',
+            culture:"fr-FR",
+        });
+        $("#TelPersonne").kendoTextBox({
+            label: "Telephone",
+            value: '{{Personne.numerotel}}',
+        });
+        $("#PoidsPersonne").kendoNumericTextBox({
+            label: "Poids",
+            value: '{{Personne.poids}}',
+        });
+        $("#AdressePersonne").kendoTextBox({
+            label: "Adresse",
+            value: '{{Personne.adresse}}',
+        });
+        $("#CodePostalPersonne").kendoTextBox({
+            label: "Code Postal",
+            value: '{{Personne.code_postal}}',
+        });
+        $("#VillePersonne").kendoTextBox({
+            label: "Ville",
+            value: '{{Personne.ville}}',
+        });
+       
+        $("#save").on("click",function(){
+            $("#loader-background").show()
+            var ville = $("#VillePersonne").val()
+            var code_postal = $("#CodePostalPersonne").val()
+            var adresse = $("#AdressePersonne").val()
+            var poids = $("#PoidsPersonne").val()
+            var tel = $("#TelPersonne").val()
+            var ddn = $("#DdnPersonne").val()
+            var prenom = $("#PrenomPersonne").val()
+            var nom = $("#NomPersonne").val()
+            var id = $("#idPersonne").val()
+            var password = $("#PasswordPersonne").val()
+            var email = $("#EmailPersonne").val()
+            $.ajax({
+                url : '{{url_for("UpdatePersonne")}}',
+                data:{
+                    "ville":ville,
+                    "code_postal":code_postal,
+                    "adresse":adresse,
+                    "poids":poids,
+                    "tel":tel,
+                    "ddn":ddn,
+                    "prenom":prenom,
+                    "nom":nom,
+                    "id":id,
+                    "password":password,
+                    "email":email,
+                
+                },
+                type:'POST',
+                success:function(response){
+                    if(response == "false"){
+                        alert("Problème lors de la sauvegarde")
+                    }else{
+                        history.back()
+                    }
+                }
+            });
+        })
+        
+    });
+</script>
