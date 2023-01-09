@@ -55,6 +55,7 @@ CREATE TABLE cours (
   typec VARCHAR(42),
   prix decimal(4.2),
   id int,
+  url_image VARCHAR(500),
   PRIMARY KEY (idc)
 ) ENGINE=InnoDB DEFAULT CHARSET=UTF8MB4;
 
@@ -63,6 +64,7 @@ CREATE TABLE poney (
   idpo int,
   nomp VARCHAR(42),
   poidssup decimal(3.3),
+  url_image VARCHAR(500),
   PRIMARY KEY (idpo)
 ) ENGINE=InnoDB DEFAULT CHARSET=UTF8MB4;
 

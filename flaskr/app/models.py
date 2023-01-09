@@ -55,6 +55,7 @@ class Cours(db.Model):
     descc = db.Column(db.String)
     typec = db.Column(db.String)
     prix = db.Column(db.DECIMAL)
+    url_image = db.Column(db.String)
     id = db.Column(db.Integer, ForeignKey("moniteur.id"))
     moniteur = relationship("Moniteur")
     
@@ -84,7 +85,8 @@ class Poney(db.Model):
     idpo = db.Column(db.Integer, primary_key = True)
     nomp = db.Column(db.String)
     poidssup = db.Column(db.DECIMAL)
-    
+    url_image = db.Column(db.String)
+
     def __init__(self, idpo,nomp,poidssup) -> None:
         self.idpo = idpo
         self.nomp = nomp

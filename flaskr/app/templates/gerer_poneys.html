@@ -279,17 +279,9 @@
         
 
         $("#Poney").on("dblclick", "tr", function() {
-            const id = $(row)[0].childNodes[0].innerHTML
-            const url = '{{url_for("Poneys",id="idPoney")}}'.replace("idPoney",id)
-            $.ajax({
-                type:"POST",
-                data:{"id":id},
-                url:url,
-                success:function(response){ window.location.href = "/Poney/"+id;
-} 
-               
-
-            });
+            const id = $(row)[0].childNodes[0].innerHTML;
+            const url = '{{url_for("PoneyDetail",id="idPoney")}}'.replace("idPoney",id);
+            window.location = url;
         });
                 
         $("#deletePoney").on("click",function(){

@@ -1,0 +1,136 @@
+{% include 'banner.html' %}
+<style>
+    @import url('https://fonts.googleapis.com/css2?family=Source+Sans+Pro&display=swap');
+
+    body{
+        background-color: rgb(247, 255, 249);
+    }
+
+    *{font-size: 101% !important}
+    h2{
+        font-size: 150% !important;
+    }
+    body{
+        background-color: rgb(247, 255, 249);
+    }
+</style> 
+
+<div class="container-fluid" style="margin-top: 1em;">
+    <div class="row">
+    <div class="col-md-4" style="display: flex;align-items: center;">
+        <img src="{{Poney.url_image}}" alt="Cours De Saut" style="width:100%;">
+    </div>
+    <div class="col-md-7" style="width: 60%;">
+    <div class="row" style="border-bottom: solid 1px">
+        <h1 for="InfoCours"  >Poneys</h1>
+    </div>
+
+    <div class="row" style="border-bottom: solid 1px;padding: 1em;">
+        <div class="row">
+            <div class="col-sm-4">
+                <h2 for="InfoP" style="color: gray;">Informations du Poneys</h2>
+            </div>
+            <div class="col-md-8"></div>
+        </div>
+        <div class="row">
+            <div class="col-sm-4"></div>
+            <div class="col-sm-8">
+                <div class="row">
+                    <input id="PoneyID">
+                </div>
+        </div>
+        <div class="row"  style="margin-top: 1em;">
+            <div class="col-md-4"></div>
+            <div class="col-md-8">
+                <input id="PoneyNom">
+            </div>
+        </div>
+        <div class="row" style="margin-top: 1em;">
+            <div class="col-md-4"></div>
+            <div class="col-md-8">
+                <input id="PoneyPoids">
+            </div>
+        </div>
+    </div>
+    </div>
+   
+
+    <div class="row" style="margin: 1em 0;">
+        <div class="col-8"></div>
+        <div class="col-4 d-flex justify-content-end">
+            <button id="save" type="button" class="btn btn-success">Sauvegarder</button>
+        </div>
+
+    </div>
+</div>
+<div class="col-md-1"></div>
+</div>
+</div>
+<div id="loader-background" style="display: none;">
+    <img id="loader" src="{{url_for('static', filename='img/loader.svg')}}"/>
+</div>
+<script>
+    
+
+    $(document).ready(function() {
+
+        $("#PoneyID").kendoTextBox({
+            value: '{{Poney.idpo}}',
+            enable : false,
+            label:"ID",
+        })
+
+        $("#PoneyNom").kendoTextBox({
+            value: '{{Poney.nomp}}',
+            label:"Nom",
+            
+        })
+        $("#PoneyPoids").kendoNumericTextBox({
+            value: '{{Poney.poidssup}}',
+            min:0,
+            label:"Poids supporté",
+        })
+
+
+        $("#save").on("click",function(){
+            if(checkfield()){
+                $("#loader-background").show()
+                var descc = $("#DescriptionCours").val()
+                var typec = $("#TypeComboBox").data("kendoComboBox").text() 
+                var prix = $("#PrixCours").val()
+                var nom = $("#NomCours").val()
+                var idmoniteur =   $("#MoniteursComboBox").val().split(" ")[0]
+                var idc = "{{Poney.idpo}}"
+                $.ajax({
+                    url : '{{url_for("UpdateCours")}}',
+                    data:{
+                        "descc":descc,
+                        "idmoniteur":idmoniteur,
+                        "idc":idc,
+                        "prix" : prix,
+                        "type" : typec,
+                        "nomc" : nom
+
+                    },
+                    type:'POST',
+                    success:function(response){
+                        if(response == "false"){
+                            alert("Problème lors de la sauvegarde")
+                        }else{
+                            window.location = '{{url_for("cours")}}'
+                        }
+                    }
+                });
+            }
+        })
+        
+    });
+    function checkfield(){
+        hasDesc = $("#DescriptionCours").val() != "" ?true : false;
+        hasName = $("#NomCours").val() != ""?true : false;
+        hasType =  $("#TypeCours").val() != ""?true : false;
+        hasPrice = $("#PrixCours").val() != ""?true : false;
+        hasMoniteur =$("#MoniteursComboBox").val().split(" ")[0] != ""?true : false;
+        return hasDesc && hasName && hasType && hasPrice && hasMoniteur
+    }
+</script>

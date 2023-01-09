@@ -257,7 +257,10 @@
         $(document).ready(function() {
         
             $("#PersonneReservation").kendoComboBox({
-            dataSource: [],
+            dataSource: {
+                serverFiltering: true,
+            },
+            filter: "contains",
             dataTextField: "name",
             dataValueField: "name"
         });

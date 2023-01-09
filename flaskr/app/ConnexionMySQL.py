@@ -12,8 +12,8 @@ from sqlalchemy import create_engine
 from sqlalchemy.ext.declarative import declarative_base
 
 
-#engine = create_engine('mysql+mysqlconnector://faucher:Thierry45.@servinfo-mariadb/DBfaucher', convert_unicode=True)
-engine = create_engine('mysql+mysqlconnector://root:root@localhost/GRAND_GALOP', convert_unicode=True)
+engine = create_engine('mysql+mysqlconnector://faucher:Thierry45.@servinfo-mariadb/DBfaucher', convert_unicode=True)
+#engine = create_engine('mysql+mysqlconnector://root:root@localhost/GRAND_GALOP', convert_unicode=True)
 #engine = create_engine('mysql+mysqlconnector://doudeau:doudeau@servinfo-mariadb/DBdoudeau', convert_unicode=True)
 #engine = create_engine('mysql+mysqlconnector://doudeau:doudeau@localhost/GRAND_GALOP', convert_unicode=True)
 
@@ -59,6 +59,8 @@ def get_cours(id):
     return Cours.query.get(int(id))
 def get_client(id):
     return Client.query.get(id)
+def get_poney(id):
+    return Poney.query.get(id)
 
 def get_moniteur(id):
     return Moniteur.query.get(id)
@@ -94,11 +96,9 @@ def get_info_all_moniteur(id,nom,prenom,naissance,telephone,adresseEmail):
 
 def get_info_all_clients(id,nom,prenom,naissance,telephone,adresseEmail,a_paye):
     res = Client.query
-    
     if(id!= "" and id != "0"):
         res = res.filter(Client.id == id)
     if(nom!= ""):
-        print(res)
         res = res.filter(Client.personne.has(Personne.nomp == nom))
 
     if(prenom!= ""):
@@ -350,7 +350,7 @@ def delete_personne(id):
     if client is not None:
         deleteclient(id)
         db.session.commit()
-    elif moniteur is not None:
+    if moniteur is not None:
         for c in cours:
             deletecours(c.idc)
             db.session.commit()

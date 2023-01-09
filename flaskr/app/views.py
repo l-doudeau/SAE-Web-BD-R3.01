@@ -282,7 +282,7 @@ def PersonneDetail(id):
 @login_required
 @app.route('/Poney/<id>',methods=['POST',"GET"])
 def PoneyDetail(id):
-    return render_template("poneyDetails.html",id=id)
+    return render_template("poneyDetails.html",Poney = get_poney(id))
 
 @login_required
 @app.route("/Cours/<id>",methods=["POST","GET"])
