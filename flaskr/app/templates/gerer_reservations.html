@@ -5,6 +5,9 @@
         margin: 1em;
     }
 
+    .a{
+        display: none;
+    }
     #loader-background {
         position: fixed;
         top: 0;
@@ -24,7 +27,7 @@
 </style>
 <body>
     <section>
-        <div class="container">
+        <div class="container-fluid">
             <div class="row">
                 <div class="row">
                     <div class="col-12 col-md-8"></div>
@@ -373,19 +376,19 @@
             },
                 
             columns: [
-                {data: 'jmahms',className: "dt-center",orderable:false,"render" : function (data) { 
+                {data: 'jmahms',className: "dt-center",orderable:true,"render" : function (data) { 
                     let m = new Date(data);
                     var date = moment.utc(m).format('DD/MM/YYYY HH:mm:ss');
                     return date
                 }
             },
-                {data: 'nomp',orderable:false,className: "dt-center",id : {data:"id"}
+                {data: 'nomp',orderable:true,className: "dt-center",id : {data:"id"}
             },
-                {data: 'prenomp',orderable:false,className: "dt-center"},
-                {data: 'nomc',orderable:false,className: "dt-center"},
-                {data: 'nompo',orderable:false,className: "dt-center"},
-                {data: 'duree',orderable:false,className: "dt-center"},
-                {data: 'a_paye',orderable:false,className: "dt-center", "render":function (data, type, row) {
+                {data: 'prenomp',orderable:true,className: "dt-center"},
+                {data: 'nomc',orderable:true,className: "dt-center"},
+                {data: 'nompo',orderable:true,className: "dt-center"},
+                {data: 'duree',orderable:true,className: "dt-center"},
+                {data: 'a_paye',orderable:true,className: "dt-center", "render":function (data, type, row) {
                           return (data === true) ? '<input class="form-check-input" type="checkbox" value="" onclick="save(this)" id="flexCheckChecked" checked>':'<input class="form-check-input" onclick="save(this)" type="checkbox" value="" id="flexCheckChecked">'} },
                 {data: "id",className:"a"},
                 {data:"idpo",className:"a"}
