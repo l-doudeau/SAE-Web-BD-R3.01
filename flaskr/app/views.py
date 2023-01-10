@@ -182,6 +182,8 @@ def data_cours():
             "nomc":ligne.nomc,
             "descc":ligne.descc,
             "typec": ligne.typec,
+            "jmahms": ligne.jmahms,
+            "duree": str(ligne.duree),
             "prix": ligne.prix,
             "id" : ligne.moniteur.personne.nomp
         })
@@ -227,14 +229,14 @@ def data_reservations():
     lignes = get_info_all_reservations(jmahms,id,idc,idpo,duree,a_paye)
     for ligne in lignes:
         data["data"].append({
-            "jmahms": ligne.jmahms,
+            "jmahms": ligne.cours.jmahms,
             "id":ligne.id,
             "idc":ligne.idc,
             "nomp":ligne.personne.nomp,
             "prenomp":ligne.personne.prenomp,
             "nomc": ligne.cours.nomc,
             "nompo": ligne.poney.nomp,
-            "duree": str(ligne.duree),
+            "duree": str(ligne.cours.duree),
             "a_paye": ligne.a_paye
         })
 
@@ -375,7 +377,7 @@ def SendMail():
     seconde = time.split(":")[2]
     strDate = "" + jours + "/" + mois+ "/" +annee + " " + heure + ":" +minute + ":" + seconde
     msg = Message(sender=app.config.get("MAIL_USERNAME"),
-                        recipients=["thomasf45@hotmail.fr"],
+                        recipients=[email],
                         body="Ceci est un mail automatique, Veuillez à penser de payer votre cours du " + strDate  + ".\nEn vous souhaitant une bonne journée. \nCordialement,\n \n Grand Galop",
                         subject = "GRAND GALOP : Reservation Cours " + strDate)
     mail.send(msg)
@@ -520,15 +522,19 @@ def AddCours():
     """
     nom = request.form["nom"]
     descc = request.form["descc"]
-    type = request.form["type"]
+    typec = request.form["type"]
     prix = request.form["prix"]
+    duree = request.form["duree"]
+    print(duree)
+    jmahms = request.form["jmahms"]
+    url = request.form["url"]
     id = request.form["id"]
-    if type == "1" : 
-        type = "Individuel"
-    elif type == "2":
-        type = "Collectif"
-    ajouteCours(nom, descc, type, prix, id)
-    return ""
+    if typec == "1" : 
+        typec = "Individuel"
+    elif typec == "2":
+        typec = "Collectif"
+    save = ajouteCours(nom, descc, typec, prix,jmahms,duree, id,url)
+    return "true" if save  else "false"
 
 @app.route('/AddPersonne',methods=['POST'])
 def AddPersonne():

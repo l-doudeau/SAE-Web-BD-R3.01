@@ -1,4 +1,4 @@
-{% include 'banner.html' %}
+
 <style>
     .row{
         margin: 1em;
@@ -23,6 +23,7 @@
         background-color: rgb(249, 255, 249);
     }
 </style>
+{% include 'banner.html' %}
 <body>
     <section>
         <div class="container">
@@ -41,9 +42,10 @@
                     <tr>
                         <th>ID</th>
                         <th>Nom</th>
-                        <th>Description</th>
                         <th>Type</th>
                         <th>Prix</th>
+                        <th>Date</th>
+                        <th>Duree</th>
                         <th>Moniteur</th>
                 </thead>
                 <tbody></tbody>
@@ -117,10 +119,42 @@
                         </div>
                         <div class="row">
                             <div class="col-4">
+                                <label for="DateReservation" class="label label-primary">Date de reservation</label>
+                            </div>
+                            <div class="col-8">
+                                <input required id="DateReservation">
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-4">
+                                <label for="HeureReservation" class="label label-primary">Heure reservation</label>
+                            </div>
+                            <div class="col-8">
+                                <input id="HeureReservation">
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-4">
+                                <label for="DuréeReservation" class="label label-primary">Durée</label>
+                            </div>
+                            <div class="col-8">
+                                <input required  id="DuréeReservation">
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-4">
                                 <label for="idMoniteur" class="label label-primary">Moniteur</label>
                             </div>
                             <div class="col-8">
                                 <input required id="idMoniteur">
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-4">
+                                <label for="URLImage" class="label label-primary">URL Image</label>
+                            </div>
+                            <div class="col-8">
+                                <input required  id="URLImage">
                             </div>
                         </div>
                     </div>
@@ -176,7 +210,23 @@
                             <input id="PrixFiltre">
                         </div>
                     </div>
-    
+                    <div class="row">
+                        <div class="col-5">
+                            <label for="DateReservation" class="label label-primary">Date de reservation</label>
+                        </div>
+                        <div class="col-7">
+                            <input id="DateReservation1">
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-5">
+                            <label for="DuréeReservation" class="label label-primary">Durée</label>
+                        </div>
+                        <div class="col-7">
+                            <input  id="DuréeReservation1">
+                        </div>
+                    </div>
                     <div class="row">
                         <div class="col-5">
                             <label for="NomMoniteurFiltre" class="label label-primary">Nom du moniteur</label>
@@ -216,23 +266,66 @@
         $(document).ready(function() {
             $("#loader-background").hide()
 
+            $("#DuréeReservation").kendoTimePicker({
+            culture:"fr-FR",
+            interval:5,
+            max: new Date(2000, 0, 1, 2, 0, 0),
+            
+            size:"medium"
+            
+            });
+            $("#DateReservation").kendoDatePicker({
+                culture:"fr-FR",
+                size:"medium",
+                minTime : "08:00",
+            });
+
+            $("#URLImage").kendoTextBox({
+            placeholder: "Entrer l'URL de l'image",
+            fillMode: "solid",
+            size:"medium"
+        });
+
+            $("#DateReservation1").kendoDateTimePicker({
+                culture:"fr-FR",
+                size:"medium",
+                minTime : "08:00",
+                });
+
+            $("#HeureReservation").kendoTimePicker({
+                culture:"fr-FR",
+                interval : 60,
+                min: new Date(2000, 0, 1, 8, 0, 0),
+                max: new Date(2000, 0, 1,20, 0, 0),
+                size:"medium",
+                });
+
+            $("#DuréeReservation1").kendoTimePicker({
+                culture:"fr-FR",
+                interval:5,
+                max: new Date(2000, 0, 1, 2, 0, 0),
+                size:"medium",
+            
+            });
+
+
             $("#IDFiltre").kendoNumericTextBox({
                 culture: "fr-FR",
                 min:0,
-                size:"large",
+                size:"medium",
                 placeholder: "Entrer l'id du cours",
                 format: "{0:n0}"
             });
 
             $("#NomFiltre").kendoTextBox({
-                size:"large",
+                size:"medium",
                 placeholder: "Entrer le nom du cours",
             });
 
             $("#TypeFiltre").kendoComboBox({
                 dataTextField: "text",
                         dataValueField: "value",
-                        size:"large",
+                        size:"medium",
                         dataSource: [
                             { text: "", value: "1" },
                             { text: "Collectif", value: "2" },
@@ -243,14 +336,14 @@
             $("#PrixFiltre").kendoNumericTextBox({
                 culture: "fr-FR",
                 min:0,
-                size:"large",
+                size:"medium",
                 placeholder: "Entrer le prix du cours",
                 format: "{0:c2}"
             });
 
             $("#NomMoniteurFiltre").kendoTextBox({
                 placeholder: "Entrer le nom du moniteur cours",
-                size:"large",
+                size:"medium",
             });
 
         var table = $('#cours').DataTable({
@@ -270,9 +363,14 @@
             columns: [
                 {data: 'idc',className: "dt-center"},
                 {data: 'nomc',className: "dt-center"},
-                {data: 'descc',className: "dt-center"},
                 {data: 'typec',className: "dt-center"},
                 {data: 'prix',className: "dt-center"},
+                {data: 'jmahms',className: "dt-center","render" : function (data) { 
+                    let m = new Date(data);
+                    var date = moment.utc(m).format('DD/MM/YYYY HH:mm:ss');
+                    return date
+                }},
+                {data: 'duree',className: "dt-center",},
                 {data: 'id',className: "dt-center"},
         ],
             info:true,
@@ -306,13 +404,21 @@
             var type = $("#TypeCours").val();
             var prix = $("#prixCours").val()
             var id = $("#idMoniteur").val().split(" ")[0];
+            var jmahms = $("#DateReservation").val();
+            var duree = $("#DuréeReservation").val();
+            var heurereserv = $("#HeureReservation").data("kendoTimePicker").value();
+            var url = $("#URLImage").val()
+            jmahms == ""?$("#DateReservation").css("border","1px solid red"):$("#DateReservation").css("border","");
+            duree == ""?$("#DuréeReservation").css("border","1px solid red"):$("#DuréeReservation").css("border","");
+            heurereserv == ""?$("#HeureReservation").css("border","1px solid red"):$("#HeureReservation").css("border","");
 
             nom == ""?$("#nomCours").css("border","1px solid red"):$("#nomCours").css("border","");
             descc == ""?$("#descCours").css("border","1px solid red"):$("#descCours").css("border","");
             type == ""?$("#TypeCours").css("border","1px solid red"):$("#TypeCours").css("border","");
-            prix == ""  || !isNumeric(prix)?$("#prixCours").css("border","1px solid red"):$("#prixCours").css("border","");
+            prix == ""  || !isNumeric(prix)?$("#prixCours").parent().css("border","1px solid red"):$("#prixCours").parent().css("border","");
+            id == ""? $("#idMoniteur").parent().css("border","1px solid red"):$("#idMoniteur").parent().css("border","");
 
-            if(nom != "" && descc != "" && prix != ""&& isNumeric(prix) && type != ""){
+            if(nom != "" && descc != "" && prix != ""&& isNumeric(prix) && type != "" && id != "" && jmahms != "" && duree !="" && heurereserv != ""){
                 $.ajax({
                 url:'{{url_for("AddCours")}}',
                 type:'POST',
@@ -321,11 +427,19 @@
                     descc : descc,
                     type : type,
                     prix : prix,
-                    id : id
+                    id : id,
+                    duree : duree,
+                    jmahms : jmahms + " " + $("#HeureReservation").val(),
+                    url : url
                     },
-            success: function(){ 
-                console.log("reussi");
-                table.ajax.reload();
+            success: function(response){ 
+                console.log(response)
+                if(response == "true"){
+                    table.ajax.reload();
+
+                }else{
+                    alert(response)
+                }
 
                 } 
             });
@@ -335,19 +449,19 @@
         $("#nomCours").kendoTextBox({
             placeholder: "Nom",
             fillMode: "solid",
-            size:"large"
+            size:"medium"
         });
 
         $("#descCours").kendoTextBox({
             placeholder: "Description",
             fillMode: "solid",
-            size:"large"
+            size:"medium"
         });
 
         $("#prixCours").kendoNumericTextBox({
                 culture: "fr-FR",
                 min:0,
-                size:"large",
+                size:"medium",
                 placeholder: "Entrer le prix du cours",
                 format: "{0:c2}"
         });
@@ -357,7 +471,7 @@
             dataValueField: "name",
             placeholder: "Entrer un moniteur",
             fillMode: "solid",
-            size:"large"
+            size:"medium"
         });
 
         var listeMoniteurs = "{{Moniteurs}}".replaceAll("&#39;","").replaceAll("[","").replaceAll("]","").replaceAll(", ",",").split(",")
@@ -377,7 +491,7 @@
                         suggest: true,
                         clearButton: false,
                         index: 1,
-                        size:"large",
+                        size:"medium",
                     });
 
 

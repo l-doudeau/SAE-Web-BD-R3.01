@@ -133,7 +133,7 @@ button:active {
                 <div class="col-md-4" style="border-bottom: solid 2px;"></div>
                 <div class="col-md-4" style="text-align: center;">
                     <h4 >Durée</h4>
-                    <p>{{Reservation.duree}}</p>
+                    <p>{{Reservation.cours.duree}}</p>
                 </div>
             </div>
             <div class="row" style="margin-top: 1em;">
@@ -210,14 +210,14 @@ button:active {
             url: "/sendMail",
             type: "POST",
             data: {email : "{{Client.adressemail}}",
-                    date : "{{Reservation.jmahms}}"}
+                    date : "{{Reservation.cours.jmahms}}"}
 
         })
     }
 $(document).ready(function() {
 
-    var date = "{{Reservation.jmahms}}"
-    $("#DateReservation").html(moment("{{Reservation.jmahms}}").format('DD/MM/YYYY HH:mm:SS'))
+    var date = "{{Reservation.cours.jmahms}}"
+    $("#DateReservation").html(moment("{{Reservation.cours.jmahms}}").format('DD/MM/YYYY HH:mm:SS'))
     
     $("#DateDeNaissance").html(moment("{{Client.ddn}}").format('DD/MM/YYYY'))
     var paye = "{{Reservation.a_paye}}" == "True" ? true:false;

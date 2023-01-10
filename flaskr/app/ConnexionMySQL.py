@@ -12,8 +12,8 @@ from sqlalchemy import create_engine
 from sqlalchemy.ext.declarative import declarative_base
 
 
-#engine = create_engine('mysql+mysqlconnector://faucher:Thierry45.@servinfo-mariadb/DBfaucher', convert_unicode=True)
-engine = create_engine('mysql+mysqlconnector://root:root@localhost/GRAND_GALOP', convert_unicode=True)
+engine = create_engine('mysql+mysqlconnector://faucher:Thierry45.@servinfo-mariadb/DBfaucher', convert_unicode=True)
+#engine = create_engine('mysql+mysqlconnector://root:root@localhost/GRAND_GALOP', convert_unicode=True)
 #engine = create_engine('mysql+mysqlconnector://doudeau:doudeau@servinfo-mariadb/DBdoudeau', convert_unicode=True)
 #engine = create_engine('mysql+mysqlconnector://doudeau:doudeau@localhost/GRAND_GALOP', convert_unicode=True)
 
@@ -191,7 +191,7 @@ def get_info_all_reservations(dateReservation,idp,idc,idpo,duree,a_cotise):
         minute = temps.split(":")[1]
         seconde = 0 
         datetime1 = datetime.datetime(int(annee),int(mois),int(jour),int(heure),int(minute),int(seconde))
-        res =  res.filter(Reserver.jmahms == datetime1)
+        res =  res.filter(Reserver.cours.has(Cours.jmahms == datetime1))
         
     if(idp != ""):
         res =  res.filter(Reserver.id == idp)
@@ -280,7 +280,7 @@ def update_reservation(jmahms,id,idc,est_paye):
     seconde = 0 
     datetime1 = datetime.datetime(int(annee),int(mois),int(jour),int(heure),int(minute),int(seconde))
   
-    reservation = Reserver.query.filter(Reserver.idc == idc and Reserver.id == id and Reserver.jmahms == datetime1).first()
+    reservation = Reserver.query.filter(Reserver.idc == idc and Reserver.id == id and Reserver.cours.has(Cours.jmahms == datetime1)).first()
     reservation.a_paye = True if est_paye == "true" else False
     try : 
         db.session.commit()
@@ -310,7 +310,7 @@ def deletereservation(date,id,idpo):
     liste_time = liste_date_time[1].split(":")
 
     jmahms = datetime.datetime(int(liste_date[2]),int(liste_date[1]),int(liste_date[0]),int(liste_time[0]),int(liste_time[1]),int(liste_time[2]))
-    reservation = Reserver.query.filter(Reserver.jmahms == jmahms).filter(Reserver.id == id).filter(Reserver.idpo == idpo).first()
+    reservation = Reserver.query.filter(Reserver.cours.has(Cours.jmahms == jmahms)).filter(Reserver.id == id).filter(Reserver.idpo == idpo).first()
     db.session.delete(reservation)
     try : 
         
@@ -333,12 +333,14 @@ def deletecours(idc):
         db.session.delete(reserv)
 
     cours = Cours.query.get(idc)
+    print(cours)
     db.session.delete(cours)
     try:
         db.session.commit()
         return True
 
-    except:
+    except Exception as e:
+        print(e)
         db.session.rollback()
         return False
     
@@ -490,7 +492,7 @@ def ajout_reservation(date,id,idpo,idc,duree,a_paye):
         return False
 
 
-def ajouteCours(nomc, descc, typec, prix, id):
+def ajouteCours(nomc, descc, typec, prix,jmahms,duree,id,url):
     """
     Il ajoute un nouveau cours à la base de données
     
@@ -500,14 +502,21 @@ def ajouteCours(nomc, descc, typec, prix, id):
     :param prix: float
     :return: une valeur booléenne.
     """
-    cours = Cours(get_max_id_cours()+1, nomc, descc, typec, prix, id)
+    liste_datetime = jmahms.split(" ")
+    liste = liste_datetime[0].split("/")
+    liste_time = liste_datetime[1].split(":")
+    date_cours = datetime.datetime(int(liste[2]),int(liste[1]),int(liste[0]),int(liste_time[0]),int(liste_time[1]),0)
+    cours = Cours(get_max_id_cours()+1, nomc, descc, typec, prix,duree,date_cours, id,url)
     db.session.add(cours)
     try:
         db.session.commit()
         return True
-    except:
+    except Exception as e:
+        print(e)
         db.session.rollback()
         return False
+       
+
 
 def ajoute_moniteur(idp):
     """

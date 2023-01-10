@@ -110,14 +110,6 @@
             <div class="modal-body">
                 <div class="row">
                     <div class="col-4">
-                        <label for="DateReservation" class="label label-primary">Date de reservation</label>
-                    </div>
-                    <div class="col-8">
-                        <input required id="DateReservation" value="01/01/2022">
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col-4">
                         <label for="PersonneReservation" class="label label-primary">Personne</label>
                     </div>
                     <div class="col-8">
@@ -143,14 +135,7 @@
                     </div>
                 </div>
 
-                <div class="row">
-                    <div class="col-4">
-                        <label for="DuréeReservation" class="label label-primary">Durée</label>
-                    </div>
-                    <div class="col-8">
-                        <input required  id="DuréeReservation">
-                    </div>
-                </div>
+               
                 <div class="row">
                     <div class="col-4">
                         <label for="CotiseReservation" class="label label-primary">Déjà cotisé ?</label>
@@ -179,14 +164,7 @@
             </button>
             </div>
             <div class="modal-body">
-                <div class="row">
-                    <div class="col-4">
-                        <label for="DateReservation" class="label label-primary">Date de reservation</label>
-                    </div>
-                    <div class="col-8">
-                        <input id="DateReservation1">
-                    </div>
-                </div>
+                
                 <div class="row">
                     <div class="col-4">
                         <label for="PersonneReservation" class="label label-primary">Personne</label>
@@ -214,14 +192,7 @@
                     </div>
                 </div>
 
-                <div class="row">
-                    <div class="col-4">
-                        <label for="DuréeReservation" class="label label-primary">Durée</label>
-                    </div>
-                    <div class="col-8">
-                        <input  id="DuréeReservation1">
-                    </div>
-                </div>
+               
                 <div class="row">
                     <div class="col-4">
                         <label for="CotiseReservation" class="label label-primary">Est payé ?</label>
@@ -267,9 +238,7 @@
             dataTextField: "name",
             dataValueField: "name"});
 
-        $("#DateReservation").kendoDateTimePicker({
-            culture:"fr-FR",
-        });
+        
 
         $("#PoneyReservation").kendoComboBox({
             dataSource: [],
@@ -286,21 +255,13 @@
             dataTextField: "name",
             dataValueField: "name"});
 
-        $("#DateReservation1").kendoDateTimePicker({
-            culture:"fr-FR",
-        });
-
+       
         $("#PoneyReservation1").kendoComboBox({
             dataSource: [],
                     dataTextField: "name",
                     dataValueField: "name"
         });
-        $("#DuréeReservation1").kendoTimePicker({
-            culture:"fr-FR",
-            interval:5,
-            max: new Date(2000, 0, 1, 2, 0, 0)
-            
-                    });
+        
         $("#CotiseReservation1").kendoComboBox({
                         dataTextField: "text",
                         dataValueField: "value",
@@ -311,12 +272,7 @@
                             
                         ]
                     });
-        $("#DuréeReservation").kendoTimePicker({
-            culture:"fr-FR",
-            interval:5,
-            max: new Date(2000, 0, 1, 2, 0, 0)
-            
-                    });
+        
         $("#CotiseReservation").kendoComboBox({
                         dataTextField: "text",
                         dataValueField: "value",

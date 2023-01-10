@@ -14,7 +14,8 @@
          justify-content: center
     }
 </style>
-<div class="container-fluid" style="margin : 5em 0;">
+<main>
+<div class="container-fluid" style="margin : 0; padding: 7em 0 ;">
     <div class="row" style="display: flex;justify-content: space-around;">
         <div  class="gestion" id="personnes" >
             <img src="{{url_for('static', filename='./img/personnes.png')}}" alt="personnes"style="width: 20%;">
@@ -44,6 +45,7 @@
         </div>
     </div>
 </div>
+</main>
 <script>
      $(document).ready(function() {
         $("#cours").on("click",function(){

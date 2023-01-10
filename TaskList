@@ -2,3 +2,5 @@ Page D'acceuil
 Page détail Reservation / Poney 
 Ajout d'un champs url_image dans la table Poneys Cours afin de faciliter l'insertion d'image dans l'html
 ...
+
+MAX ID Table ancien et actuelle

@@ -56,9 +56,11 @@ CREATE TABLE client (
 
 CREATE TABLE cours (
   idc int,
+  jmahms datetime,
   nomc VARCHAR(42),
   descc VARCHAR(300),
   typec VARCHAR(42),
+  duree time,
   prix decimal(4.2),
   id int,
   url_image VARCHAR(500),
@@ -76,13 +78,11 @@ CREATE TABLE poney (
 
 
 CREATE TABLE reserver (
-  jmahms datetime,
   id int,
   idc int,
   idpo int,
-  duree time,
   a_paye boolean,
-  PRIMARY KEY (jmahms, id, idpo)
+  PRIMARY KEY (idc, id, idpo)
 ) ENGINE=InnoDB DEFAULT CHARSET=UTF8MB4;
 
 CREATE TABLE ancien_personne (
@@ -116,10 +116,12 @@ CREATE TABLE ancien_client (
 
 CREATE TABLE ancien_cours (
   idc int,
+  jmahms datetime,
   nomc VARCHAR(42),
   descc VARCHAR(300),
   typec VARCHAR(42),
   prix decimal(4.2),
+  duree time,
   id int,
   PRIMARY KEY (idc)
 ) ENGINE=InnoDB DEFAULT CHARSET=UTF8MB4;
@@ -139,9 +141,8 @@ CREATE TABLE ancien_reserver (
   id int,
   idc int,
   idpo int,
-  duree time,
   a_paye boolean,
-  PRIMARY KEY (jmahms, id, idpo)
+  PRIMARY KEY (idc, id, idpo)
 ) ENGINE=InnoDB DEFAULT CHARSET=UTF8MB4;
 
 -- les contraintes
@@ -219,7 +220,7 @@ create trigger verifPoidsUpdate before update on reserver for each row
 
 -- verifie que les horaires de la reservation du cours sont conformes au horaires du club (insert)
 
-create trigger verifHeureReservation before insert on reserver for each ROW
+create trigger verifHeureReservation before insert on cours for each ROW
 begin
   declare heureNew int;
   declare msg VARCHAR(300);
@@ -235,7 +236,7 @@ begin
         LEAVE boucle_reservations;
       END IF;
       if heureNew < TIME("08:00:00") or heureNew > TIME("20:00:00") then
-        set msg = concat("Réservation impossible car les cours n'ont lieux qu'entre 8 heures et 20 heures. ", "ID Personne : ", new.id,  ", ID Cours : ", new.idc);
+        set msg = concat("Cours impossible car les cours n'ont lieux qu'entre 8 heures et 20 heures. ", "ID Personne : ", new.id,  ", ID Cours : ", new.idc);
         signal SQLSTATE '45000' set MESSAGE_TEXT = msg;
       end if;
     end LOOP;
@@ -245,7 +246,7 @@ end |
 
 -- verifie que les horaires de la reservation du cours sont conformes au horaires du club (update)
 
-create trigger verifHeureReservationUpdate before update on reserver for each ROW
+create trigger verifHeureReservationUpdate before update on cours for each ROW
 begin
   declare heureNew int;
   declare msg VARCHAR(300);
@@ -261,7 +262,7 @@ begin
         LEAVE boucle_reservations;
       END IF;
       if heureNew < TIME("08:00:00") or heureNew > TIME("20:00:00") then
-        set msg = concat("Réservation impossible car les cours n'ont lieux qu'entre 8 heures et 20 heures. ", "ID Personne : ", new.id,  ", ID Cours : ", new.idc);
+        set msg = concat("Cours impossible car les cours n'ont lieux qu'entre 8 heures et 20 heures. ", "ID Personne : ", new.id,  ", ID Cours : ", new.idc);
         signal SQLSTATE '45000' set MESSAGE_TEXT = msg;
       end if;
     end LOOP;
@@ -333,7 +334,7 @@ begin
   declare nbPersonnes int;
   declare typeCours VARCHAR(42);
   declare mes VARCHAR(100);
-  select IFNULL(count(id),0) into nbPersonnes from reserver where idc = new.idc and jmahms = new.jmahms;
+  select IFNULL(count(id),0) into nbPersonnes from reserver where idc = new.idc;
   select typec into typeCours from cours where idc = new.idc;
   if typeCours = "Collectif" then
     if nbPersonnes + 1 > nbmax then
@@ -361,7 +362,7 @@ BEGIN
     declare debutNew time;
     declare dureeNew time;
     DECLARE lesReservations CURSOR FOR select TIME(jmahms) as debutAncien, TIME(duree) as dureeAncien, TIME(new.jmahms) as debutNew, TIME(new.duree) as dureeNew 
-    from reserver 
+    from reserver natural join Cours
     where id = new.id and year(jmahms) = year(new.jmahms) and month(jmahms) = month(new.jmahms) and day(jmahms) = day(new.jmahms);
     DECLARE CONTINUE HANDLER FOR NOT FOUND SET done = TRUE;
 
@@ -412,7 +413,7 @@ END |
 
 -- trigger qui vérifie lors d'une reservation que le repos du poney est respecté (insert)
 
-create trigger verifHeureRepos before insert on reserver for each row
+create trigger verifHeureRepos before insert on cours for each row
 begin
   declare msg VARCHAR(300);
   declare debutAncien time;
@@ -422,7 +423,7 @@ begin
   declare fini int DEFAULT FALSE;
   declare heureRepos cursor for 
   select TIME(duree) as dureeAncien, TIME(new.jmahms) as debutNew, TIME(jmahms) as debutAncien, TIME(new.duree) as dureeNew
-  from reserver 
+  from cours
   where idpo = new.idpo and year(jmahms) = year(new.jmahms) 
   and month(jmahms) = month(new.jmahms) and day(jmahms) = day(new.jmahms);
 
@@ -458,7 +459,7 @@ end |
 
 -- trigger qui vérifie lors d'une reservation que le repos du poney est respecté (update)
 
-create trigger verifHeureReposUpdate before update on reserver for each row
+create trigger verifHeureReposUpdate before update on cours for each row
 begin
   declare msg VARCHAR(300);
   declare debutAncien time;
@@ -468,7 +469,7 @@ begin
   declare fini int DEFAULT FALSE;
   declare heureRepos cursor for 
   select TIME(duree) as dureeAncien, TIME(new.jmahms) as debutNew, TIME(jmahms) as debutAncien, TIME(new.duree) as dureeNew
-  from reserver 
+  from cours 
   where idpo = new.idpo and year(jmahms) = year(new.jmahms)
   and month(jmahms) = month(new.jmahms) and day(jmahms) = day(new.jmahms);
 
@@ -597,7 +598,7 @@ create trigger verifPersonneReserveDansClientUpdate before update on reserver fo
 
 -- trigger qui vérifie lors d'une réservation que la date du cours n'est pas dépasée (insert)
 
-create trigger verifCoursPasCommence before insert on reserver for each row
+create trigger verifCoursPasCommence before insert on cours for each row
   begin
     declare msg VARCHAR(300);
     if new.jmahms < now() then
@@ -609,7 +610,7 @@ create trigger verifCoursPasCommence before insert on reserver for each row
 
 -- trigger qui vérifie lors d'une réservation que la date du cours n'est pas dépasée (update)
 
-create trigger verifCoursPasCommenceUpdate before update on reserver for each row
+create trigger verifCoursPasCommenceUpdate before update on cours for each row
   begin
     declare msg VARCHAR(300);
     if new.jmahms < now() then
@@ -642,7 +643,7 @@ create trigger ajouteTableAncienMoniteur before delete on moniteur for each row
 
 create trigger ajouteTableAncienCours before delete on cours for each row
   begin
-      INSERT INTO ancien_cours(idc, nomc, descc, typec, prix) VALUES(old.idc, old.nomc, old.descc, old.typec, old.prix);
+      INSERT INTO ancien_cours(idc,jmahms,duree, nomc, descc, typec, prix) VALUES(old.idc,old.jmahms,old.duree, old.nomc, old.descc, old.typec, old.prix);
   END |
 
 
@@ -654,7 +655,7 @@ create trigger ajouteTableAncienPoney before delete on poney for each row
 
 create trigger ajouteTableAncienReserver before delete on reserver for each row
   begin
-      INSERT INTO ancien_reserver(jmahms, id, idc, idpo, duree, a_paye) VALUES(old.jmahms, old.id, old.idc, old.idpo, old.duree, old.a_paye);
+      INSERT INTO ancien_reserver(id, idc, idpo, a_paye) VALUES(old.id, old.idc, old.idpo, old.a_paye);
   END |
 
 delimiter ;

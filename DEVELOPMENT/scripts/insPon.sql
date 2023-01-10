@@ -59,21 +59,21 @@ insert into moniteur (id) values (1),
                                 (23),
                                 (24);
 
-insert into cours (idc, nomc, descc, typec, prix,id,url_image) values
-            (1, 'Cours de saut', "Ce cours portera sur la technique de saut d'obstacle pour les débutants", "Collectif", 45,1,"https://www.centre-equestre-marina.com/wp-content/uploads/stage-equitation-cours-anglais.jpg"), 
-            (2, 'Cours de saut', "Ce cours portera sur la technique de saut d'obstacle pour les débutants", "Individuel", 80,5,"https://www.centre-equestre-marina.com/wp-content/uploads/stage-equitation-cours-anglais.jpg"),
-            (3, 'Initiation', "Cours d'initiation au poney ", "Individuel", 65,12,"https://www.experiencecotedazur.com/wp-content/uploads/wpetourisme/big-ticket-image-5c1bd871e85e5393321769-cropped600-400.jpg"),
-            (4, 'Initiation', "Cours d'initiation au poney ", "Collectif", 25,1,"https://www.experiencecotedazur.com/wp-content/uploads/wpetourisme/big-ticket-image-5c1bd871e85e5393321769-cropped600-400.jpg"),
-            (5, 'Cours de course', "Ce cours portera sur la course à poney", "Individuel", 65,1,"https://upload.wikimedia.org/wikipedia/commons/7/7b/Horseracing_Churchill_Downs.jpg"),
-            (6, 'Cours poussin', "Ce cours sera un entraînement pour la catégorie poussin", "Collectif", 35,1,"http://www.cemontfort.fr/wp-content/uploads/2019/01/ecole-equitation-poussin-2-centre-equestre-montfort.jpg"),
-            (7, 'Cours de saut', "Ce cours portera sur la technique de saut d'obstacle pour les débutants", "Collectif", 45,1,"https://www.centre-equestre-marina.com/wp-content/uploads/stage-equitation-cours-anglais.jpg"),
-            (8, 'Cours de vitesse', "Ce cours portera sur la technique de saut d'obstacle pour les débutants", "Individuel", 45,1,"https://www.jourdegalop.com/Media/Jdg/Images/Articles/JDG/2017/08/Brando-sc-1.jpg"),
-            (9, 'Cours de saut', "Ce cours portera sur la technique de saut d'obstacle pour les débutants", "Individuel", 45,1,"https://www.centre-equestre-marina.com/wp-content/uploads/stage-equitation-cours-anglais.jpg"),
-            (10, 'Cours de saut', "Ce cours portera sur la technique de saut d'obstacle pour les débutants", "Collectif", 45,22,"https://www.centre-equestre-marina.com/wp-content/uploads/stage-equitation-cours-anglais.jpg"),
-            (11, 'Cours de saut', "Ce cours portera sur la technique de saut d'obstacle pour les débutants", "Individuel", 45,1,"https://www.centre-equestre-marina.com/wp-content/uploads/stage-equitation-cours-anglais.jpg"),
-            (12, 'Cours de saut', "Ce cours portera sur la technique de saut d'obstacle pour les débutants", "Collectif", 45,18,"https://www.centre-equestre-marina.com/wp-content/uploads/stage-equitation-cours-anglais.jpg"),
-            (13, 'Cours de saut', "Ce cours portera sur la technique de saut d'obstacle pour les débutants", "Collectif", 45,1,"https://www.centre-equestre-marina.com/wp-content/uploads/stage-equitation-cours-anglais.jpg"),
-            (14, 'Cours de saut', "Ce cours portera sur la technique de saut d'obstacle pour les débutants", "Individuel", 100,1,"https://www.centre-equestre-marina.com/wp-content/uploads/stage-equitation-cours-anglais.jpg");
+insert into cours (idc,jmahms,duree, nomc, descc, typec, prix,id,url_image) values
+            (1,STR_TO_DATE("13-01-2024 08:30:00", "%d-%m-%Y %H:%i:%s"), STR_TO_DATE("02:00:00", "%H:%i:%s"), 'Cours de saut', "Ce cours portera sur la technique de saut d'obstacle pour les débutants", "Collectif", 45,1,"https://www.centre-equestre-marina.com/wp-content/uploads/stage-equitation-cours-anglais.jpg"), 
+            (2,STR_TO_DATE('07-06-2024 08:59:59',"%d-%m-%Y %H:%i:%s"), STR_TO_DATE("01:00:00", "%H:%i:%s"), 'Cours de saut', "Ce cours portera sur la technique de saut d'obstacle pour les débutants", "Individuel", 80,5,"https://www.centre-equestre-marina.com/wp-content/uploads/stage-equitation-cours-anglais.jpg"),
+            (3,STR_TO_DATE('24-12-2023 16:00:00',"%d-%m-%Y %H:%i:%s"), STR_TO_DATE("00:30:00", "%H:%i:%s"), 'Initiation', "Cours d'initiation au poney ", "Individuel", 65,12,"https://www.experiencecotedazur.com/wp-content/uploads/wpetourisme/big-ticket-image-5c1bd871e85e5393321769-cropped600-400.jpg"),
+            (4,STR_TO_DATE('24-12-2023 16:00:00',"%d-%m-%Y %H:%i:%s"), STR_TO_DATE("02:00:00", "%H:%i:%s"), 'Initiation', "Cours d'initiation au poney ", "Collectif", 25,1,"https://www.experiencecotedazur.com/wp-content/uploads/wpetourisme/big-ticket-image-5c1bd871e85e5393321769-cropped600-400.jpg"),
+            (5,STR_TO_DATE('24-01-2023 16:00:00',"%d-%m-%Y %H:%i:%s"), STR_TO_DATE("02:00:00", "%H:%i:%s"), 'Cours de course', "Ce cours portera sur la course à poney", "Individuel", 65,1,"https://upload.wikimedia.org/wikipedia/commons/7/7b/Horseracing_Churchill_Downs.jpg"),
+            (6,STR_TO_DATE('24-01-2023 16:00:00',"%d-%m-%Y %H:%i:%s"), STR_TO_DATE("00:30:00", "%H:%i:%s"), 'Cours poussin', "Ce cours sera un entraînement pour la catégorie poussin", "Collectif", 35,1,"http://www.cemontfort.fr/wp-content/uploads/2019/01/ecole-equitation-poussin-2-centre-equestre-montfort.jpg"),
+            (7,STR_TO_DATE('24-01-2023 16:00:00',"%d-%m-%Y %H:%i:%s"), STR_TO_DATE("02:00:00", "%H:%i:%s"), 'Cours de saut', "Ce cours portera sur la technique de saut d'obstacle pour les débutants", "Collectif", 45,1,"https://www.centre-equestre-marina.com/wp-content/uploads/stage-equitation-cours-anglais.jpg"),
+            (8,STR_TO_DATE('24-01-2023 16:00:00',"%d-%m-%Y %H:%i:%s"), STR_TO_DATE("00:30:00", "%H:%i:%s"), 'Cours de vitesse', "Ce cours portera sur la technique de saut d'obstacle pour les débutants", "Individuel", 45,1,"https://www.jourdegalop.com/Media/Jdg/Images/Articles/JDG/2017/08/Brando-sc-1.jpg"),
+            (9,STR_TO_DATE('24-01-2023 16:00:00',"%d-%m-%Y %H:%i:%s"), STR_TO_DATE("02:00:00", "%H:%i:%s"), 'Cours de saut', "Ce cours portera sur la technique de saut d'obstacle pour les débutants", "Individuel", 45,1,"https://www.centre-equestre-marina.com/wp-content/uploads/stage-equitation-cours-anglais.jpg"),
+            (10,STR_TO_DATE('24-01-2023 16:00:00',"%d-%m-%Y %H:%i:%s"), STR_TO_DATE("02:00:00", "%H:%i:%s"), 'Cours de saut', "Ce cours portera sur la technique de saut d'obstacle pour les débutants", "Collectif", 45,22,"https://www.centre-equestre-marina.com/wp-content/uploads/stage-equitation-cours-anglais.jpg"),
+            (11,STR_TO_DATE('24-01-2023 16:00:00',"%d-%m-%Y %H:%i:%s"), STR_TO_DATE("00:30:00", "%H:%i:%s"), 'Cours de saut', "Ce cours portera sur la technique de saut d'obstacle pour les débutants", "Individuel", 45,1,"https://www.centre-equestre-marina.com/wp-content/uploads/stage-equitation-cours-anglais.jpg"),
+            (12,STR_TO_DATE('24-01-2023 16:00:00',"%d-%m-%Y %H:%i:%s"), STR_TO_DATE("01:00:00", "%H:%i:%s"), 'Cours de saut', "Ce cours portera sur la technique de saut d'obstacle pour les débutants", "Collectif", 45,18,"https://www.centre-equestre-marina.com/wp-content/uploads/stage-equitation-cours-anglais.jpg"),
+            (13,STR_TO_DATE('24-01-2023 16:00:00',"%d-%m-%Y %H:%i:%s"), STR_TO_DATE("01:00:00", "%H:%i:%s"), 'Cours de saut', "Ce cours portera sur la technique de saut d'obstacle pour les débutants", "Collectif", 45,1,"https://www.centre-equestre-marina.com/wp-content/uploads/stage-equitation-cours-anglais.jpg"),
+            (14,STR_TO_DATE('24-01-2023 16:00:00',"%d-%m-%Y %H:%i:%s"), STR_TO_DATE("02:00:00", "%H:%i:%s"), 'Cours de saut', "Ce cours portera sur la technique de saut d'obstacle pour les débutants", "Individuel", 100,1,"https://www.centre-equestre-marina.com/wp-content/uploads/stage-equitation-cours-anglais.jpg");
 
             
 insert into poney (idpo, nomp, poidssup,url_image) values (1, "Chacha", 180,"https://i.pinimg.com/564x/66/2c/a3/662ca3a80f4c5471ac8f62ceb91d1b6b.jpg"),
@@ -91,19 +91,18 @@ insert into poney (idpo, nomp, poidssup,url_image) values (1, "Chacha", 180,"htt
                                                 (13, "Victoria", 120,"https://i.pinimg.com/564x/a7/c3/f6/a7c3f670cd3082c5ba76bb3700b624ac.jpg");
 insert into admin (id) values (1);
                             
-insert into reserver (jmahms, id, idc, idpo, duree, a_paye) values
-    (STR_TO_DATE("13-01-2024 08:30:00", "%d-%m-%Y %H:%i:%s"), 6, 1, 1, STR_TO_DATE("02:00:00", "%H:%i:%s"), true),
-    (STR_TO_DATE('07-06-2024 08:59:59',"%d-%m-%Y %H:%i:%s"), 5, 14, 6, STR_TO_DATE('00:30:00', "%H:%i:%s"), true),
-    (STR_TO_DATE('24-12-2023 16:00:00',"%d-%m-%Y %H:%i:%s"), 20, 10, 1, STR_TO_DATE('00:30:00', "%H:%i:%s"), true),
-    (STR_TO_DATE('24-12-2023 16:00:00',"%d-%m-%Y %H:%i:%s"), 2, 10, 3, STR_TO_DATE('02:00:00', "%H:%i:%s"), true),    
-    (STR_TO_DATE('24-01-2023 16:00:00',"%d-%m-%Y %H:%i:%s"), 4, 10, 4, STR_TO_DATE('02:00:00', "%H:%i:%s"), true),    
-    (STR_TO_DATE('24-01-2023 16:00:00',"%d-%m-%Y %H:%i:%s"), 6, 10, 5, STR_TO_DATE('01:00:00', "%H:%i:%s"), true),
-    (STR_TO_DATE('24-01-2023 16:00:00',"%d-%m-%Y %H:%i:%s"), 11, 10, 7, STR_TO_DATE('01:00:00', "%H:%i:%s"), true),
-    (STR_TO_DATE('24-01-2023 16:00:00',"%d-%m-%Y %H:%i:%s"), 13, 10, 9, STR_TO_DATE('02:00:00', "%H:%i:%s"), true),
-    (STR_TO_DATE('24-01-2023 16:00:00',"%d-%m-%Y %H:%i:%s"), 14, 10, 10, STR_TO_DATE('02:00:00', "%H:%i:%s"), true),
-    (STR_TO_DATE('24-01-2023 16:00:00',"%d-%m-%Y %H:%i:%s"), 15, 10, 11, STR_TO_DATE('02:00:00', "%H:%i:%s"), true),
-    (STR_TO_DATE('24-01-2023 16:00:00',"%d-%m-%Y %H:%i:%s"), 16, 10, 12, STR_TO_DATE('02:00:00', "%H:%i:%s"), true),
-
+insert into reserver (id, idc, idpo, a_paye) values
+    ( 6, 1, 1, true),
+    ( 5, 14, 6, true),
+    ( 20, 10, 1,  true),
+    ( 2, 10, 3, true),    
+    ( 4, 10, 4,  true),    
+    ( 6, 10, 5,  true),
+    ( 11, 10, 7, true),
+    ( 13, 10, 9,  true),
+    ( 14, 10, 10,  true),
+    ( 15, 10, 11,  true),
+    ( 16, 10, 12,  true);
 
   /*(STR_TO_DATE('24-01-2022 16:00:00',"%d-%m-%Y %H:%i:%s"), 19, 10, 13, STR_TO_DATE('02:00:00', "%H:%i:%s"), true),*/  /* CETTE LIGNE ET CELLE DU DESSOUS ↓ MARCHE ENSEMBLE ET NE FONCTINNE PAS CAR LE COURS COLLECTIF EST PLEIN */
   /*(STR_TO_DATE('24-01-2022 16:00:00',"%d-%m-%Y %H:%i:%s"), 18, 10, 6, STR_TO_DATE('02:00:00', "%H:%i:%s"), true),*/  /* CETTE LIGNE ET CELLE DU DESSUS ↑ MARCHE ENSEMBLE ET NE FONCTINNE PAS CAR LE COURS COLLECTIF EST PLEIN */
@@ -115,5 +114,3 @@ insert into reserver (jmahms, id, idc, idpo, duree, a_paye) values
   /*(STR_TO_DATE('13-01-2014 08:30:00',"%d-%m-%Y %H:%i:%s"), 3, 1, 1, STR_TO_DATE('01:00:00', "%H:%i:%s"), true),*/ /*NE MARCHE PAS CAR LE PONEY EST DÉJÀ DANS UN AUTRE COURS AU MÊME CRENEAU*/
   /*(STR_TO_DATE('24-01-2022 16:00:00',"%d-%m-%Y %H:%i:%s"), 9, 12, 2, STR_TO_DATE('01:00:00', "%H:%i:%s"), true),*/ /*NE MARCHE PAS CAR LE POIDS DE LE PERSONNE EST SUPERIEUR AU POIDS MAXIMUM SUPPORTABLE DU PONEY*/           
   /*(STR_TO_DATE('24-01-2022 21:00:00',"%d-%m-%Y %H:%i:%s"), 9, 12, 1, STR_TO_DATE('01:00:00', "%H:%i:%s"), true),*/ /*NE MARCHE PAS CAR LES HORAIRES DE COURS DU CLUB NE SONT PAS RESPECTÉES*/
-    
-    (STR_TO_DATE('24-01-2023 14:00:00',"%d-%m-%Y %H:%i:%s"), 3, 12, 1, STR_TO_DATE('01:00:00', "%H:%i:%s"), true);

@@ -3,3 +3,4 @@ flask_login
 flask_sqlalchemy
 pymysql
 mysql-connector-python
+flask_mail
