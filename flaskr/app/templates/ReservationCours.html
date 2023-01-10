@@ -1,0 +1,35 @@
+{% include 'banner.html' %}
+
+<div class="container-fluid">
+    <div class="row" style="background-color: rgb(89,147,105);">
+        <div class="col-md-3" style="text-align: center;padding:1em;border-right: solid 2px white;">
+            <img src="{{url_for('static',filename ='./img/avatar.png')}}" alt="avatar" style="height: 3em;">
+            <p>Mes infos</p>
+        </div>
+
+        <div class="col-md-3" style="text-align: center;padding:1em;border-right: solid 2px white;">
+            <img src="{{url_for('static',filename ='./img/shop.png')}}" alt="avatar" style="height: 3em;">
+            <p>Mon panier</p>
+        </div>
+
+        <div class="col-md-3" style="text-align: center;padding:1em;border-right: solid 2px white;">
+            <img src="{{url_for('static',filename ='./img/facture.png')}}" alt="avatar" style="height: 3em;">
+            <p>Mes factures</p>
+        </div>
+
+        <div class="col-md-3" style="text-align: center;padding:1em;">
+            <img src="{{url_for('static',filename ='./img/poney.png')}}" alt="avatar" style="height: 3em;">
+            <p>Activitées</p>
+        </div>
+    </div>
+    <div class="col-md-4">
+
+    </div>
+
+    <div class="col-md-8">
+        <table id="Cours"></table>
+    </div>
+</div>
+
+
+{% include 'footer.html' %}

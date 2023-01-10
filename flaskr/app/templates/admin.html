@@ -1,0 +1,69 @@
+{% include 'banner.html' %}
+<style>
+
+    .gestion{
+        cursor: pointer;
+        text-align: center;
+        background-color: rgb(218, 253, 224);
+        border-radius: 4em;
+        width: 25%;
+        height: 10em;
+        display: flex;
+         align-items: center;
+         flex-wrap: wrap;
+         justify-content: center
+    }
+</style>
+<div class="container-fluid" style="margin : 5em 0;">
+    <div class="row" style="display: flex;justify-content: space-around;">
+        <div  class="gestion" id="personnes" >
+            <img src="{{url_for('static', filename='./img/personnes.png')}}" alt="personnes"style="width: 20%;">
+            <p style="flex-basis: 100%;">Gérer les personnes</p>
+        </div>
+        <div class="gestion" id="clients" >
+            <img src="{{url_for('static', filename='./img/client.png')}}" alt="personnes"style="width: 20%;">
+            <p style="flex-basis: 100%;">Gérer les clients</p>
+        </div>
+        <div class="gestion" id="moniteurs"  >
+            <img src="{{url_for('static', filename='./img/moniteur.png')}}" alt="personnes"  style="width: 20%;">
+            <p style="flex-basis: 100%;">Gérer les moniteurs</p>
+        </div>
+    </div>
+    <div class="row" style="display: flex;justify-content: space-around;margin: 2em 0;">
+        <div class="gestion" id="poneys"  >
+            <img src="{{url_for('static', filename='./img/horse.png')}}" alt="personnes"  style="width: 20%;">
+            <p style="flex-basis: 100%;">Gérer les poneys</p>
+        </div>
+        <div class="gestion" id="reservation"  >
+            <img src="{{url_for('static', filename='./img/reservation.png')}}" alt="personnes"  style="width: 20%">
+            <p style="flex-basis: 100%;">Gérer les réservations</p>
+        </div>
+        <div class="gestion" id="cours" >
+            <img src="{{url_for('static', filename='./img/cours.png')}}" alt="personnes"  style="width: 20%;">
+            <p style="flex-basis: 100%;">Gérer les cours</p>
+        </div>
+    </div>
+</div>
+<script>
+     $(document).ready(function() {
+        $("#cours").on("click",function(){
+            window.location = "{{url_for('cours')}}"
+        })
+        $("#personnes").on("click",function(){
+            window.location = "{{url_for('Personnes')}}"
+        })
+        $("#reservation").on("click",function(){
+            window.location = "{{url_for('Reservations')}}"
+        })
+        $("#poneys").on("click",function(){
+            window.location = "{{url_for('Poneys')}}"
+        })
+        $("#moniteurs").on("click",function(){
+            window.location = "{{url_for('Moniteurs')}}"
+        })
+        $("#clients").on("click",function(){
+            window.location = "{{url_for('Clients')}}"
+        })
+     });
+</script>
+{% include 'footer.html' %}

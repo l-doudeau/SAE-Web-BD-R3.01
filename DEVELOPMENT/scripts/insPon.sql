@@ -76,20 +76,20 @@ insert into cours (idc, nomc, descc, typec, prix,id,url_image) values
             (14, 'Cours de saut', "Ce cours portera sur la technique de saut d'obstacle pour les débutants", "Individuel", 100,1,"https://www.centre-equestre-marina.com/wp-content/uploads/stage-equitation-cours-anglais.jpg");
 
             
-insert into poney (idpo, nomp, poidssup,url_image) values (1, "Chacha", 180,"https://images.pexels.com/photos/208881/pexels-photo-208881.jpeg"),
-                                                (2, "Michella", 30,"https://images.pexels.com/photos/2317182/pexels-photo-2317182.jpeg"),
-                                                (3, "Parapluie", 62,"https://images.pexels.com/photos/5350167/pexels-photo-5350167.jpeg"),
-                                                (4, "Merveille", 101,"https://images.pexels.com/photos/11082557/pexels-photo-11082557.jpeg"),
-                                                (5, "Shakira", 100,"https://images.pexels.com/photos/1996331/pexels-photo-1996331.jpeg"),
-                                                (6, "Souja boy", 55,"https://images.pexels.com/photos/297201/pexels-photo-297201.jpeg"),
-                                                (7, "Prune", 84,"https://images.pexels.com/photos/14089558/pexels-photo-14089558.jpeg"),
-                                                (8, "Virgule", 40,"https://images.pexels.com/photos/460991/pexels-photo-460991.jpeg"),
-                                                (9, "Bouteille", 62,"https://images.pexels.com/photos/2738730/pexels-photo-2738730.jpeg"),
-                                                (10, "Mure", 170,"https://images.pexels.com/photos/4208119/pexels-photo-4208119.jpeg"),
-                                                (11, "Cerise", 90,"https://images.pexels.com/photos/1094561/pexels-photo-1094561.jpeg"),
-                                                (12, "Rose", 100,"https://images.pexels.com/photos/510104/pexels-photo-510104.jpeg"),
-                                                (13, "Victoria", 120,"https://images.pexels.com/photos/459236/pexels-photo-459236.jpeg");
-
+insert into poney (idpo, nomp, poidssup,url_image) values (1, "Chacha", 180,"https://i.pinimg.com/564x/66/2c/a3/662ca3a80f4c5471ac8f62ceb91d1b6b.jpg"),
+                                                (2, "Michella", 30,"https://i.pinimg.com/564x/c8/0a/79/c80a791148362ff2d4011490ced1208b.jpg"),
+                                                (3, "Parapluie", 62,"https://i.pinimg.com/564x/c0/92/73/c092739657bb546a640e5095f6db9565.jpg"),
+                                                (4, "Merveille", 101,"https://i.pinimg.com/564x/3a/c0/8f/3ac08f41b3a3f0ab7ea92a0112003bf6.jpg"),
+                                                (5, "Shakira", 100,"https://i.pinimg.com/564x/3f/04/44/3f04441630c5faec7166855ce912171b.jpg"),
+                                                (6, "Souja boy", 55,"https://i.pinimg.com/564x/37/d5/b2/37d5b2f7f6a2c6e0166a666574e27a7f.jpg"),
+                                                (7, "Prune", 84,"https://i.pinimg.com/564x/c8/da/86/c8da86dcd4bbd933ab10734f486d40e9.jpg"),
+                                                (8, "Virgule", 40,"https://i.pinimg.com/564x/0c/88/4e/0c884ef4ecb1d0f4d3e820ff75688878.jpg"),
+                                                (9, "Bouteille", 62,"https://i.pinimg.com/564x/03/f9/07/03f90722653bf7edc7722c4d88006e1c.jpg"),
+                                                (10, "Mure", 170,"https://i.pinimg.com/564x/8d/2c/1f/8d2c1f2f06e542fee2e22eacce8d07f2.jpg"),
+                                                (11, "Cerise", 90,"https://i.pinimg.com/564x/89/e7/f4/89e7f4310a5d6c4ee97f980beb4e44bc.jpg"),
+                                                (12, "Rose", 100,"https://i.pinimg.com/736x/4a/c8/ac/4ac8acb2b8e56f7f91907204447fe357.jpg"),
+                                                (13, "Victoria", 120,"https://i.pinimg.com/564x/a7/c3/f6/a7c3f670cd3082c5ba76bb3700b624ac.jpg");
+insert into admin (id) values (1);
                             
 insert into reserver (jmahms, id, idc, idpo, duree, a_paye) values
     (STR_TO_DATE("13-01-2024 08:30:00", "%d-%m-%Y %H:%i:%s"), 6, 1, 1, STR_TO_DATE("02:00:00", "%H:%i:%s"), true),

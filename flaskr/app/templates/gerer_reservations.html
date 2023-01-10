@@ -1,5 +1,3 @@
-
-{% include 'banner.html' %}
 <style>
     .row{
         margin: 1em;
@@ -25,9 +23,10 @@
         transform: translate(-50%, -50%); /* Centre l'SVG du loader */
     }
 </style>
+{% include 'banner.html' %}
 <body>
     <section>
-        <div class="container-fluid">
+        <div class="container-fluid" style="margin-bottom: m;">
             <div class="row">
                 <div class="row">
                     <div class="col-12 col-md-8"></div>
@@ -243,7 +242,6 @@
 </form>
 </body>
 <script src="https://kendo.cdn.telerik.com/2022.3.1109/js/cultures/kendo.culture.fr-FR.min.js"></script>
-
 <script>
     function isNumeric(str) {
         if (typeof str != "string") return false // we only process strings!  
@@ -394,7 +392,7 @@
                 {data: 'a_paye',orderable:true,className: "dt-center", "render":function (data, type, row) {
                           return (data === true) ? '<input class="form-check-input" type="checkbox" value="" onclick="save(this)" id="flexCheckChecked" checked>':'<input class="form-check-input" onclick="save(this)" type="checkbox" value="" id="flexCheckChecked">'} },
                 {data: "id",className:"a"},
-                {data:"idpo",className:"a"}
+                {data:"idc",className:"a"}
            ,
         ],
             info:true,
@@ -475,21 +473,15 @@
         });
         
 
-        /*$("#reservations").on("dblclick", "tr", function() {
-            var date = $(row)[0].childNodes[0].innerHTML
-            var id = $(row)[0].childNodes[0].innerHTML;
-            
-            $.ajax({
-                type:"POST",
-                data:{"id":id},
-                url:url,
-                success:function(response){ window.location.href = "/Client/"+id;
+        $("#reservations").on("dblclick", "tr", function() {
+            var date = $(row)[0].childNodes[0].innerHTML.replaceAll("/","-").replace(" ","_")
+            var id = $(row)[0].childNodes[7].innerHTML
+            var idc = $(row)[0].childNodes[8].innerHTML
+            my_url = "{{ url_for('ReservationDetail',jmahms='date',id='idpersonne',idc='idcours')}}".replace("date",date).replace("idpersonne",id).replace("idcours",idc).replaceAll("amp;","") ;
+            console.log(my_url)
+            window.location.href = my_url
 
-               
-
-            });
         });
-                } */
         $("#deleteReservation").on("click",function(){
             $("#loader-background").show()
             $.ajax({
@@ -520,7 +512,7 @@
                     est_paye :$(checkbox)[0].checked,
                     jmahms : ligne.children[0].innerHTML,
                     id : table.row($(checkbox).parents()).data()["id"],
-                    idpo : table.row($(checkbox).parents()).data()["idpo"]
+                    idc : table.row($(checkbox).parents()).data()["idc"]
                 },
         success: function(response){
                 if(response == "false"){

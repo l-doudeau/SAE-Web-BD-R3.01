@@ -1,5 +1,5 @@
 
-{% include 'banner.html' %}
+
 <style>
     .row{
         margin: 1em;
@@ -21,6 +21,7 @@
         transform: translate(-50%, -50%); /* Centre l'SVG du loader */
     }
 </style>
+{% include 'banner.html' %}
 <body>
     <section>
         <div class="container">
@@ -86,7 +87,7 @@
                                 <label for="PrenomPersonne" class="label label-primary">Prenom</label>
                             </div>
                             <div class="col-8">
-                                <input required id="PrenomPersonne">
+                                <input id="PrenomPersonne">
                             </div>
                         </div>
 
@@ -95,7 +96,7 @@
                                 <label for="NomPersonne" class="label label-primary">Nom</label>
                             </div>
                             <div class="col-8">
-                                <input required  id="NomPersonne">
+                                <input  id="NomPersonne">
                             </div>
                         </div>
                         <div class="row">
@@ -103,7 +104,7 @@
                                 <label for="DataPersonne" class="label label-primary">Date de naissance</label>
                             </div>
                             <div class="col-8">
-                                <input required id="DataPersonne" value="01/01/2022">
+                                <input id="DataPersonne">
                             </div>
                         </div>
                         <div class="row">
@@ -111,7 +112,7 @@
                                 <label for="PoidsPersonne" class="label label-primary">Poids</label>
                             </div>
                             <div class="col-8">
-                                <input required id="PoidsPersonne">
+                                <input id="PoidsPersonne">
                             </div>
                         </div>
 
@@ -120,7 +121,7 @@
                                 <label for="AdresseEmailPersonne" class="label label-primary">Adresse Email</label>
                             </div>
                             <div class="col-8">
-                                <input required  id="AdresseEmailPersonne">
+                                <input  id="AdresseEmailPersonne">
                             </div>
                         </div>
 
@@ -129,7 +130,7 @@
                                 <label  for="AdressePersonne" class="label label-primary">Adresse</label>
                             </div>
                             <div class="col-8">
-                                <input required  id="AdressePersonne">
+                                <input id="AdressePersonne">
                             </div>
                         </div>
 
@@ -138,7 +139,7 @@
                                 <label for="CodePostalPersonne" class="label label-primary">Code Postal</label>
                             </div>
                             <div class="col-8">
-                                <input required  id="CodePostalPersonne">
+                                <input id="CodePostalPersonne">
                             </div>
                         </div>
 
@@ -147,7 +148,7 @@
                                 <label for="VillePersonne" class="label label-primary">Ville</label>
                             </div>
                             <div class="col-8">
-                                <input required id="VillePersonne">
+                                <input id="VillePersonne">
                             </div>
                         </div>
 
@@ -156,7 +157,7 @@
                                 <label for="TelPersonne" class="label label-primary">Numero de téléphone</label>
                             </div>
                             <div class="col-8">
-                                <input required id="TelPersonne">
+                                <input id="TelPersonne">
                             </div>
                         </div>
 
@@ -165,7 +166,7 @@
                                 <label for="EstClient" class="label label-primary">Client ?</label>
                             </div>
                             <div class="col-8">
-                                <input required id="EstClient">
+                                <input id="EstClient">
                             </div>
                         </div>
 
@@ -174,7 +175,7 @@
                                 <label for="EstMoniteur" class="label label-primary">Moniteur ?</label>
                             </div>
                             <div class="col-8">
-                                <input required id="EstMoniteur">
+                                <input id="EstMoniteur">
                             </div>
                         </div>
 
@@ -191,7 +192,7 @@
     <div id="loader-background" style="display: none;">
         <img id="loader" src="{{url_for('static', filename='img/loader.svg')}}"/>
     </div>
-    <div class="modal" id="modalFiltrePersonnes" tabindex="2" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal fade" id="modalFiltrePersonnes" tabindex="2" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered" role="document">
         <div class="modal-content">
             <div class="modal-header">
@@ -269,75 +270,6 @@
         </div>
         </div>
     </div>
-    <div class="modal" id="modalFiltreMoniteurs" tabindex="2" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-            <div class="modal-dialog modal-dialog-centered" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLabel">Filtre<h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-                </div>
-                <div class="modal-body">
-                    <div class="row">
-                        <div class="col-5">
-                            <label for="IDFiltre" class="k-label">ID</label>
-                        </div>
-                        <div class="col-7">
-                            <input id="IDFiltre">
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-5">
-                            <label for="NomFiltre" class="k-label">Nom</label>
-                        </div>
-                        <div class="col-7">
-                            <input id="NomFiltre">
-                        </div>
-                    </div>
-    
-                    <div class="row">
-                        <div class="col-5">
-                            <label for="PrenomFiltre" class="label label-primary">Prénom</label>
-                        </div>
-                        <div class="col-7">
-                            <input  id="PrenomFiltre">
-                        </div>
-                    </div>
-                    
-                    <div class="row">
-                        <div class="col-5">
-                            <label for="NaissanceFiltre" class="label label-primary">Date de naissance</label>
-                        </div>
-                        <div class="col-7">
-                            <input id="NaissanceFiltre">
-                        </div>
-                    </div>
-    
-                    <div class="row">
-                        <div class="col-5">
-                            <label for="AdresseEmailFiltre" class="label label-primary">Adresse Email</label>
-                        </div>
-                        <div class="col-7">
-                            <input  id="AdresseEmailFiltre">
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-5">
-                            <label for="TelephoneFiltre" class="label label-primary">Numéro de téléphone</label>
-                        </div>
-                        <div class="col-7">
-                            <input id="TelephoneFiltre">
-                        </div>
-                    </div>    
-                </div>
-                <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Fermer</button>
-                <button type="button" class="btn btn-success" id="savefilter">Sauvegarder</button>
-                </div>
-            </div>
-            </div>
-        </div>
 </body>
 <script src="https://kendo.cdn.telerik.com/2022.3.1109/js/cultures/kendo.culture.fr-FR.min.js"></script>
 
@@ -359,30 +291,37 @@
                 culture: "fr-FR",
                 min:0,
                 placeholder: "Entrer l'id d'une personne",
-                format: "{0:n0}"
+                format: "{0:n0}",
+                size:"medium"
             });
             $("#NomFiltre").kendoTextBox({
                 placeholder: "Entrer le nom d'une personne",
+                size:"medium"
             });
             
             $("#PrenomFiltre").kendoTextBox({
                 placeholder: "Entrer le prénom d'une personne",
+                size:"medium"
             });
 
             $("#NaissanceFiltre").kendoDatePicker({
                 culture: "fr-FR",
+                size:"medium"
             });
 
             $("#AdresseEmailFiltre").kendoTextBox({
                 placeholder: "Entrer l'adresse email d'une personne",
+                size:"medium"
             });
             $("#TelephoneFiltre").kendoTextBox({
                 placeholder: "Entrer le numéro de téléphone d'une personne",
+                size:"medium"
             });
 
             $("#RoleFiltre").kendoComboBox({
                 dataTextField: "text",
                 placeholder: "Entrer le rôle d'une personne",
+                size:"medium",
 
                         dataValueField: "value",
                         dataSource: [
@@ -504,55 +443,58 @@
         $("#PrenomPersonne").kendoTextBox({
             placeholder: "Prenom",
             fillMode: "solid",
-            size:"large"
+            size:"medium"
         });
 
         $("#NomPersonne").kendoTextBox({
             placeholder: "Nom",
             fillMode: "solid",
-            size:"large"
+            size:"medium"
         });
 
         $("#DataPersonne").kendoDatePicker({
             start: "year",
             format: "dd/MM/yyyy",
-            size:"large"
+            size:"medium"
         });
 
-        $("#PoidsPersonne").kendoTextBox({
-            placeholder: "Poids",
-            fillMode: "solid",
-            size:"large"
-        });
+        $("#PoidsPersonne").kendoNumericTextBox({
+                culture: "fr-FR",
+                min:0,
+                value:0,
+                placeholder: "Entrer le poids de la personne",
+                format: "{0:n0}",
+                size:"medium"
+            });
 
         $("#AdresseEmailPersonne").kendoTextBox({
             placeholder: "Adresse Email",
             fillMode: "solid",
-            size:"large"
+            size:"medium"
         });
 
         $("#AdressePersonne").kendoTextBox({
             placeholder: "Adresse",
             fillMode: "solid",
-            size:"large"
+            size:"medium"
         });
 
         $("#CodePostalPersonne").kendoTextBox({
             placeholder: "Code Postal",
             fillMode: "solid",
-            size:"large"
+            size:"medium"
         });
 
         $("#VillePersonne").kendoTextBox({
             placeholder: "Ville",
             fillMode: "solid",
-            size:"large"
+            size:"medium"
         });
 
         $("#TelPersonne").kendoTextBox({
             placeholder: "Numéro de téléphone",
             fillMode: "solid",
-            size:"large"
+            size:"medium"
         });
 
 
@@ -566,7 +508,8 @@
             filter: "contains",
             suggest: true,
             clearButton: false,
-            index: 1
+            index: 1,
+            size:"medium"
         });
 
         $("#EstMoniteur").kendoComboBox({
@@ -579,7 +522,8 @@
             filter: "contains",
             suggest: true,
             clearButton: false,
-            index: 1
+            index: 1,
+            size:"medium"
         });
 
         $("#personnes").on("click", "tr", function() {

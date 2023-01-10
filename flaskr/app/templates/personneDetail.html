@@ -1,4 +1,4 @@
-{% include 'banner.html' %}
+
 <style>
     @import url('https://fonts.googleapis.com/css2?family=Source+Sans+Pro&display=swap');
     </style> 
@@ -30,6 +30,7 @@
         transform: translate(-50%, -50%); /* Centre l'SVG du loader */
     }
 </style>
+{% include 'banner.html' %}
 <div class="container" style="margin-top: 1em;">
     <div class="row" style="border-bottom: solid 1px">
         <h1 for="InfoP"  >Compte</h1>
@@ -111,7 +112,7 @@
     $(document).ready(function(){
         $("#EmailPersonne").kendoTextBox({
             label: "Email",
-            value: '{{Personne.adressemail}}',
+            value: '{{Personnes.adressemail}}',
             size: "full",
             rounded: "medium",
 
@@ -119,47 +120,47 @@
 
         $("#PasswordPersonne").kendoTextBox({
             label: "Mot de passe",
-            value: '{{Personne.mdp}}',
+            value: '{{Personnes.mdp}}',
         });
 
         $("#idPersonne").kendoTextBox({
             label: "ID",
-            value: '{{Personne.id}}',
+            value: '{{Personnes.id}}',
             enable: false,
         });
         $("#NomPersonne").kendoTextBox({
             label: "Nom",
-            value: '{{Personne.nomp}}',
+            value: '{{Personnes.nomp}}',
             
         });
         $("#PrenomPersonne").kendoTextBox({
             label: "Prenom",
-            value: '{{Personne.prenomp}}',
+            value: '{{Personnes.prenomp}}',
         });
         $("#DdnPersonne").kendoDatePicker({
             label: "Date de naissance",
-            value: '{{Personne.ddn}}',
+            value: '{{Personnes.ddn}}',
             culture:"fr-FR",
         });
         $("#TelPersonne").kendoTextBox({
             label: "Telephone",
-            value: '{{Personne.numerotel}}',
+            value: '{{Personnes.numerotel}}',
         });
         $("#PoidsPersonne").kendoNumericTextBox({
             label: "Poids",
-            value: '{{Personne.poids}}',
+            value: '{{Personnes.poids}}',
         });
         $("#AdressePersonne").kendoTextBox({
             label: "Adresse",
-            value: '{{Personne.adresse}}',
+            value: '{{Personnes.adresse}}',
         });
         $("#CodePostalPersonne").kendoTextBox({
             label: "Code Postal",
-            value: '{{Personne.code_postal}}',
+            value: '{{Personnes.code_postal}}',
         });
         $("#VillePersonne").kendoTextBox({
             label: "Ville",
-            value: '{{Personne.ville}}',
+            value: '{{Personnes.ville}}',
         });
        
         $("#save").on("click",function(){
@@ -192,15 +193,22 @@
                 
                 },
                 type:'POST',
-                success:function(response){
+                success:async function(response){
                     if(response == "false"){
                         alert("Problème lors de la sauvegarde")
                     }else{
-                        history.back()
+                        await delay(1);
+                        $("#loader-background").hide()
                     }
                 }
             });
         })
         
     });
+    function delay(n){
+        return new Promise(function(resolve){
+            setTimeout(resolve,n*1000);
+        });
+    }
+
 </script>

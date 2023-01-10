@@ -1,4 +1,3 @@
-
 {% include 'banner.html' %}
 <style>
     .row{
@@ -61,7 +60,8 @@
                 </div>
                 <div class="modal-body">
                   <p>Etes-vous sur de vouloir supprimer ce cours ?</p>
-                  <span id="courssupprimer"></span>
+                  <p id="courssupprimer" style="margin: 0;font-weight: bold;"></p>
+                  <p id="desccourssupprimer"></p>
                 </div>
                 <div class="modal-footer">
                   <button type="button" class="btn btn-secondary" data-dismiss="modal">Fermer</button>
@@ -132,7 +132,7 @@
                 </div>
             </div>
         </form>
-        <div class="modal" id="modalFiltreCours" tabindex="2" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal fade" id="modalFiltreCours" tabindex="2" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered" role="document">
             <div class="modal-content">
                 <div class="modal-header">
@@ -214,21 +214,25 @@
         $("#buttonmodalSupr").prop("disabled",true)
 
         $(document).ready(function() {
-            
+            $("#loader-background").hide()
+
             $("#IDFiltre").kendoNumericTextBox({
                 culture: "fr-FR",
                 min:0,
+                size:"large",
                 placeholder: "Entrer l'id du cours",
                 format: "{0:n0}"
             });
 
             $("#NomFiltre").kendoTextBox({
+                size:"large",
                 placeholder: "Entrer le nom du cours",
             });
 
             $("#TypeFiltre").kendoComboBox({
                 dataTextField: "text",
                         dataValueField: "value",
+                        size:"large",
                         dataSource: [
                             { text: "", value: "1" },
                             { text: "Collectif", value: "2" },
@@ -239,12 +243,14 @@
             $("#PrixFiltre").kendoNumericTextBox({
                 culture: "fr-FR",
                 min:0,
+                size:"large",
                 placeholder: "Entrer le prix du cours",
                 format: "{0:c2}"
             });
 
             $("#NomMoniteurFiltre").kendoTextBox({
                 placeholder: "Entrer le nom du moniteur cours",
+                size:"large",
             });
 
         var table = $('#cours').DataTable({
@@ -299,7 +305,7 @@
             var descc = $("#descCours").val()
             var type = $("#TypeCours").val();
             var prix = $("#prixCours").val()
-            var id = $("#idMoniteur").val();
+            var id = $("#idMoniteur").val().split(" ")[0];
 
             nom == ""?$("#nomCours").css("border","1px solid red"):$("#nomCours").css("border","");
             descc == ""?$("#descCours").css("border","1px solid red"):$("#descCours").css("border","");
@@ -310,7 +316,8 @@
                 $.ajax({
                 url:'{{url_for("AddCours")}}',
                 type:'POST',
-                data:{nom : nom,
+                data:{
+                    nom : nom,
                     descc : descc,
                     type : type,
                     prix : prix,
@@ -337,17 +344,28 @@
             size:"large"
         });
 
-        $("#prixCours").kendoTextBox({
-            placeholder: "Prix",
+        $("#prixCours").kendoNumericTextBox({
+                culture: "fr-FR",
+                min:0,
+                size:"large",
+                placeholder: "Entrer le prix du cours",
+                format: "{0:c2}"
+        });
+        $("#idMoniteur").kendoComboBox({
+            dataSource: [],
+            dataTextField: "name",
+            dataValueField: "name",
+            placeholder: "Entrer un moniteur",
             fillMode: "solid",
             size:"large"
         });
 
-        $("#idMoniteur").kendoComboBox({
-            placeholder: "Michel Charpentier",
-            fillMode: "solid",
-            size:"large"
-        });
+        var listeMoniteurs = "{{Moniteurs}}".replaceAll("&#39;","").replaceAll("[","").replaceAll("]","").replaceAll(", ",",").split(",")
+
+        
+        for(let i = 0; i<listeMoniteurs.length;i++){
+            $("#idMoniteur").data("kendoComboBox").dataSource.add({name :listeMoniteurs[i]})
+        }
 
         $("#TypeCours").kendoComboBox({
                         dataTextField: "text",
@@ -358,7 +376,8 @@
                         ],
                         suggest: true,
                         clearButton: false,
-                        index: 1
+                        index: 1,
+                        size:"large",
                     });
 
 
@@ -369,7 +388,8 @@
             $("#buttonmodalSupr").prop("disabled",false)
             row = this;
             $(this).css('background-color', "#AFE1AF");
-            $("#courssupprimer").html($(row)[0].childNodes[1].innerHTML+ " " + $(row)[0].childNodes[2].innerHTML)
+            $("#courssupprimer").html($(row)[0].childNodes[1].innerHTML)
+            $("#desccourssupprimer").html($(row)[0].childNodes[2].innerHTML)
         });
         
 
@@ -377,6 +397,7 @@
             const id = $(row)[0].childNodes[0].innerHTML
             const url = '{{url_for("CoursDetails",id="idCours")}}'.replace("idCours",id)
             window.location.href = "/Cours/"+id; 
+            
 
         });
                 

@@ -35,6 +35,12 @@ CREATE TABLE personne (
 ) ENGINE=InnoDB DEFAULT CHARSET=UTF8MB4;
 
 
+CREATE TABLE admin (
+  id int,
+  PRIMARY KEY (id)
+) ENGINE=InnoDB DEFAULT CHARSET=UTF8MB4;
+
+
 CREATE TABLE moniteur (
   id int,
   PRIMARY KEY (id)
@@ -403,32 +409,6 @@ END |
 -- END |
 
 
--- permet de vérifier que le client n'a pas déja un cours au horaire de sa nouvelle réservation (update)
-
-CREATE TRIGGER ajoutPersonneHoraireUpdate BEFORE update ON reserver FOR EACH ROW
-BEGIN
-    DECLARE done INT DEFAULT FALSE;
-    declare msg VARCHAR(300);
-    declare debutAncien time;
-    declare dureeAncien time;
-    declare debutNew time;
-    declare dureeNew time;
-    DECLARE lesReservations CURSOR FOR select TIME(jmahms) as debutAncien, TIME(duree) as dureeAncien, TIME(new.jmahms) as debutNew, TIME(new.duree) as dureeNew from reserver where id = new.id and year(jmahms) = year(new.jmahms) and month(jmahms) = month(new.jmahms) and day(jmahms) = day(new.jmahms);
-    DECLARE CONTINUE HANDLER FOR NOT FOUND SET done = TRUE;
-
-    OPEN lesReservations;
-        boucle_reservations: LOOP
-            FETCH lesReservations INTO debutAncien, dureeAncien, debutNew, dureeNew;
-            IF done THEN
-              LEAVE boucle_reservations;
-            END IF;
-            IF (debutAncien > debutNew and ADDTIME(debutNew, dureeNew) > debutAncien or debutAncien < debutNew and debutNew < ADDTIME(debutAncien, dureeAncien)) then 
-              set msg = concat ("Inscription impossible à l'activité car le même client à déja un cours à cette heure");
-              signal SQLSTATE '45000' set MESSAGE_TEXT = msg; 
-            END IF;
-        END LOOP;
-    CLOSE lesReservations;
-END |
 
 -- trigger qui vérifie lors d'une reservation que le repos du poney est respecté (insert)
 

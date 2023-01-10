@@ -1,5 +1,5 @@
 
-{% include 'banner.html' %}
+
 <style>
     .row{
         margin: 1em;
@@ -21,6 +21,7 @@
         transform: translate(-50%, -50%); /* Centre l'SVG du loader */
     }
 </style>
+{% include 'banner.html' %}
 <body>
     <section>
         <div class="container">
@@ -279,25 +280,31 @@
                 culture: "fr-FR",
                 min:0,
                 placeholder: "Entrer l'id d'une personne",
-                format: "{0:n0}"
+                format: "{0:n0}",
+                size : "medium",
             });
             $("#NomFiltre").kendoTextBox({
                 placeholder: "Entrer le nom d'une personne",
+                size : "medium",
             });
             
             $("#PrenomFiltre").kendoTextBox({
                 placeholder: "Entrer le prénom d'une personne",
+                size : "medium",
             });
 
             $("#NaissanceFiltre").kendoDatePicker({
                 culture: "fr-FR",
+                size : "medium",
             });
 
             $("#AdresseEmailFiltre").kendoTextBox({
                 placeholder: "Entrer l'adresse email d'une personne",
+                size : "medium",
             });
             $("#TelephoneFiltre").kendoTextBox({
                 placeholder: "Entrer le numéro de téléphone d'une personne",
+                size : "medium",
             });
             $("#CotiseReservation1").kendoComboBox({
                         dataTextField: "text",
@@ -307,7 +314,8 @@
                             { text: "Oui", value: "2" },
                             { text: "Non", value: "3" },
                             
-                        ]
+                        ],
+                        size : "medium",
                     });
         var table = $('#clients').DataTable({
             ajax: {
@@ -379,7 +387,7 @@
             var codepostal = $("#CodePostalClient").val()
             var ville = $("#VilleClient").val()
             var tel = $("#TelClient").val()
-            var cotise = $("#CotiseClient").val() == "Oui"?true:false;
+            var cotise = $("#CotiseClient").data("kendoComboBox").text()  == "Oui"?true:false;
             console.log(cotise)
             prenom == ""?$("#PrenomClient").css("border","1px solid red"):$("#PrenomClient").css("border","");
             nom == ""?$("#NomClient").css("border","1px solid red"):$("#NomClient").css("border","");
@@ -411,11 +419,25 @@
                     tel:tel,
                     cotise:cotise
                     },
-            success: function(){ 
-                console.log("reussi")
+            success: function(response){ 
                 table.ajax.reload();
                 $("#loader-background").hide()
+                if(response == "true"){
+                
+                    $("#PrenomClient").data("kendoTextBox").value("")
+                    $("#NomClient").data("kendoTextBox").value("")
+                    $("#VilleClient").data("kendoTextBox").value("")
 
+                    $("#AdresseEmailClient").data("kendoTextBox").value("")
+                    $("#AdresseClient").data("kendoTextBox").value("")
+                    $("#CodePostalClient").data("kendoTextBox").value("")
+                    $("#TelClient").data("kendoTextBox").value("")
+
+                    $("#DateClient").data("kendoDatePicker").value(null)
+
+                    $("#PoidsClient").data("kendoNumericTextBox").value("")
+                    $("#CotiseClient").data("kendoComboBox").value("")
+                }
                 } 
             });
         }     
@@ -424,55 +446,59 @@
         $("#PrenomClient").kendoTextBox({
             placeholder: "Prenom",
             fillMode: "solid",
-            size:"large"
+            size : "medium",
         });
 
         $("#NomClient").kendoTextBox({
             placeholder: "Nom",
             fillMode: "solid",
-            size:"large"
+            size : "medium",
         });
 
         $("#DateClient").kendoDatePicker({
             start: "year",
             format: "dd/MM/yyyy",
-            size:"large"
+            size : "medium",
+            placeholder : "Entrer la date de naissance"
         });
 
-        $("#PoidsClient").kendoTextBox({
-            placeholder: "Poids",
-            fillMode: "solid",
-            size:"large"
-        });
+        $("#PoidsClient").kendoNumericTextBox({
+                culture: "fr-FR",
+                min:0,
+                value : 0,
+                placeholder: "Entrer le poids supporté min",
+                format: "{0:n0}",
+                size : "medium",
+            });
 
         $("#AdresseEmailClient").kendoTextBox({
             placeholder: "Adresse Email",
             fillMode: "solid",
-            size:"large"
+            size : "medium",
         });
 
         $("#AdresseClient").kendoTextBox({
             placeholder: "Adresse",
             fillMode: "solid",
-            size:"large"
+            size : "medium",
         });
 
         $("#CodePostalClient").kendoTextBox({
             placeholder: "Code Postal",
             fillMode: "solid",
-            size:"large"
+            size : "medium",
         });
 
         $("#VilleClient").kendoTextBox({
             placeholder: "Ville",
             fillMode: "solid",
-            size:"large"
+            size : "medium",
         });
 
         $("#TelClient").kendoTextBox({
             placeholder: "Numéro de téléphone",
             fillMode: "solid",
-            size:"large"
+            size : "medium",
         });
 
         $("#CotiseClient").kendoComboBox({
@@ -485,7 +511,8 @@
                         filter: "contains",
                         suggest: true,
                         clearButton: false,
-                        index: 1
+                        index: 1,
+                        size : "medium",
                     });
 
         $("#clients").on("click", "tr", function() {

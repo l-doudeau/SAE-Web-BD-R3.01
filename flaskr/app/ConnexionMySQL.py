@@ -12,8 +12,8 @@ from sqlalchemy import create_engine
 from sqlalchemy.ext.declarative import declarative_base
 
 
-engine = create_engine('mysql+mysqlconnector://faucher:Thierry45.@servinfo-mariadb/DBfaucher', convert_unicode=True)
-#engine = create_engine('mysql+mysqlconnector://root:root@localhost/GRAND_GALOP', convert_unicode=True)
+#engine = create_engine('mysql+mysqlconnector://faucher:Thierry45.@servinfo-mariadb/DBfaucher', convert_unicode=True)
+engine = create_engine('mysql+mysqlconnector://root:root@localhost/GRAND_GALOP', convert_unicode=True)
 #engine = create_engine('mysql+mysqlconnector://doudeau:doudeau@servinfo-mariadb/DBdoudeau', convert_unicode=True)
 #engine = create_engine('mysql+mysqlconnector://doudeau:doudeau@localhost/GRAND_GALOP', convert_unicode=True)
 
@@ -268,7 +268,7 @@ def update_client(id, cotisation):
         db.session.rollback()
         return False
     
-def update_reservation(jmahms,id,idpo,est_paye):
+def update_reservation(jmahms,id,idc,est_paye):
     
     date = jmahms.split(' ')[0]
     temps = jmahms.split(' ')[1]
@@ -280,9 +280,8 @@ def update_reservation(jmahms,id,idpo,est_paye):
     seconde = 0 
     datetime1 = datetime.datetime(int(annee),int(mois),int(jour),int(heure),int(minute),int(seconde))
   
-    reservation = Reserver.query.filter(Reserver.idpo == idpo and Reserver.id == id and Reserver.jmahms == datetime1).first()
-    print(reservation)
-    reservation.a_paye = True if est_paye == "false" else False
+    reservation = Reserver.query.filter(Reserver.idc == idc and Reserver.id == id and Reserver.jmahms == datetime1).first()
+    reservation.a_paye = True if est_paye == "true" else False
     try : 
         db.session.commit()
         
@@ -292,6 +291,10 @@ def update_reservation(jmahms,id,idpo,est_paye):
         print(e)
         return False
     
+def isAdmin(id):
+    a = Admin.query.get(id)
+    return a != None
+
 def deletereservation(date,id,idpo):
     """
     Il prend une date, un id et un idpo et supprime la réservation qui correspond à la date, l'id et
@@ -393,13 +396,25 @@ def modifier_Personne(personne):
         db.session.rollback()
         return False
 
+def modifier_poney(poney):
+    po = Poney.query.get(poney.idpo)
+    po.nomp = poney.nomp
+    po.poidssup = poney.poidssup
+    po.url_image = poney.url_image
+    try :
+        db.session.commit()
+        return True
+    except Exception as e: 
+        print(e)
+        db.session.rollback()
+        return False
+
 def modifier_cours(cours):
     c = Cours.query.get(cours.idc)
     c.nomc = cours.nomc
     c.descc = cours.descc
     c.typec = cours.typec
     c.prix = cours.prix
-    c.id = cours.id
     try :
         db.session.commit()
         return True
@@ -431,7 +446,7 @@ def ajout_client(idp, cotise):
         db.session.rollback()
         return False
 
-def ajout_poney(nom,poids):
+def ajout_poney(nom,poids,url):
     """
     Il ajoute un poney à la base de données
     
@@ -439,7 +454,7 @@ def ajout_poney(nom,poids):
     :param poids: float
     """
     idpo = get_max_id_poney() + 1
-    poney = Poney(idpo,nom,poids)
+    poney = Poney(idpo,nom,poids,url)
     db.session.add(poney)
     try:
         db.session.commit()

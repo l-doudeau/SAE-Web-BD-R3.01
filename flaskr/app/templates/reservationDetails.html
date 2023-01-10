@@ -1,0 +1,230 @@
+{% include 'banner.html' %}
+<style>
+    @import url('https://fonts.googleapis.com/css2?family=Source+Sans+Pro&display=swap');
+
+    body{
+        background-color: rgb(247, 255, 249);
+        --defaultColor:  rgb(14, 212, 64);
+    }
+
+    h4{
+        color: var(--defaultColor);
+    }
+    input,span{font-size: 110% !important}
+    p{
+        font-size: 1.1em;
+    }
+    h2{
+        font-size: 150% !important;
+    }
+    body{
+        background-color: rgb(247, 255, 249);
+    }
+    #loader-background {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-color: rgba(82, 82, 82, 0.1); /* Opacité de 50% */
+        z-index: 999; /* Place l'élément en arrière-plan */
+    }
+
+    #loader {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%); /* Centre l'SVG du loader */
+    }
+    button {
+  font-family: inherit;
+  font-size: 20px;
+  background: royalblue;
+  color: white;
+  padding: 0.7em 1em;
+  padding-left: 0.9em;
+  display: flex;
+  align-items: center;
+  border: none;
+  border-radius: 16px;
+  overflow: hidden;
+  transition: all 0.2s;
+}
+
+button span {
+  display: block;
+  margin-left: 0.3em;
+  transition: all 0.3s ease-in-out;
+}
+
+button svg {
+  display: block;
+  transform-origin: center center;
+  transition: transform 0.3s ease-in-out;
+}
+
+button:hover .svg-wrapper {
+  animation: fly-1 0.6s ease-in-out infinite alternate;
+}
+
+button:hover svg {
+  transform: translateX(1.2em) rotate(45deg) scale(1.1);
+}
+
+button:hover span {
+  transform: translateX(5em);
+}
+
+button:active {
+  transform: scale(0.95);
+}
+
+@keyframes fly-1 {
+  from {
+    transform: translateY(0.1em);
+  }
+
+  to {
+    transform: translateY(-0.1em);
+  }
+}
+
+
+</style> 
+
+<script>
+    console.log("{{Reservation}}")
+</script>
+<div class="container-fluid">
+    <div class="row" style="margin-top: 1em;">
+        <div class="col-md-4" style="margin-top:2em;">
+            <h1 style="text-align: center;color: gray;font-weight: 600;width: 100%;">Récapitulatif Reservation</h1>
+            <div class="row" style="margin-top:1em;display: none;" id="payement">
+                <div class="col-12" style="display: flex; justify-content: center;flex-wrap: wrap;">
+                <p style="margin: 0;width: 100%;text-align: center;">La réservation n'est pas payé.</p><p style="margin: 0;width: 100%;text-align: center">Voulez vous envoyer un email ?</p>
+                <button style="width: 6em;height: 2em;margin: 1em 0;" onclick="sendMail()">
+                    <div class="svg-wrapper-1">
+                      <div class="svg-wrapper">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24">
+                          <path fill="none" d="M0 0h24v24H0z"></path>
+                          <path fill="currentColor" d="M1.946 9.315c-.522-.174-.527-.455.01-.634l19.087-6.362c.529-.176.832.12.684.638l-5.454 19.086c-.15.529-.455.547-.679.045L12 14l6-8-8 6-8.054-2.685z"></path>
+                        </svg>
+                      </div>
+                    </div>
+                    <span>Send</span>
+                  </button>
+            </div>
+            <div class="col-6" >
+                
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6" style="margin: 1em;border: solid 2px;border-radius: 1em;">
+            <div class="row">
+                <div class="col-md-4"></div>
+                <div class="col-md-4"><img src="{{url_for('static', filename='img/grand_galop2.png')}}" align="middle" width="100%" /></div>
+                <div class="col-md-4"></div>
+            </div>
+            <div class="row" >
+                <div class="col-md-4"  style="text-align: center;">
+                    <h4>Date de la réservation</h4>
+                    <span id="DateReservation"></span>
+                </div>
+                <div class="col-md-4" style="border-bottom: solid 2px;"></div>
+                <div class="col-md-4" style="text-align: center;">
+                    <h4 >Durée</h4>
+                    <p>{{Reservation.duree}}</p>
+                </div>
+            </div>
+            <div class="row" style="margin-top: 1em;">
+                <div class="col-md-4"></div>
+                <div class="col-md-4" style="text-align: center;font-weight: bold;">
+                    <p style="font-weight: bold;font-size: 1.5em;">{{Client.nomp}} {{Client.prenomp}}</p>
+                </div>
+                <div class="col-md-4"></div>
+            </div>
+            <div class="row">
+                <div class="col-md-4" style="text-align: center;">
+                    <h4>Date de naissance</h4>
+                    <span id="DateDeNaissance"></span>
+                </div>
+                <div class="col-md-4">
+                    <h4 style="text-align: center;">Email</h4>
+                    <p  style="text-align: center;">{{Client.adressemail}}</p>
+                </div>
+                <div class="col-md-4">
+                    <h4 style="text-align: center;">Numero de téléphone</h4>
+                    <p style="text-align: center;">{{Client.numerotel}}</p>
+
+                </div>
+            </div>
+
+            <div class="row" style="margin-top: 1em;display: flex;">
+                <div class="col-md-4" style="text-align: center;">
+                    <h4 >Adresse</h4>
+                    <p style="margin: 0;">{{Client.adresse}}</p>
+                    <p>{{Client.code_postal}} {{Client.ville}}</p>
+                </div>
+                <div class="col-md-4">
+                    
+                </div>
+                <div class="col-md-4" style="text-align: center;">
+                    <h4 >Poids</h4>
+                    <p style="margin: 0;">{{Client.poids}}kg</p>
+                </div>
+                </div>
+
+            <div class="row" style="margin-top: 1em;display: flex;align-items: center;">
+                <div class="col-md-4"></div>
+                <div class="col-md-4"><p style="border-top: solid 2px;"></p></div>
+                <div class="col-md-4"></div>
+            </div>
+            <div class="row" style="margin-top: 1em;display: flex;align-items: center;">
+                <div class="col-md-3" style="display: flex;align-items: center;justify-content: center;">
+                    <h4 style="font-weight: bold;text-align: center;font-size: 1.5em; width: 100%;">Cours :</h4>
+                </div>
+                <div class="col-md-8">
+                    <p style="margin: 0.2em;">{{Cours.nomc}}</p>
+                    <p style="margin: 0.2em;">{{Cours.descc}}</p>
+                    <p style="margin: 0.2em;">Type : {{Cours.typec}}</p>
+                    <p style="margin: 0.2em;">Prix : {{Cours.prix}}€</p>
+                </div>
+            </div>
+            <div class="row" style="margin-top: 1em;display: flex;align-items: center;margin-bottom: 2em;">
+                <div class="col-md-3" style="display: flex;align-items: center;justify-content: center;">
+                    <h4 style="font-weight: bold;text-align: center;font-size: 1.5em; width: 100%;">Moniteur :</h4>
+                </div>
+                <div class="col-md-8">
+                    <p style="margin: 0.2em;">{{Moniteur.nomp}} {{Moniteur.prenomp}}</p>
+                    <p style="margin: 0.2em;">{{Moniteur.adressemail}}</p>
+                    <p style="margin: 0.2em;">{{Moniteur.numerotel}}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function sendMail(){
+        $.ajax({
+            url: "/sendMail",
+            type: "POST",
+            data: {email : "{{Client.adressemail}}",
+                    date : "{{Reservation.jmahms}}"}
+
+        })
+    }
+$(document).ready(function() {
+
+    var date = "{{Reservation.jmahms}}"
+    $("#DateReservation").html(moment("{{Reservation.jmahms}}").format('DD/MM/YYYY HH:mm:SS'))
+    
+    $("#DateDeNaissance").html(moment("{{Client.ddn}}").format('DD/MM/YYYY'))
+    var paye = "{{Reservation.a_paye}}" == "True" ? true:false;
+    if(!paye){
+        console.log("hey")
+        $("body").get(0).style.setProperty("--defaultColor", "red");
+        $("#payement").show()
+    }
+});
+</script>

@@ -1,15 +1,31 @@
-{% include 'banner.html' %}
+
 <style>
     @import url('https://fonts.googleapis.com/css2?family=Source+Sans+Pro&display=swap');
-    *{font-size: 101% !important}
+    p,span,input{font-size: 101% !important}
     h2{
         font-size: 150% !important;
     }
     body{
         background-color: rgb(247, 255, 249);
     }
-</style> 
+    #loader-background {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-color: rgba(82, 82, 82, 0.1); /* Opacité de 50% */
+        z-index: 999; /* Place l'élément en arrière-plan */
+    }
 
+    #loader {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%); /* Centre l'SVG du loader */
+    }
+</style> 
+{% include 'banner.html' %}
 <div class="container-fluid" style="margin-top: 1em;">
     <div class="row">
     <div class="col-md-4" style="display: flex;align-items: center;">
@@ -100,6 +116,8 @@
 <div id="loader-background" style="display: none;">
     <img id="loader" src="{{url_for('static', filename='img/loader.svg')}}"/>
 </div>
+<script src="https://kendo.cdn.telerik.com/2022.3.1109/js/cultures/kendo.culture.fr-FR.min.js"></script>
+
 <script>
     
 
@@ -122,6 +140,8 @@
 
         $("#PrixCours").kendoNumericTextBox({
             value: '{{Cours.prix}}',
+            format: "{0:c2}",
+            culture : "fr-FR",
             min:0,
         })
 
@@ -192,11 +212,12 @@
 
                     },
                     type:'POST',
-                    success:function(response){
+                    success:async function(response){
                         if(response == "false"){
                             alert("Problème lors de la sauvegarde")
                         }else{
-                            window.location = '{{url_for("cours")}}'
+                            await delay(1)
+                            $("#loader-background").hide()
                         }
                     }
                 });
@@ -211,5 +232,10 @@
         hasPrice = $("#PrixCours").val() != ""?true : false;
         hasMoniteur =$("#MoniteursComboBox").val().split(" ")[0] != ""?true : false;
         return hasDesc && hasName && hasType && hasPrice && hasMoniteur
+    }
+    function delay(n){
+        return new Promise(function(resolve){
+            setTimeout(resolve,n*1000);
+        });
     }
 </script>

@@ -1,10 +1,12 @@
-from .app import app,login_manager
+from .app import app,login_manager,mail
 from .models import *
 from .ConnexionMySQL import *
 from flask import render_template
 from flask_login import LoginManager,login_user,login_required,logout_user,current_user
 from flask import Flask,redirect,url_for,request
 from flask_sqlalchemy import SQLAlchemy
+from flask_mail import Message
+import datetime
 
 
 @login_manager.user_loader
@@ -12,23 +14,16 @@ def load_user(user_id):
     return get_personne(user_id)
 
 @app.route("/")
-@login_required
 def index():
-    if(get_moniteur(current_user.id)):
-        return render_template("index.html",role="Moniteur")
-    elif(get_client(current_user.id)):
-        return render_template("index.html",role="Client")
+    if(isinstance(current_user,Personne)):
+        return render_template("index.html",Personne=get_personne(current_user.id))
     else:
-        return render_template("index.html",role="")
+        return render_template("index.html",Personne = Personne("","","","","","","","","","",""))
     
 @app.route("/logout")
 def logout():
     logout_user()
     return redirect(url_for("index"))
-
-@app.route("/TEST")
-def test():
-    return render_template("accueil.html")
 
 @app.route('/login',methods=["POST","GET"])
 def login():
@@ -59,44 +54,74 @@ def login():
 @app.route('/Clients')
 @login_required
 def Clients():
-    return render_template('gerer_client.html')
+    if(isAdmin(current_user.id)):
+        return render_template('gerer_client.html',Personne=get_personne(current_user.id))
+    return render_template("index.html",Personne=get_personne(current_user.id))
 
 @app.route('/Moniteurs')
 @login_required
 def Moniteurs():
-    print(login_manager.login_message + "\n")
-    return render_template('gerer_moniteur.html')
+    if(isAdmin(current_user.id)):
+
+        print(login_manager.login_message + "\n")
+        return render_template('gerer_moniteur.html',Personne=get_personne(current_user.id))
+    return render_template("index.html",Personne=get_personne(current_user.id))
+
+
+@app.route('/estAdmin',methods=["POST"])
+@login_required
+def estAdmin():
+    print(request.form)
+    id = request.form["id"]
+    
+    if(isAdmin(id)):
+        
+        return "yes"
+    
+    return "no"
 
 @app.route('/Cours')
 @login_required
 def cours():
-    return render_template('gerer_cours.html')
-
+    if(isAdmin(current_user.id)):
+        Moniteurs = []
+        for m in get_info_all_moniteur("","","","","",""):
+            Moniteurs.append(str(m.id) + " " + m.personne.nomp + " " + m.personne.prenomp)
+        return render_template('gerer_cours.html',Moniteurs = Moniteurs,Personne=get_personne(current_user.id))
+    return render_template("index.html",Personne=get_personne(current_user.id))
+ 
 @app.route('/Poneys')
 @login_required
 def Poneys():
-    print(login_manager.login_message + "\n")
-    return render_template('gerer_poneys.html')
+    if(isAdmin(current_user.id)):
+        return render_template('gerer_poneys.html',Personne=get_personne(current_user.id))
+    return render_template("index.html",Personne=get_personne(current_user.id))
 
 @app.route('/Personnes')
 @login_required
 def Personnes():
-    return render_template('gerer_personne.html')
+    if(isAdmin(current_user.id)):
+        
+        return render_template('gerer_personne.html',Personne=get_personne(current_user.id))
+    return render_template("index.html",Personne=get_personne(current_user.id))
 
 
 @app.route('/Reservations')
 @login_required
 def Reservations():
-    Personne = []
-    Cours = []
-    Poneys = []
-    for p in get_info_all_personnes("","","","","",""):
-        Personne.append(str(p.id) + " " + p.nomp + " " + p.prenomp)
-    for c in get_info_all_cours("","","","",""):
-        Cours.append(str(c.idc) + " " + c.nomc)
-    for po in get_info_all_poney("","",""):
-        Poneys.append(str(po.idpo)+ " " + po.nomp )
-    return render_template("gerer_reservations.html",Personnes = Personne, cours = Cours, poneys = Poneys)
+    print(current_user.id)
+    if(isAdmin(current_user.id)):
+        Personne = []
+        Cours = []
+        Poneys = []
+        for p in get_info_all_personnes("","","","","",""):
+            Personne.append(str(p.id) + " " + p.nomp + " " + p.prenomp)
+        for c in get_info_all_cours("","","","",""):
+            Cours.append(str(c.idc) + " " + c.nomc)
+        for po in get_info_all_poney("","",""):
+            Poneys.append(str(po.idpo)+ " " + po.nomp )
+        return render_template("gerer_reservations.html",Personnes = Personne, cours = Cours, poneys = Poneys,Personne=get_personne(current_user.id))
+    return render_template("index.html",Personne=get_personne(current_user.id))
 
 @app.route('/api/dataclients',methods=["POST"])
 def data_client():
@@ -143,7 +168,6 @@ def data_poneys():
 @app.route('/api/datacours',methods=["POST"])
 def data_cours():
     data = {"data":[]}
-    print(request.form)
     idc = request.form["idc"]
     nomc = request.form["nomc"]
     type = request.form["typec"]
@@ -205,7 +229,7 @@ def data_reservations():
         data["data"].append({
             "jmahms": ligne.jmahms,
             "id":ligne.id,
-            "idpo":ligne.idpo,
+            "idc":ligne.idc,
             "nomp":ligne.personne.nomp,
             "prenomp":ligne.personne.prenomp,
             "nomc": ligne.cours.nomc,
@@ -274,39 +298,90 @@ def data_personneCombo():
         
     return data
 
-@login_required
 @app.route('/Personne/<id>',methods=['POST',"GET"])
+@login_required
 def PersonneDetail(id):
-    return render_template("personneDetail.html",Personne = get_personne(id))
+    if(isAdmin(current_user.id)):
+        return render_template("personneDetail.html",Personnes = get_personne(id),Personne=get_personne(current_user.id))
+    return render_template("index.html",Personne=get_personne(current_user.id))
 
-@login_required
 @app.route('/Poney/<id>',methods=['POST',"GET"])
+@login_required
 def PoneyDetail(id):
-    return render_template("poneyDetails.html",Poney = get_poney(id))
+    if(isAdmin(current_user.id)):
+        return render_template("poneyDetails.html",Poney = get_poney(id),Personne=get_personne(current_user.id))
+    return render_template("index.html",Personne=get_personne(current_user.id))
 
+@app.route("/ReserverCours")
 @login_required
+def ReserverCours():
+    
+    return render_template("ReservationCours.html",Personne=get_personne(current_user.id))
+
+
+
 @app.route("/Cours/<id>",methods=["POST","GET"])
+@login_required
 def CoursDetails(id):
-    Moniteurs = []
-    if(request.method == "POST"):
-        idm = request.form["id"]
-    else:
-        idm = get_cours(id).moniteur.id
-        
-    for moniteur in get_info_all_moniteur("","","","","",""):
-        Moniteurs.append(str(moniteur.id) + " " + moniteur.personne.nomp + " " + moniteur.personne.prenomp)
-    print(get_moniteur(idm))
-    return render_template("CoursDetails.html",Cours = get_cours(id),Moniteurs = Moniteurs,Moniteur = get_moniteur(idm))
+    if(isAdmin(current_user.id)):
+        Moniteurs = []
+        if(request.method == "POST"):
+            idm = request.form["id"]
+        else:
+            idm = get_cours(id).moniteur.id
+            
+        for moniteur in get_info_all_moniteur("","","","","",""):
+            Moniteurs.append(str(moniteur.id) + " " + moniteur.personne.nomp + " " + moniteur.personne.prenomp)
+        print(get_moniteur(idm))
+        return render_template("CoursDetails.html",Cours = get_cours(id),Moniteurs = Moniteurs,Moniteur = get_moniteur(idm),Personne=get_personne(current_user.id))
+    return render_template("index.html",Personne=get_personne(current_user.id))
 
+@app.route('/Reservation/Details',methods=['POST',"GET"])
 @login_required
-@app.route('/Reservation/<jmahms><id><idpo>',methods=['POST',"GET"])
-def ReservationDetail(jmahms,id,idpo):
-    return render_template("index.html",id=id)#TODO
+def ReservationDetail():
 
+    if(isAdmin(current_user.id)):
+        date = request.args["jmahms"].split("_")[0]
+        time = request.args["jmahms"].split("_")[1]
+        annee = date.split("-")[2]
+        mois = date.split("-")[1]
+        jours = date.split("-")[0]
+        heure = time.split(":")[0]
+        minute = time.split(":")[1]
+        seconde = time.split(":")[2]
+        strDate = "" + jours + "/" + mois+ "/" +annee + " " + heure + ":" +minute + ":" + seconde
+        reservation = get_info_all_reservations(strDate,request.args["id"],request.args["idc"],"","","")[0]
+        moniteur = get_cours(reservation.idc).moniteur.personne
+        client = reservation.personne
+        cours = reservation.cours
+        return render_template("reservationDetails.html",Reservation = reservation ,
+                                                    Moniteur = moniteur,
+                                                    Client = client,
+                                                    Cours = cours,
+                                                    Personne=get_personne(current_user.id))
+    return render_template("index.html",Personne=get_personne(current_user.id))
 
-
-@login_required
+@app.route("/sendMail", methods=["POST"])
+def SendMail():
+    print(request.form)
+    email = request.form["email"]
+    date1 = request.form["date"].split(" ")[0]
+    time = request.form["date"].split(" ")[1]
+    annee = date1.split("-")[2]
+    mois = date1.split("-")[1]
+    jours = date1.split("-")[0]
+    heure = time.split(":")[0]
+    minute = time.split(":")[1]
+    seconde = time.split(":")[2]
+    strDate = "" + jours + "/" + mois+ "/" +annee + " " + heure + ":" +minute + ":" + seconde
+    msg = Message(sender=app.config.get("MAIL_USERNAME"),
+                        recipients=["thomasf45@hotmail.fr"],
+                        body="Ceci est un mail automatique, Veuillez à penser de payer votre cours du " + strDate  + ".\nEn vous souhaitant une bonne journée. \nCordialement,\n \n Grand Galop",
+                        subject = "GRAND GALOP : Reservation Cours " + strDate)
+    mail.send(msg)
+    return ""
 @app.route('/AddClient',methods=['POST'])
+@login_required
 def AddClient():
     prenom = request.form["prenom"]
     nom = request.form["nom"]
@@ -319,8 +394,8 @@ def AddClient():
     numerotel = request.form["tel"]
     cotise = request.form["cotise"]
     id = ajoute_personne(nom,prenom,ddn,poids,adresseemail,adresse,code_postal,ville,numerotel)
-    ajout_client(id,cotise)
-    return ""
+    save = ajout_client(id,cotise)
+    return "true" if save else "false"
 
 
 @app.route("/Cours/Update",methods=["POST"])
@@ -334,6 +409,18 @@ def UpdateCours():
     c = Cours(idc,nomc,descc,type,prix,idmoniteur)
     save = modifier_cours(c)
     return "true" if save else "false"
+
+@app.route("/Poney/Update",methods=["POST"])
+def UpdatePoney():
+    print("a")
+    idpo = request.form["idpo"]
+    poids = request.form["poids"]
+    nompo = request.form["nompo"]
+    url = request.form["url"]
+    po = Poney(idpo,nompo,poids,url)
+    save = modifier_poney(po)
+    return "true" if save else "false"
+
 
 @app.route('/Personne/Update',methods=['POST'])
 def UpdatePersonne():
@@ -361,11 +448,12 @@ def UpdateClient():
 
 @app.route("/Reservation/Update",methods=["POST"])
 def UpdateReservation():
+    print(request.form)
     id = request.form["id"]
     jmahms = request.form["jmahms"]
-    idpo = request.form["idpo"]
+    idc = request.form["idc"]
     est_paye = request.form["est_paye"]
-    save = update_reservation(jmahms,id,idpo,est_paye)
+    save = update_reservation(jmahms,id,idc,est_paye)
     return "true" if save else "false"
 
 
@@ -373,7 +461,8 @@ def UpdateReservation():
 def AddPoney():
     nom = request.form["nom"]
     poids = int(request.form["poids"])
-    ajout_poney(nom,poids)
+    url = request.form["url"]
+    ajout_poney(nom,poids,url)
     return ""
 @app.route('/AddReservation',methods=['POST'])
 def AddReservation():
@@ -482,3 +571,9 @@ def deleteCours():
 def deletePersonne():
     delete_personne(request.form["id"])
     return ""
+
+
+@app.route('/adminPage/')
+@login_required
+def adminPage():
+    return render_template('admin.html',Personne=get_personne(current_user.id))

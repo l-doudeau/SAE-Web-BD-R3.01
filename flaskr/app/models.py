@@ -87,10 +87,11 @@ class Poney(db.Model):
     poidssup = db.Column(db.DECIMAL)
     url_image = db.Column(db.String)
 
-    def __init__(self, idpo,nomp,poidssup) -> None:
+    def __init__(self, idpo,nomp,poidssup,url) -> None:
         self.idpo = idpo
         self.nomp = nomp
         self.poidssup = poidssup
+        self.url_image = url
     def __repr__(self) -> str:
         return str(self.idpo) + ", " + self.nomp + ", " + str(self.poidssup)
 
@@ -117,3 +118,10 @@ class Reserver(db.Model):
     def __repr__(self) -> str:
         return str(self.jmahms) + ", " + str(self.id) + ", " + str(self.idpo) + ", " + str(self.duree) + ", " + str(self.a_paye)
 
+class Admin(db.Model):
+    id = db.Column(db.Integer, ForeignKey("personne.id"), primary_key=True)
+
+    def __init__(self, id) -> None:
+        self.id = id
+    def __repr__(self) -> str:
+        return str(self.id )

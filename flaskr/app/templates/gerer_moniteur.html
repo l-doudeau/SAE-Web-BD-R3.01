@@ -1,5 +1,4 @@
 
-{% include 'banner.html' %}
 <style>
     .row{
         margin: 1em;
@@ -21,6 +20,8 @@
         transform: translate(-50%, -50%); /* Centre l'SVG du loader */
     }
 </style>
+
+{% include 'banner.html' %}
 <body>
     <section>
         <div class="container">
@@ -103,7 +104,7 @@
                                 <label for="DateMoniteur" class="label label-primary">Date de naissance</label>
                             </div>
                             <div class="col-8">
-                                <input required id="DateMoniteur" value="01/01/2022">
+                                <input id="DateMoniteur">
                             </div>
                         </div>
                         <div class="row">
@@ -111,7 +112,7 @@
                                 <label for="PoidsMoniteur" class="label label-primary">Poids</label>
                             </div>
                             <div class="col-8">
-                                <input required id="PoidsMoniteur">
+                                <input id="PoidsMoniteur">
                             </div>
                         </div>
 
@@ -120,7 +121,7 @@
                                 <label for="AdresseEmailMoniteur" class="label label-primary">Adresse Email</label>
                             </div>
                             <div class="col-8">
-                                <input required  id="AdresseEmailMoniteur">
+                                <input  id="AdresseEmailMoniteur">
                             </div>
                         </div>
 
@@ -129,7 +130,7 @@
                                 <label  for="AdresseMoniteur" class="label label-primary">Adresse</label>
                             </div>
                             <div class="col-8">
-                                <input required  id="AdresseMoniteur">
+                                <input  id="AdresseMoniteur">
                             </div>
                         </div>
 
@@ -138,7 +139,7 @@
                                 <label for="CodePostalMoniteur" class="label label-primary">Code Postal</label>
                             </div>
                             <div class="col-8">
-                                <input required  id="CodePostalMoniteur">
+                                <input  id="CodePostalMoniteur">
                             </div>
                         </div>
 
@@ -147,7 +148,7 @@
                                 <label for="VilleMoniteur" class="label label-primary">Ville</label>
                             </div>
                             <div class="col-8">
-                                <input required id="VilleMoniteur">
+                                <input id="VilleMoniteur">
                             </div>
                         </div>
 
@@ -156,7 +157,7 @@
                                 <label for="TelMoniteur" class="label label-primary">Numero de téléphone</label>
                             </div>
                             <div class="col-8">
-                                <input required id="TelMoniteur">
+                                <input id="TelMoniteur">
                             </div>
                         </div>
 
@@ -169,7 +170,7 @@
                 </div>
             </div>
         </form>
-        <div class="modal" id="modalFiltreMoniteurs" tabindex="2" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal fade" id="modalFiltreMoniteurs" tabindex="2" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered" role="document">
             <div class="modal-content">
                 <div class="modal-header">
@@ -263,25 +264,31 @@
                 culture: "fr-FR",
                 min:0,
                 placeholder: "Entrer l'id d'une personne",
-                format: "{0:n0}"
+                format: "{0:n0}",
+                size:"medium"
             });
             $("#NomFiltre").kendoTextBox({
                 placeholder: "Entrer le nom d'une personne",
+                size:"medium"
             });
             
             $("#PrenomFiltre").kendoTextBox({
                 placeholder: "Entrer le prénom d'une personne",
+                size:"medium"
             });
 
             $("#NaissanceFiltre").kendoDatePicker({
                 culture: "fr-FR",
+                size:"medium"
             });
 
             $("#AdresseEmailFiltre").kendoTextBox({
                 placeholder: "Entrer l'adresse email d'une personne",
+                size:"medium"
             });
             $("#TelephoneFiltre").kendoTextBox({
                 placeholder: "Entrer le numéro de téléphone d'une personne",
+                size:"medium"
             });
             
 
@@ -388,55 +395,60 @@
         $("#PrenomMoniteur").kendoTextBox({
             placeholder: "Prenom",
             fillMode: "solid",
-            size:"large"
+            size:"medium"
         });
 
         $("#NomMoniteur").kendoTextBox({
             placeholder: "Nom",
             fillMode: "solid",
-            size:"large"
+            size:"medium"
         });
 
         $("#DateMoniteur").kendoDatePicker({
             start: "year",
             format: "dd/MM/yyyy",
-            size:"large"
+            size:"medium",
+            placeholder : "Entrer la date de naissance"
         });
 
-        $("#PoidsMoniteur").kendoTextBox({
-            placeholder: "Poids",
-            fillMode: "solid",
-            size:"large"
-        });
+        $("#PoidsMoniteur").kendoNumericTextBox({
+                culture: "fr-FR",
+                min:0,
+                value : 0,
+                placeholder: "Entrer le poids supporté min",
+                format: "{0:n0}",
+                size : "medium",
+            });
+
 
         $("#AdresseEmailMoniteur").kendoTextBox({
             placeholder: "Adresse Email",
             fillMode: "solid",
-            size:"large"
+            size:"medium"
         });
 
         $("#AdresseMoniteur").kendoTextBox({
             placeholder: "Adresse",
             fillMode: "solid",
-            size:"large"
+            size:"medium"
         });
 
         $("#CodePostalMoniteur").kendoTextBox({
             placeholder: "Code Postal",
             fillMode: "solid",
-            size:"large"
+            size:"medium"
         });
 
         $("#VilleMoniteur").kendoTextBox({
             placeholder: "Ville",
             fillMode: "solid",
-            size:"large"
+            size:"medium"
         });
 
         $("#TelMoniteur").kendoTextBox({
             placeholder: "Numéro de téléphone",
             fillMode: "solid",
-            size:"large"
+            size:"medium"
         });
 
         $("#moniteurs").on("click", "tr", function() {
@@ -452,8 +464,8 @@
 
         $("#moniteurs").on("dblclick", "tr", function() {
             const id = $(row)[0].childNodes[0].innerHTML
-            const url = '{{url_for("PersonneDetail",id="id")}}'.replace("idMoniteur",id)
-
+            const url = '{{url_for("PersonneDetail",id="idMoniteur")}}'.replace("idMoniteur",id)
+            window.location = url
         });
                 
         $("#deleteMoniteur").on("click",function(){
