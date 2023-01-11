@@ -431,9 +431,13 @@
                     est_client:est_client,
                     est_moniteur:est_moniteur,
                     },
-            success: function(){ 
-                console.log("reussi")
-                table.ajax.reload();
+            success: function(response){ 
+                if(response == "true"){
+                
+                    table.ajax.reload();
+                }else{
+                    alert(response)
+                }
                 $("#loader-background").hide()
                 } 
             });
@@ -541,18 +545,10 @@
             const id = $(row)[0].childNodes[0].innerHTML
             const url = '{{url_for("PersonneDetail",id="idPersonne")}}'.replace("idPersonne",id)
             $("#loader-background").show()
-            $.ajax({
-                type:"POST",
-                data:{"id":id},
-                url:url,
-                success:function(response){
-                    window.location.href = "/Personne/"+id; 
-                } 
+            window.location.href = "/Personne/"+id; 
                
 
             });
-
-        });
 
         $("#Filtres").on("click",function(){
             $("#modalFiltrePersonnes").modal("show")
@@ -563,11 +559,15 @@
                 url:'{{url_for("deletePersonne")}}',
                 type:'POST',
                 data:{id:$(row)[0].childNodes[0].innerHTML},
-            success: function(){
-                table.ajax.reload();
-                row = null;
+            success: function(response){
+                if(response == "true"){
+                    table.ajax.reload();
+                    row = null;
+                    $("#buttonmodalSupr").prop("disabled",true)
+                }else{
+                    alert(response)
+                }
                 $("#loader-background").hide()
-                $("#buttonmodalSupr").prop("disabled",true)
                 } 
             });       
         });

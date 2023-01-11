@@ -116,12 +116,29 @@ def Reservations():
         Poneys = []
         for p in get_info_all_personnes("","","","","",""):
             Personne.append(str(p.id) + " " + p.nomp + " " + p.prenomp)
-        for c in get_info_all_cours("","","","",""):
+        for c in get_info_all_cours("","","","","","",""):
             Cours.append(str(c.idc) + " " + c.nomc)
         for po in get_info_all_poney("","",""):
             Poneys.append(str(po.idpo)+ " " + po.nomp )
         return render_template("gerer_reservations.html",Personnes = Personne, cours = Cours, poneys = Poneys,Personne=get_personne(current_user.id))
     return render_template("index.html",Personne=get_personne(current_user.id))
+
+@app.route("/ReserverCours/<id>")
+@login_required
+def reserverCours(id):
+    if(get_client(current_user.id) != None):
+        if(request.method == "POST"):
+            idp = request.form["id"]
+            po = get_poney(idp)
+        else:
+            po = Poney("","","","")
+                
+        return render_template("ReserverLeCours.html",Personne=get_personne(current_user.id),
+                                            Cours = get_cours(id),
+                                            Poneys = get_poneys_possible(get_cours(id),current_user.id),
+                                            Poney = po)
+    return render_template("index.html",Personne=get_personne(current_user.id))
+
 
 @app.route('/api/dataclients',methods=["POST"])
 def data_client():
@@ -160,7 +177,8 @@ def data_poneys():
         data["data"].append({
             "idpo": ligne.idpo,
             "nomp":ligne.nomp,
-            "poidssup":ligne.poidssup
+            "poidssup":ligne.poidssup,
+            "url_image" : ligne.url_image
         })
     return data
 
@@ -173,8 +191,10 @@ def data_cours():
     type = request.form["typec"]
     prix = request.form["prix"]
     nomMoniteur = request.form["nomMoniteur"]
+    jmahms = request.form["jmahms"]
+    duree = request.form["duree"]
     
-    lignes = get_info_all_cours(idc,nomc,type,prix,nomMoniteur)
+    lignes = get_info_all_cours(idc,nomc,type,prix,nomMoniteur,jmahms,duree)
 
     for ligne in lignes:
         data["data"].append({
@@ -232,6 +252,7 @@ def data_reservations():
             "jmahms": ligne.cours.jmahms,
             "id":ligne.id,
             "idc":ligne.idc,
+            "idpo":ligne.idpo,
             "nomp":ligne.personne.nomp,
             "prenomp":ligne.personne.prenomp,
             "nomc": ligne.cours.nomc,
@@ -279,6 +300,21 @@ def data_personne():
             })
     return data
 
+@app.route("/api/dataReservationCours",methods=["POST"])
+def data_coursReservation():
+    data = {"data":[]}
+    id = request.form["id"]
+    typeActivite = request.form["typeActivite"]
+    date = request.form["jma"]
+    infos = get_all_cours_a_reserver(id,typeActivite,date)
+    for cours in infos:
+        data["data"].append({
+            "nomc" : cours.nomc,
+            "date" : cours.jmahms,
+            "membres" : get_place(cours),
+            "prix" : str(cours.prix) + " " + str(cours.idc)
+        })
+    return data
 @app.route('/api/datapersonnescombobox')
 def data_personneCombo():
     """
@@ -397,7 +433,7 @@ def AddClient():
     cotise = request.form["cotise"]
     id = ajoute_personne(nom,prenom,ddn,poids,adresseemail,adresse,code_postal,ville,numerotel)
     save = ajout_client(id,cotise)
-    return "true" if save else "false"
+    return "true" if save == True else save
 
 
 @app.route("/Cours/Update",methods=["POST"])
@@ -408,9 +444,16 @@ def UpdateCours():
     idc = request.form["idc"]
     type = request.form["type"]
     prix = request.form["prix"]
-    c = Cours(idc,nomc,descc,type,prix,idmoniteur)
+    date =  request.form["date"]
+    duree =  request.form["duree"]
+    url =  request.form["url"]
+    liste_date_time = date.split(" ")
+    liste_date = liste_date_time[0].split("/")
+    liste_time = liste_date_time[1].split(":")
+    jmahms = datetime.datetime(int(liste_date[2]),int(liste_date[1]),int(liste_date[0]),int(liste_time[0]),int(liste_time[1]),0)
+    c = Cours(idc,nomc,descc,type,prix,duree,jmahms,idmoniteur,url)
     save = modifier_cours(c)
-    return "true" if save else "false"
+    return "true" if save == True else save
 
 @app.route("/Poney/Update",methods=["POST"])
 def UpdatePoney():
@@ -421,7 +464,7 @@ def UpdatePoney():
     url = request.form["url"]
     po = Poney(idpo,nompo,poids,url)
     save = modifier_poney(po)
-    return "true" if save else "false"
+    return "true" if save == True else save
 
 
 @app.route('/Personne/Update',methods=['POST'])
@@ -439,24 +482,24 @@ def UpdatePersonne():
     password = request.form["password"]
     p = Personne(id,nom,prenom,ddn,poids,email,adresse,code_postal,ville,tel,password)
     save = modifier_Personne(p)
-    return "true" if save else "false"
+    return "true" if save == True else save
 
 @app.route('/Client/Update',methods=['POST'])
 def UpdateClient():
     id = request.form["id"]
     cotisation = request.form["cotisation"]
     save = update_client(id,cotisation)
-    return "true" if save else "false"
+    return "true" if save == True else save
 
 @app.route("/Reservation/Update",methods=["POST"])
 def UpdateReservation():
     print(request.form)
     id = request.form["id"]
-    jmahms = request.form["jmahms"]
     idc = request.form["idc"]
+    idpo = request.form["idpo"]
     est_paye = request.form["est_paye"]
-    save = update_reservation(jmahms,id,idc,est_paye)
-    return "true" if save else "false"
+    save = update_reservation(id,idc,idpo,est_paye)
+    return "true" if save == True else save
 
 
 @app.route('/AddPoney',methods=['POST'])
@@ -464,35 +507,35 @@ def AddPoney():
     nom = request.form["nom"]
     poids = int(request.form["poids"])
     url = request.form["url"]
-    ajout_poney(nom,poids,url)
-    return ""
+    save = ajout_poney(nom,poids,url)
+    return "true" if save == True else save
 @app.route('/AddReservation',methods=['POST'])
 def AddReservation():
-    jmahms = request.form["datepicker"]
-    id = request.form["id"]
-    idpo = request.form["idpo"]
-    idc = request.form["idc"]
-    duree = request.form["duree"]
-    a_paye = request.form["a_paye"]
-    ajout_reservation(jmahms,id,idpo,idc,duree,a_paye)
-    return ""
+    id = request.form["personne"]
+    idpo = request.form["poney"]
+    print(idpo)
+    idc = request.form["cours"]
+    a_paye = request.form["cotise"]
+    a_paye = True if a_paye == "true" else False
+    save = ajout_reservation(id,idpo,idc,a_paye)
+    return "true" if save == True else save
 
 @app.route('/DeletePoney',methods=['POST'])
 def DeletePoney():
-    deletePoney(int(request.form["id"]))
-    return ""
+    save = deletePoney(int(request.form["id"]))
+    return "true" if save == True else save
 @app.route('/DeleteClient',methods=['POST'])
 def DeleteClient():
     new_freq = request.get_data()
     id_brute = new_freq.decode("utf-8")
     id = id_brute.split("=")[1]
-    deleteclient(id)
-    return ""
+    save = deleteclient(id)
+    return "true" if save == True else save
 
 @app.route('/DeleteReservation',methods=['POST'])
 def DeleteReservation():
-    deletereservation(request.form["jmahms"],request.form["id"],request.form["idpo"])
-    return ""
+    save = deletereservation(request.form["jmahms"],request.form["id"],request.form["idpo"])
+    return "true" if save == True else save
 
 @app.route('/AddMoniteur',methods=['POST'])
 def AddMoniteur():
@@ -511,8 +554,8 @@ def AddMoniteur():
     numerotel = request.form["tel"]
 
     id = ajoute_personne(prenom, nom, ddn, poids, adresseemail, adresse, code_postal, ville, numerotel)
-    ajoute_moniteur(id)
-    return ""
+    save = ajoute_moniteur(id)
+    return "true" if save == True else save
 
 @app.route('/AddCours',methods=['POST'])
 def AddCours():
@@ -534,7 +577,7 @@ def AddCours():
     elif typec == "2":
         typec = "Collectif"
     save = ajouteCours(nom, descc, typec, prix,jmahms,duree, id,url)
-    return "true" if save  else "false"
+    return "true" if save == True else save
 
 @app.route('/AddPersonne',methods=['POST'])
 def AddPersonne():
@@ -556,27 +599,28 @@ def AddPersonne():
     
     id = ajoute_personne( nomp, prenomp, ddn, poids, adressemail, adresse, code_postal, ville, numerotel)
     if est_client == "true" : 
-        ajout_client(id, False)
+        save = ajout_client(id, False)
     if est_moniteur == "true" :
-        ajoute_moniteur(id)   
+        save = ajoute_moniteur(id)   
          
-    return ""
+    return "true" if save == True else save
 
 @app.route('/DeleteMoniteur', methods=['POST'])
 def DeleteMoniteur():
     id = int(request.form["id"])
-    delete_moniteur(id)
-    return ""   
+    save = delete_moniteur(id)
+    return "true" if save == True else save  
 
 @app.route('/deleteCours',methods=['POST'])
 def deleteCours():
-    deletecours(request.form["id"])
-    return ""
+    save = deletecours(request.form["id"])
+    
+    return "true" if save == True else save
 
 @app.route('/deletePersonne',methods=['POST'])
 def deletePersonne():
-    delete_personne(request.form["id"])
-    return ""
+    save = delete_personne(request.form["id"])
+    return "true" if save == True else save
 
 
 @app.route('/adminPage/')

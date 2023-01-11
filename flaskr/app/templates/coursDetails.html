@@ -29,7 +29,7 @@
 <div class="container-fluid" style="margin-top: 1em;">
     <div class="row">
     <div class="col-md-4" style="display: flex;align-items: center;">
-        <img src="{{Cours.url_image}}" alt="Cours De Saut" style="width:100%;">
+        <img src="{{Cours.url_image}}" alt="Cours De Saut" style="width:100%;" id="imgCours">
     </div>
     <div class="col-md-7" style="width: 60%;">
     <div class="row" style="border-bottom: solid 1px">
@@ -61,6 +61,24 @@
             <div class="col-md-4"><label for="PrixCours" class="k-label"> Prix : </label></div>
             <div class="col-md-8">
                 <input id="PrixCours">
+            </div>
+        </div>
+        <div class="row"  style="margin-top: 1em;">
+            <div class="col-md-4"><label for="DateCours" class="k-label"> Date : </label></div>
+            <div class="col-md-8">
+                <input id="DateCours">
+            </div>
+        </div>
+        <div class="row"  style="margin-top: 1em;">
+            <div class="col-md-4"><label for="DureeCours" class="k-label"> Durée : </label></div>
+            <div class="col-md-8">
+                <input id="DureeCours">
+            </div>
+        </div>
+        <div class="row"  style="margin-top: 1em;">
+            <div class="col-md-4"><label for="URLCours" class="k-label"> URL Image : </label></div>
+            <div class="col-md-8">
+                <input id="URLCours">
             </div>
         </div>
     </div>
@@ -127,6 +145,10 @@
             value: '{{Cours.nomc}}',
         })
 
+        $("#URLCours").kendoTextBox({
+            value: '{{Cours.url_image}}',
+        })
+
         $("#DescriptionCours").kendoTextArea({
             value: '{{Cours.descc}}'.replace("&#39;","'"),
             rows:5
@@ -138,13 +160,27 @@
                 
             });
 
+        $("#DureeCours").kendoTimePicker({
+            value : '{{Cours.duree}}',
+            culture : "fr-FR",
+            min: new Date(2000, 0, 1, 0, 0, 0),
+            max:new Date(2000, 0, 1, 2, 0, 0)
+        })
         $("#PrixCours").kendoNumericTextBox({
             value: '{{Cours.prix}}',
             format: "{0:c2}",
             culture : "fr-FR",
             min:0,
         })
+        var date = '{{Cours.jmahms}}'.split(" ")[0]
+        var heure = '{{Cours.jmahms}}'.split(" ")[1]
 
+        $("#DateCours").kendoDateTimePicker({
+            culture : "fr-FR",
+            value: new Date(date.split("-")[0],date.split("-")[1],date.split("-")[2],heure.split(":")[0],heure.split(":")[1],heure.split(":")[2]),
+
+            
+        })
 
         $("#MoniteursComboBox").kendoComboBox({
             dataSource: [],
@@ -199,6 +235,9 @@
                 var prix = $("#PrixCours").val()
                 var nom = $("#NomCours").val()
                 var idmoniteur =   $("#MoniteursComboBox").val().split(" ")[0]
+                var date =  $("#DateCours").val()
+                var duree =  $("#DureeCours").val()
+                var url = $("#URLCours").val()
                 var idc = "{{Cours.idc}}"
                 $.ajax({
                     url : '{{url_for("UpdateCours")}}',
@@ -208,7 +247,10 @@
                         "idc":idc,
                         "prix" : prix,
                         "type" : typec,
-                        "nomc" : nom
+                        "nomc" : nom,
+                        "duree" : duree,
+                        "date" : date,
+                        "url" : url
 
                     },
                     type:'POST',
@@ -218,6 +260,7 @@
                         }else{
                             await delay(1)
                             $("#loader-background").hide()
+                            $("#imgCours").attr("src",url)
                         }
                     }
                 });

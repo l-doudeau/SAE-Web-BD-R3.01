@@ -47,7 +47,9 @@
 </div>
 </main>
 <script>
+    
      $(document).ready(function() {
+        
         $("#cours").on("click",function(){
             window.location = "{{url_for('cours')}}"
         })
@@ -67,5 +69,6 @@
             window.location = "{{url_for('Clients')}}"
         })
      });
+     $("#Admin").addClass("active")
 </script>
 {% include 'footer.html' %}

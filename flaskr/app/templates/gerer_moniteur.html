@@ -383,11 +383,14 @@
                     ville:ville,
                     tel:tel
                     },
-            success: function(){ 
-                console.log("reussi")
-                table.ajax.reload();
+            success: function(response){ 
+                if(response == "true"){
+                    table.ajax.reload();
 
-                } 
+                }else{
+                    alert(response)
+                }
+            }
             });
         }     
         });
@@ -474,11 +477,16 @@
                 url:'{{url_for("DeleteMoniteur")}}',
                 type:'POST',
                 data:{id:$(row)[0].childNodes[0].innerHTML},
-            success: function(){
-                table.ajax.reload();
-                row = null;
+            success: function(response){
+                if(response == "true"){
+                    table.ajax.reload();
+                    row = null;
+                    $("#buttonmodalSupr").prop("disabled",true)
+                    
+                }else{
+                    alert(response)
+                }
                 $("#loader-background").hide()
-                $("#buttonmodalSupr").prop("disabled",true)
                 } 
             });       
         });

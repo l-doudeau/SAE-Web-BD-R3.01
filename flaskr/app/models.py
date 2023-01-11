@@ -98,7 +98,7 @@ class Poney(db.Model):
         self.poidssup = poidssup
         self.url_image = url
     def __repr__(self) -> str:
-        return str(self.idpo) + ", " + self.nomp + ", " + str(self.poidssup)
+        return str(self.idpo) + " " + self.nomp + " "
 
 
 class Reserver(db.Model):
@@ -119,7 +119,7 @@ class Reserver(db.Model):
         self.a_paye = a_paye
     
     def __repr__(self) -> str:
-        return str(self.cours.jmahms) + ", " + str(self.id) + ", " + str(self.idpo) + ", " + str(self.cours.duree) + ", " + str(self.a_paye)
+        return  str(self.id) + ", " + str(self.idpo)  + ", " + str(self.a_paye)
 
 class Admin(db.Model):
     id = db.Column(db.Integer, ForeignKey("personne.id"), primary_key=True)

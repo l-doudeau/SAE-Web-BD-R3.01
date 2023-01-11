@@ -345,7 +345,7 @@
                 {data: 'adressemail',orderable:false,className: "dt-center"},
                 {data: 'numerotel',orderable:false,className: "dt-center"},
                 {data: 'cotisation',orderable:false,className: "dt-center", "render":function (data, type, row) {
-                          return (data === true) ? '<input class="form-check-input" type="checkbox" value="" onclick="save(this)" id="flexCheckChecked" checked>':'<input class="form-check-input" onclick="save(this)" type="checkbox" value="" id="flexCheckChecked">'}
+                          return (data === true) ? '<input type="checkbox" value="" onclick="save(this)" checked>':'<input onclick="save(this)" type="checkbox" value="">'}
            },
         ],
             info:true,
@@ -437,6 +437,8 @@
 
                     $("#PoidsClient").data("kendoNumericTextBox").value("")
                     $("#CotiseClient").data("kendoComboBox").value("")
+                }else{
+                    alert(response)
                 }
                 } 
             });
@@ -539,11 +541,15 @@
                 url:'{{url_for("DeleteClient")}}',
                 type:'POST',
                 data:{id:$(row)[0].childNodes[0].innerHTML},
-            success: function(){
-                table.ajax.reload();
-                row = null;
+            success: function(response){
+                if(response == "true"){
+                    table.ajax.reload();
+                    row = null;
+                    $("#buttonmodalSupr").prop("disabled",true)
+                }else{
+                    alert(response)
+                }
                 $("#loader-background").hide()
-                $("#buttonmodalSupr").prop("disabled",true)
                 } 
             });       
         });

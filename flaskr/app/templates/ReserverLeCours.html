@@ -1,0 +1,135 @@
+{% include "banner.html" %}
+
+
+<style>
+    #imagePoney {
+    float: left;
+    width:  20em;
+    height: 30em;
+    object-fit: cover;
+}
+</style>
+<div class="container-fluid" style="margin: 2em 0;">
+    <div class="row" style="height: 100%;">
+        <div class="col-md-4" style="display:flex;align-items:center;">
+            <img src="{{Cours.url_image}}" alt="Image Cours" style="width: 100%;">
+        </div>
+        <div class="col-md-5" style="height: 100%;">
+            <div class="row" style="text-align: center;">
+                <h1 style="font-weight: bold;">Reservation pour {{Cours.nomc}}</h1>
+                <div class="row" style="text-align: left;">
+                    <label style="font-size: 1.4em;font-weight: 600;">Description : </label>
+                    <p>{{Cours.descc}}</p>
+                </div>
+                <div class="row" style="text-align: left;">
+                    <label style="font-size: 1.4em;font-weight: 600;">Date du cours : </label>
+                    <p>{{Cours.jmahms}}</p>
+                </div>
+                <div class="row" style="text-align: left;">
+                    <label style="font-size: 1.4em;font-weight: 600;">Veuillez selectionner votre poney : </label>
+                    <div class="row" style="margin-left:2em;width:40%">
+                        <input id="Poneys" >
+                    </div>
+                </div>
+                <div class="row" style="text-align: left;">
+                    <label style="font-size: 1.4em;font-weight: 600;">Moyen de paiement </label>
+                    <ul id="radiogroup"></ul>
+                </div>
+            </div>
+            <div class="row" style="margin: 1em 0;">
+                <div class="col-8"></div>
+                <div class="col-4 d-flex justify-content-end">
+                    <button id="save" type="button" class="btn btn-success">Valider</button>
+                </div>
+        
+            </div>
+        </div>
+        <div class="col-md-3">
+            <img id="imagePoney" src="" alt=" " style="width: 100%;  border: none !important; ">
+        </div>
+    </div>
+</div>
+
+<script>
+     $("#Poneys").kendoComboBox({
+            dataSource: [],
+            dataTextField: "name",
+            dataValueField: "name",
+            with : "20%",
+            change: function(e) {
+                var value = this.value();
+                $.ajax({
+                    url: "/api/dataponeys",
+                    type:"POST",
+                    data: {
+                        'id': value.split(" ")[0],
+                        nom : "",
+                        poids : "",
+                        
+                        },
+                    success:function(d){
+                        $("#imagePoney").attr("src",d.data[0].url_image)
+
+                    }
+                })
+               
+            }
+        });
+    $(document).ready(function(){
+        $("#radiogroup").kendoRadioGroup({
+        items: [{
+            value: "one",
+            label: "Payer plus tard. Vous recevrez un mail afin de pouvoir payer à l'aide d'un lien"
+        },{
+            value: "two",
+            label: "Payer maintenant par carte bancaire"
+        }]
+    });
+    });
+        $("#save").on("click",function(){
+            var personne = "{{Personne.id}}"
+            var cours = "{{Cours.idc}}"
+            var poney = $("#Poneys").data("kendoComboBox").text().split(" ")[0]
+            var radioGroup = $("#radiogroup").getKendoRadioGroup();
+            var bool = false;
+            if(radioGroup.value() == "two"){
+                var bool = true;
+            }
+
+            poney == ""?$($("#Poneys").parent()).css("border","1px solid red"):$("#Poneys").css("border","");
+            if(radioGroup.value() == undefined){
+                for(let i = 0 ; i<radioGroup.items().length;i++){
+                    $(radioGroup.items()[i]).css("border","1px solid red")
+                }
+            }else{
+                for(let i = 0 ; i<radioGroup.items().length;i++){
+                    $(radioGroup.items()[i]).css("border","");
+                }
+            }
+            if(poney != "" && radioGroup.value() != ""){ 
+                $.ajax({
+                    url:'{{url_for("AddReservation")}}',
+                    type:'POST',
+                    data:{
+                        personne : personne,
+                        cours : cours,
+                        poney : poney,
+                        cotise: bool
+                        },
+                    "success":function(response){
+                        if(response == "true"){
+                            window.location = "{{url_for('index')}}"
+                        }else{
+                            alert(response)
+                        }
+                    }
+                    });
+                
+                }
+    });
+    var listePoneys = "{{Poneys}}".replaceAll("&#39;","").replaceAll("[","").replaceAll("]","").replaceAll(", ",",").split(",")
+    for(let i = 0; i<listePoneys.length;i++){
+            $("#Poneys").data("kendoComboBox").dataSource.add({name :listePoneys[i]})
+    }
+</script>
+{% include "footer.html" %}

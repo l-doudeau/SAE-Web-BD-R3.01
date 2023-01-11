@@ -1,6 +1,21 @@
 {% include 'banner.html' %}
 
-<div class="container-fluid">
+
+<style>
+    td{
+        vertical-align: middle !important;
+    }
+    table p{
+        margin: 0;
+    }
+    #CoursDataTable  a , #CoursDataTable  p, #CoursDataTable  td {
+        font-size: 1.2em;
+    }
+
+  
+
+</style>
+<div class="container-fluid"  style="background-color: rgb(217, 250, 226);padding-bottom: 2em;">
     <div class="row" style="background-color: rgb(89,147,105);">
         <div class="col-md-3" style="text-align: center;padding:1em;border-right: solid 2px white;">
             <img src="{{url_for('static',filename ='./img/avatar.png')}}" alt="avatar" style="height: 3em;">
@@ -22,14 +37,132 @@
             <p>Activitées</p>
         </div>
     </div>
-    <div class="col-md-4">
+    <div class="row" style="margin-top: 2em;">
+        <div class="col-md-3" style="display: flex; align-items: center;">
+            <div class="col-md-1"></div>
 
-    </div>
-
-    <div class="col-md-8">
-        <table id="Cours"></table>
+            <div class="col-md-11"  style="text-align: center;background-color: rgb(89,147,105);border-radius: 2em;height: 60%;display: flex;align-items: center;">
+                <div class="row" style="padding: 2em;">
+                    <h1 style="font-weight: bold;">FILTRES</h1>
+                    <input id="TypeActiviteFilter">
+                    <input id="DateFilter">
+                </div>
+            </div>
+        </div>
+        <div class="col-md-9">
+            <div class="container" style="border: solid 2px;padding: 2em;border-radius: 2em;">
+                <table id="CoursDataTable" class="table" style="width: 100%;">
+                    <thead>
+                        <tr>
+                            <th>Image</th>
+                            <th>Nom Cours</th>
+                            <th>Date</th>
+                            <th>Nombre Restant</th>
+                            <th>Prix</th>
+                        </tr>
+                    </thead>
+                </table>
+            </div>
+        </div>
     </div>
 </div>
+<script src="https://kendo.cdn.telerik.com/2022.3.1109/js/cultures/kendo.culture.fr-FR.min.js"></script>
+<script>
+    var table = null;
+    $("#Cours").addClass("active")
+    $(document).ready(function(){
 
+        $("#TypeActiviteFilter").kendoComboBox({
+            dataTextField: "text",
+            dataValueField: "value",
+            size:"medium",
+            dataSource: [
+                { text: "", value: "1" },
+                { text: "Collectif", value: "2" },
+                { text: "Individuel", value: "3" },
+                
+            ],
+            label:"Type Activité",
+            change: function(e) {
+                saveFilter();
+            }
+        });
 
+        $("#DateFilter").kendoDatePicker({
+                culture:"fr-FR",
+                size:"medium",
+                label : "A partir du",
+                change: function(e) {
+                saveFilter();
+            }
+                });
+        
+        table = $("#CoursDataTable").DataTable({
+            ajax: {
+                url:'/api/dataReservationCours', 
+                type:"POST",
+                data:function(d){
+                    if(d!=undefined){
+                        d.id = "{{Personne.id}}"
+                        d.typeActivite = $("#TypeActiviteFilter").data("kendoComboBox").text();
+                        d.jma = $("#DateFilter").val()
+                        return d
+                    }
+                }
+            },
+                
+            columns: [
+                {data: null, orderable:false,"render" : function () { 
+                    return "<img src='{{url_for('static',filename='img/poneyb.png')}}' alt='Poney' style='width:4em'>"
+                }
+            },
+                {data: 'nomc',orderable:true,className: "dt-center"},
+                {data: 'date',orderable:true,className: "dt-center","render" : function (data) { 
+                    let m = new Date(data);
+                    var date = moment.utc(m).format('DD/MM/YYYY HH:mm:ss');
+                    return date
+                }},
+                {data: "membres",orderable:true,className: "dt-center","render" : function (data) { 
+                    if(data > 1){
+                        return "<td><p style='color:green;font-weight:bold'>" +data+" PLACES</p></td>"
+
+                    }
+                    if(data == 1){
+                        return "<td><p style='color:orange;font-weight:bold'>" +data+" PLACE</p></td>"
+                        
+                    }
+                    if(data == 0){
+                        return "<td><p style='color:red;font-weight:bold'>COMPLET</p></td>"
+
+                    }
+                }},
+                {data: 'prix',orderable:true,className: "dt-center",
+                "render" : function (data) { 
+                        return "<a href='{{url_for('reserverCours',id='idCours')}}'>".replace("idCours",data.split(' ')[1]) +data.split(' ')[0] +"€ </a>"
+
+                    }},
+           
+        ],
+        order: [[2, 'desc']],
+        paging: true,
+        info:false,
+        "searching" :false,
+        lengthMenu: [
+            [5, 10, 15, -1],
+            [5, 10, 15, 'All'],
+        ],
+        "language": {
+            "lengthMenu": "Afficher _MENU_ Cours",
+            "zeroRecords": "Aucun cours n'est programmé, revenez plus tard",
+            "infoEmpty": "Aucun cours n'est programmé, revenez plus tard",
+            "url": "//cdn.datatables.net/plug-ins/1.13.1/i18n/fr-FR.json"
+        }
+      });
+
+      $($("thead")[0]).hide()
+    });
+    function saveFilter(){
+        table.ajax.reload();
+    }
+</script>
 {% include 'footer.html' %}

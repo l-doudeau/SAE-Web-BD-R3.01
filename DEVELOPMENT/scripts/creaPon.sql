@@ -59,14 +59,13 @@ CREATE TABLE cours (
   jmahms datetime,
   nomc VARCHAR(42),
   descc VARCHAR(300),
-  typec VARCHAR(42),
+  typec VARCHAR(20),
   duree time,
   prix decimal(4.2),
   id int,
   url_image VARCHAR(500),
   PRIMARY KEY (idc)
 ) ENGINE=InnoDB DEFAULT CHARSET=UTF8MB4;
-
 
 CREATE TABLE poney (
   idpo int,
@@ -136,8 +135,6 @@ CREATE TABLE ancien_poney (
 
 
 CREATE TABLE ancien_reserver (
-
-  jmahms datetime,
   id int,
   idc int,
   idpo int,
@@ -150,7 +147,6 @@ CREATE TABLE ancien_reserver (
 ALTER TABLE moniteur ADD FOREIGN KEY (id) REFERENCES personne (id);
 ALTER TABLE client ADD FOREIGN KEY (id) REFERENCES personne (id);
 ALTER TABLE cours ADD FOREIGN KEY (id) REFERENCES moniteur (id);
-
 
 ALTER TABLE reserver ADD FOREIGN KEY (idpo) REFERENCES poney (idpo);
 ALTER TABLE reserver ADD FOREIGN KEY (idc) REFERENCES cours (idc);
@@ -171,7 +167,6 @@ drop trigger if exists verifHeureReservationUpdate;
 drop trigger if exists verifHeuresMaxCoursUpdate;
 drop trigger if exists ajoutPersonneCollectifUpdate;
 drop trigger if exists ajoutPersonneHoraireUpdate;
-drop trigger if exists verifHeureReposUpdate;
 drop trigger if exists verifPayementUpdate;
 drop trigger if exists verifPersonneReserveDansClientUpdate;
 drop trigger if exists ajouteTableAncienPersonne;
@@ -220,109 +215,49 @@ create trigger verifPoidsUpdate before update on reserver for each row
 
 -- verifie que les horaires de la reservation du cours sont conformes au horaires du club (insert)
 
-create trigger verifHeureReservation before insert on cours for each ROW
+create trigger verifHeureCoursInsert before insert on cours for each ROW
 begin
-  declare heureNew int;
   declare msg VARCHAR(300);
-  declare fini INT default false;
-  declare lesReservations cursor for
-  select TIME(new.jmahms) as heureNew from reserver;
-  DECLARE CONTINUE HANDLER FOR NOT FOUND SET fini = TRUE;
-
-  OPEN lesReservations;
-    boucle_reservations: LOOP
-    FETCH lesReservations INTO heureNew;
-      IF fini THEN
-        LEAVE boucle_reservations;
-      END IF;
-      if heureNew < TIME("08:00:00") or heureNew > TIME("20:00:00") then
+      if TIME(new.jmahms)< TIME("08:00:00") or TIME(new.jmahms) > TIME("20:00:00") then
         set msg = concat("Cours impossible car les cours n'ont lieux qu'entre 8 heures et 20 heures. ", "ID Personne : ", new.id,  ", ID Cours : ", new.idc);
         signal SQLSTATE '45000' set MESSAGE_TEXT = msg;
       end if;
-    end LOOP;
-  close lesReservations;
 end |
 
 
 -- verifie que les horaires de la reservation du cours sont conformes au horaires du club (update)
 
-create trigger verifHeureReservationUpdate before update on cours for each ROW
+create trigger verifHeureCoursUpdate before update on cours for each ROW
 begin
-  declare heureNew int;
   declare msg VARCHAR(300);
-  declare fini INT default false;
-  declare lesReservations cursor for
-  select TIME(new.jmahms) as heureNew from reserver;
-  DECLARE CONTINUE HANDLER FOR NOT FOUND SET fini = TRUE;
-
-  OPEN lesReservations;
-    boucle_reservations: LOOP
-    FETCH lesReservations INTO heureNew;
-      IF fini THEN
-        LEAVE boucle_reservations;
-      END IF;
-      if heureNew < TIME("08:00:00") or heureNew > TIME("20:00:00") then
+      if TIME(new.jmahms)< TIME("08:00:00") or TIME(new.jmahms) > TIME("20:00:00") then
         set msg = concat("Cours impossible car les cours n'ont lieux qu'entre 8 heures et 20 heures. ", "ID Personne : ", new.id,  ", ID Cours : ", new.idc);
         signal SQLSTATE '45000' set MESSAGE_TEXT = msg;
       end if;
-    end LOOP;
-  close lesReservations;
 end |
 
 
 -- trigger qui permet de verifier la duree du cours, qu'elle ne soit comprise entre 30min et 2h (insert)
 
-create trigger verifHeuresMaxCours before insert on reserver for each row
+create trigger verifHeuresMaxCours before insert on cours for each row
 BEGIN
   declare msg VARCHAR(300);
-  declare fini int DEFAULT false;
-  declare dureeNew int;
-  declare lesReservations cursor for
-  select TIME(new.duree) as dureeNew from reserver;
-
-  DECLARE CONTINUE handler for not found set fini = TRUE;
-
-  open lesReservations;
-    boucle_reservations : LOOP
-    FETCH lesReservations INTO dureeNew;
-      IF fini THEN
-        LEAVE boucle_reservations;
-      END IF;
-
-      IF dureeNew < TIME("00:30:00") or dureeNew > TIME("02:00:00") then
-        set msg = concat("Réservation impossible car un cours dure entre 30min et 2 heures.", new.id, new.idpo);
+      IF new.duree < TIME("00:30:00") or new.duree > TIME("02:00:00") then
+        set msg = concat("Cours impossible car un cours dure entre 30min et 2 heures.");
         signal SQLSTATE '45000' set MESSAGE_TEXT = msg;
       end if;
-    end LOOP;
-  close lesReservations;
 end |
 
 
 -- trigger qui permet de verifier la duree du cours, qu'elle ne soit comprise entre 30min et 2h (update)
 
-create trigger verifHeuresMaxCoursUpdate before update on reserver for each row
+create trigger verifHeuresMaxCoursUpdate before update on cours for each row
 BEGIN
   declare msg VARCHAR(300);
-  declare fini int DEFAULT false;
-  declare dureeNew int;
-  declare lesReservations cursor for
-  select TIME(new.duree) as dureeNew from reserver;
-
-  DECLARE CONTINUE handler for not found set fini = TRUE;
-
-  open lesReservations;
-    boucle_reservations : LOOP
-    FETCH lesReservations INTO dureeNew;
-      IF fini THEN
-        LEAVE boucle_reservations;
-      END IF;
-
-      IF dureeNew < TIME("00:30:00") or dureeNew > TIME("02:00:00") then
-        set msg = concat("Réservation impossible car un cours dure entre 30min et 2 heures.", new.id, new.idpo);
+      IF new.duree < TIME("00:30:00") or new.duree > TIME("02:00:00") then
+        set msg = concat("Réservation impossible car un cours dure entre 30min et 2 heures.");
         signal SQLSTATE '45000' set MESSAGE_TEXT = msg;
       end if;
-    end LOOP;
-  close lesReservations;
 end |
 
 
@@ -361,14 +296,18 @@ BEGIN
     declare dureeAncien time;
     declare debutNew time;
     declare dureeNew time;
-    DECLARE lesReservations CURSOR FOR select TIME(jmahms) as debutAncien, TIME(duree) as dureeAncien, TIME(new.jmahms) as debutNew, TIME(new.duree) as dureeNew 
-    from reserver natural join Cours
-    where id = new.id and year(jmahms) = year(new.jmahms) and month(jmahms) = month(new.jmahms) and day(jmahms) = day(new.jmahms);
+    
+    DECLARE lesReservations CURSOR FOR select time(Cours.jmahms) as debutAncien, TIME(Cours.duree) as dureeAncien
+    from reserver inner join Cours on reserver.idc = cours.idc
+    where reserver.id = new.id and cours.jmahms = (select jmahms from cours where idc = new.idc);
+    
     DECLARE CONTINUE HANDLER FOR NOT FOUND SET done = TRUE;
-
+    
+	set debutNew = (select TIME(jmahms) from cours where idc = new.idc);
+    set dureeNew = (select TIME(jmahms) from cours where idc = new.idc);
     OPEN lesReservations;
         boucle_reservations: LOOP
-            FETCH lesReservations INTO debutAncien, dureeAncien, debutNew, dureeNew;
+            FETCH lesReservations INTO debutAncien, dureeAncien;
             IF done THEN
               LEAVE boucle_reservations;
             END IF;
@@ -379,7 +318,6 @@ BEGIN
         END LOOP;
     CLOSE lesReservations;
 END |
-
 
 
 -- CREATE TRIGGER ajoutMoniteurHoraire BEFORE INSERT ON reserver FOR EACH ROW
@@ -413,7 +351,7 @@ END |
 
 -- trigger qui vérifie lors d'une reservation que le repos du poney est respecté (insert)
 
-create trigger verifHeureRepos before insert on cours for each row
+create trigger verifHeureRepos before insert on reserver for each row
 begin
   declare msg VARCHAR(300);
   declare debutAncien time;
@@ -422,16 +360,18 @@ begin
   declare dureeNew time;
   declare fini int DEFAULT FALSE;
   declare heureRepos cursor for 
-  select TIME(duree) as dureeAncien, TIME(new.jmahms) as debutNew, TIME(jmahms) as debutAncien, TIME(new.duree) as dureeNew
-  from cours
-  where idpo = new.idpo and year(jmahms) = year(new.jmahms) 
-  and month(jmahms) = month(new.jmahms) and day(jmahms) = day(new.jmahms);
+  select TIME(duree) as dureeAncien, TIME(jmahms) as debutAncien
+  from reserver inner join Cours on reserver.idc = cours.idc
+  where idpo = new.idpo and DATE(cours.jmahms) = (select DATE(jmahms) from Cours where idc = new.idc);
 
   DECLARE CONTINUE HANDLER FOR NOT FOUND SET fini = TRUE;
-
+ 
+  set debutNew = (select TIME(jmahms) from Cours where idc = new.idc);
+  set dureeNew = (select TIME(duree) from Cours where idc = new.idc);
+  
   open heureRepos;
     boucle_heure : LOOP
-      FETCH heureRepos into dureeAncien, debutNew, debutAncien, dureeNew;
+      FETCH heureRepos into dureeAncien, debutAncien;
       IF fini THEN
         LEAVE boucle_heure;
       END IF;
@@ -457,46 +397,6 @@ begin
 end |
 
 
--- trigger qui vérifie lors d'une reservation que le repos du poney est respecté (update)
-
-create trigger verifHeureReposUpdate before update on cours for each row
-begin
-  declare msg VARCHAR(300);
-  declare debutAncien time;
-  declare dureeAncien time ;
-  declare debutNew time;
-  declare dureeNew time;
-  declare fini int DEFAULT FALSE;
-  declare heureRepos cursor for 
-  select TIME(duree) as dureeAncien, TIME(new.jmahms) as debutNew, TIME(jmahms) as debutAncien, TIME(new.duree) as dureeNew
-  from cours 
-  where idpo = new.idpo and year(jmahms) = year(new.jmahms)
-  and month(jmahms) = month(new.jmahms) and day(jmahms) = day(new.jmahms);
-
-  DECLARE CONTINUE HANDLER FOR NOT FOUND SET fini = TRUE;
-
-  open heureRepos;
-    boucle_heure : LOOP
-      FETCH heureRepos into dureeAncien, debutNew, debutAncien, dureeNew;
-      IF fini THEN
-        LEAVE boucle_heure;
-      END IF;
-      if TIMEDIFF(debutNew, debutAncien) = TIME("02:00:00") then
-        if dureeAncien = TIME("02:00:00") then
-          set msg = concat ("Inscription impossible à l'activité car le cheval n'a pas eu le temps de se reposer");
-          signal SQLSTATE '45000' set MESSAGE_TEXT = msg;
-        end if;
-      end if;
-      if TIMEDIFF(debutAncien, debutNew) = TIME("02:00:00") then
-        if dureeNew = TIME("02:00:00") then
-          set msg = concat ("Inscription impossible à l'activité car le cheval n'a pas eu le temps de se reposer");
-          signal SQLSTATE '45000' set MESSAGE_TEXT = msg;
-        end if;
-      end if;
-    END LOOP;
-  CLOSE heureRepos;
-end |
-
 
 -- create trigger verifUniquePoneyParCours before insert on reserver for each row
 --   begin 
@@ -511,27 +411,13 @@ create trigger verifPayement before insert on reserver for each row
 begin
   declare msg VARCHAR(300);
   declare cotistationAnnuelle boolean;
-  declare payementCours boolean ;
-  declare fini int DEFAULT FALSE;
-  declare lesReservations cursor for 
-  select cotisationA as cotistationAnnuelle, new.a_paye as payementCours
+  set cotistationAnnuelle = (select cotisationA as cotistationAnnuelle
   from client
-  where id = new.id;
-
-  DECLARE CONTINUE HANDLER FOR NOT FOUND SET fini = TRUE;
-
-  open lesReservations;
-    boucle_heure : LOOP
-      FETCH lesReservations into cotistationAnnuelle, payementCours;
-      IF fini THEN
-        LEAVE boucle_heure;
-      END IF;
-        if cotistationAnnuelle = false and payementCours = true then
-          set msg = concat ("Impossible de réserver l'activité : ", new.idc, ", car la cotisation annuel n'est pas réglé");
-          signal SQLSTATE '45000' set MESSAGE_TEXT = msg;
-      end if;
-    END LOOP;
-  CLOSE lesReservations;
+  where id = new.id);
+	if cotistationAnnuelle = false then
+	  set msg = concat ("Impossible de réserver l'activité : ", new.idc, ", car la cotisation annuel n'est pas réglé");
+	  signal SQLSTATE '45000' set MESSAGE_TEXT = msg;
+  end if;
 end |
 
 
@@ -643,7 +529,7 @@ create trigger ajouteTableAncienMoniteur before delete on moniteur for each row
 
 create trigger ajouteTableAncienCours before delete on cours for each row
   begin
-      INSERT INTO ancien_cours(idc,jmahms,duree, nomc, descc, typec, prix) VALUES(old.idc,old.jmahms,old.duree, old.nomc, old.descc, old.typec, old.prix);
+      INSERT INTO ancien_cours(idc,jmahms,duree, nomc, descc, typec, prix) VALUES(old.idc,old.jmahms,old.duree, old.nomc, old.descc, old.typec , old.prix);
   END |
 
 

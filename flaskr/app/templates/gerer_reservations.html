@@ -48,6 +48,7 @@
                         <th>Durée</th>
                         <th>Est payé</th>
                         <th>ID</th>
+                        <th>IDC</th>
                         <th>IDPO</th>
                     </tr>
                 </thead>
@@ -182,7 +183,22 @@
                         <input  id="CoursReservation1">
                     </div>
                 </div>
-                
+                <div class="row">
+                    <div class="col-4">
+                        <label for="DateReservation" class="label label-primary">Date de reservation</label>
+                    </div>
+                    <div class="col-8">
+                        <input id="DateReservation1">
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-4">
+                        <label for="DuréeReservation" class="label label-primary">Durée</label>
+                    </div>
+                    <div class="col-8">
+                        <input  id="DuréeReservation1">
+                    </div>
+                </div>
                 <div class="row">
                     <div class="col-4">
                         <label for="PoneyReservation" class="label label-primary">Poney</label>
@@ -233,6 +249,24 @@
             dataTextField: "name",
             dataValueField: "name"
         });
+
+
+        $("#DateReservation1").kendoDateTimePicker({
+                culture:"fr-FR",
+                size:"medium",
+                minTime : "08:00",
+                });
+
+            
+
+            $("#DuréeReservation1").kendoTimePicker({
+                culture:"fr-FR",
+                interval:5,
+                max: new Date(2000, 0, 1, 2, 0, 0),
+                size:"medium",
+            
+            });
+
 
         $("#CoursReservation").kendoComboBox({dataSource: [],
             dataTextField: "name",
@@ -346,9 +380,10 @@
                 {data: 'nompo',orderable:true,className: "dt-center"},
                 {data: 'duree',orderable:true,className: "dt-center"},
                 {data: 'a_paye',orderable:true,className: "dt-center", "render":function (data, type, row) {
-                          return (data === true) ? '<input class="form-check-input" type="checkbox" value="" onclick="save(this)" id="flexCheckChecked" checked>':'<input class="form-check-input" onclick="save(this)" type="checkbox" value="" id="flexCheckChecked">'} },
+                          return (data === true) ? '<input type="checkbox" value="" onclick="save(this)" id="flexCheckChecked" checked>':'<input onclick="save(this)" type="checkbox" value="" id="flexCheckChecked">'} },
                 {data: "id",className:"a"},
-                {data:"idc",className:"a"}
+                {data:"idc",className:"a"},
+                {data:"idpo",className:"a"}
            ,
         ],
             info:true,
@@ -392,7 +427,7 @@
             cours == ""?$("#CoursReservation").css("border","1px solid red"):$("#CoursReservation").css("border","");
             var datepicker = $("#DateReservation").data("kendoDatePicker");
             datepicker._value == null?$('#DateReservation').css("border","1px solid red"):$("#DateReservation").css("border","");
-            poney == ""  || !isNumeric(poids)?$("#PoneyReservation").css("border","1px solid red"):$("#PoneyReservation").css("border","");
+            poney == ""?$("#PoneyReservation").css("border","1px solid red"):$("#PoneyReservation").css("border","");
             duree == ""?$("#DuréeReservation").css("border","1px solid red"):$("#DuréeReservation").css("border","");
 
             if(personne != "" && cours != "" && poney != ""&& duree != "" && cotise != "" && datepicker._value != null){
@@ -404,12 +439,15 @@
                     personne : personne,
                     cours : cours,
                     poney : poney,
-                    duree : duree,
                     cotise:cotise
                     },
-            success: function(){ 
-                console.log("reussi")
-                table.ajax.reload();
+            success: function(response){ 
+                if(response == "true"){
+
+                    table.ajax.reload();
+                }else{
+                    alert(response)
+                }
 
                 } 
             });
@@ -446,11 +484,16 @@
                 data:{jmahms:$(row)[0].childNodes[0].innerHTML,
                     id:$(row)[0].childNodes[7].innerHTML,
                     idpo:$(row)[0].childNodes[8].innerHTML},
-            success: function(){
-                table.ajax.reload();
-                row = null;
+            success: function(response){
+                if(response == "true"){
+                    table.ajax.reload();
+                    row = null;
+                    $("#buttonmodalSupr").prop("disabled",true)
+                }else{
+                    alert(response)
+                }
+
                 $("#loader-background").hide()
-                $("#buttonmodalSupr").prop("disabled",true)
                 } 
             });       
         });
@@ -466,13 +509,14 @@
             type:'POST',
             data:{
                     est_paye :$(checkbox)[0].checked,
-                    jmahms : ligne.children[0].innerHTML,
                     id : table.row($(checkbox).parents()).data()["id"],
-                    idc : table.row($(checkbox).parents()).data()["idc"]
+                    idc : table.row($(checkbox).parents()).data()["idc"],
+                    idpo : table.row($(checkbox).parents()).data()["idpo"]
                 },
         success: function(response){
-                if(response == "false"){
-                    alert("Erreur lors de l'update")
+            console.log(response)
+                if(response != "true"){
+                    alert(response)
             }   
         }
         });    

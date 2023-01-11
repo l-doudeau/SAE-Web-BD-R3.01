@@ -60,20 +60,20 @@ insert into moniteur (id) values (1),
                                 (24);
 
 insert into cours (idc,jmahms,duree, nomc, descc, typec, prix,id,url_image) values
-            (1,STR_TO_DATE("13-01-2024 08:30:00", "%d-%m-%Y %H:%i:%s"), STR_TO_DATE("02:00:00", "%H:%i:%s"), 'Cours de saut', "Ce cours portera sur la technique de saut d'obstacle pour les débutants", "Collectif", 45,1,"https://www.centre-equestre-marina.com/wp-content/uploads/stage-equitation-cours-anglais.jpg"), 
-            (2,STR_TO_DATE('07-06-2024 08:59:59',"%d-%m-%Y %H:%i:%s"), STR_TO_DATE("01:00:00", "%H:%i:%s"), 'Cours de saut', "Ce cours portera sur la technique de saut d'obstacle pour les débutants", "Individuel", 80,5,"https://www.centre-equestre-marina.com/wp-content/uploads/stage-equitation-cours-anglais.jpg"),
+            (1,STR_TO_DATE("13-01-2024 08:30:00", "%d-%m-%Y %H:%i:%s"), STR_TO_DATE("02:00:00", "%H:%i:%s"), 'Cours de saut', "Ce cours portera sur la technique de saut d'obstacle pour les débutants","Collectif", 45,1,"https://www.centre-equestre-marina.com/wp-content/uploads/stage-equitation-cours-anglais.jpg"), 
+            (2,STR_TO_DATE('07-06-2024 08:59:59',"%d-%m-%Y %H:%i:%s"), STR_TO_DATE("01:00:00", "%H:%i:%s"), 'Cours de saut', "Ce cours portera sur la technique de saut d'obstacle pour les débutants","Individuel", 80,5,"https://www.centre-equestre-marina.com/wp-content/uploads/stage-equitation-cours-anglais.jpg"),
             (3,STR_TO_DATE('24-12-2023 16:00:00',"%d-%m-%Y %H:%i:%s"), STR_TO_DATE("00:30:00", "%H:%i:%s"), 'Initiation', "Cours d'initiation au poney ", "Individuel", 65,12,"https://www.experiencecotedazur.com/wp-content/uploads/wpetourisme/big-ticket-image-5c1bd871e85e5393321769-cropped600-400.jpg"),
             (4,STR_TO_DATE('24-12-2023 16:00:00',"%d-%m-%Y %H:%i:%s"), STR_TO_DATE("02:00:00", "%H:%i:%s"), 'Initiation', "Cours d'initiation au poney ", "Collectif", 25,1,"https://www.experiencecotedazur.com/wp-content/uploads/wpetourisme/big-ticket-image-5c1bd871e85e5393321769-cropped600-400.jpg"),
             (5,STR_TO_DATE('24-01-2023 16:00:00',"%d-%m-%Y %H:%i:%s"), STR_TO_DATE("02:00:00", "%H:%i:%s"), 'Cours de course', "Ce cours portera sur la course à poney", "Individuel", 65,1,"https://upload.wikimedia.org/wikipedia/commons/7/7b/Horseracing_Churchill_Downs.jpg"),
             (6,STR_TO_DATE('24-01-2023 16:00:00',"%d-%m-%Y %H:%i:%s"), STR_TO_DATE("00:30:00", "%H:%i:%s"), 'Cours poussin', "Ce cours sera un entraînement pour la catégorie poussin", "Collectif", 35,1,"http://www.cemontfort.fr/wp-content/uploads/2019/01/ecole-equitation-poussin-2-centre-equestre-montfort.jpg"),
             (7,STR_TO_DATE('24-01-2023 16:00:00',"%d-%m-%Y %H:%i:%s"), STR_TO_DATE("02:00:00", "%H:%i:%s"), 'Cours de saut', "Ce cours portera sur la technique de saut d'obstacle pour les débutants", "Collectif", 45,1,"https://www.centre-equestre-marina.com/wp-content/uploads/stage-equitation-cours-anglais.jpg"),
-            (8,STR_TO_DATE('24-01-2023 16:00:00',"%d-%m-%Y %H:%i:%s"), STR_TO_DATE("00:30:00", "%H:%i:%s"), 'Cours de vitesse', "Ce cours portera sur la technique de saut d'obstacle pour les débutants", "Individuel", 45,1,"https://www.jourdegalop.com/Media/Jdg/Images/Articles/JDG/2017/08/Brando-sc-1.jpg"),
-            (9,STR_TO_DATE('24-01-2023 16:00:00',"%d-%m-%Y %H:%i:%s"), STR_TO_DATE("02:00:00", "%H:%i:%s"), 'Cours de saut', "Ce cours portera sur la technique de saut d'obstacle pour les débutants", "Individuel", 45,1,"https://www.centre-equestre-marina.com/wp-content/uploads/stage-equitation-cours-anglais.jpg"),
+            (8,STR_TO_DATE('24-01-2023 16:00:00',"%d-%m-%Y %H:%i:%s"), STR_TO_DATE("00:30:00", "%H:%i:%s"), 'Cours de vitesse', "Ce cours portera sur la technique de saut d'obstacle pour les débutants", "Collectif", 45,1,"https://www.jourdegalop.com/Media/Jdg/Images/Articles/JDG/2017/08/Brando-sc-1.jpg"),
+            (9,STR_TO_DATE('24-01-2023 16:00:00',"%d-%m-%Y %H:%i:%s"), STR_TO_DATE("02:00:00", "%H:%i:%s"), 'Cours de saut', "Ce cours portera sur la technique de saut d'obstacle pour les débutants", "Collectif", 45,1,"https://www.centre-equestre-marina.com/wp-content/uploads/stage-equitation-cours-anglais.jpg"),
             (10,STR_TO_DATE('24-01-2023 16:00:00',"%d-%m-%Y %H:%i:%s"), STR_TO_DATE("02:00:00", "%H:%i:%s"), 'Cours de saut', "Ce cours portera sur la technique de saut d'obstacle pour les débutants", "Collectif", 45,22,"https://www.centre-equestre-marina.com/wp-content/uploads/stage-equitation-cours-anglais.jpg"),
-            (11,STR_TO_DATE('24-01-2023 16:00:00',"%d-%m-%Y %H:%i:%s"), STR_TO_DATE("00:30:00", "%H:%i:%s"), 'Cours de saut', "Ce cours portera sur la technique de saut d'obstacle pour les débutants", "Individuel", 45,1,"https://www.centre-equestre-marina.com/wp-content/uploads/stage-equitation-cours-anglais.jpg"),
+            (11,STR_TO_DATE('24-01-2023 16:00:00',"%d-%m-%Y %H:%i:%s"), STR_TO_DATE("00:30:00", "%H:%i:%s"), 'Cours de saut', "Ce cours portera sur la technique de saut d'obstacle pour les débutants", "Collectif", 45,1,"https://www.centre-equestre-marina.com/wp-content/uploads/stage-equitation-cours-anglais.jpg"),
             (12,STR_TO_DATE('24-01-2023 16:00:00',"%d-%m-%Y %H:%i:%s"), STR_TO_DATE("01:00:00", "%H:%i:%s"), 'Cours de saut', "Ce cours portera sur la technique de saut d'obstacle pour les débutants", "Collectif", 45,18,"https://www.centre-equestre-marina.com/wp-content/uploads/stage-equitation-cours-anglais.jpg"),
             (13,STR_TO_DATE('24-01-2023 16:00:00',"%d-%m-%Y %H:%i:%s"), STR_TO_DATE("01:00:00", "%H:%i:%s"), 'Cours de saut', "Ce cours portera sur la technique de saut d'obstacle pour les débutants", "Collectif", 45,1,"https://www.centre-equestre-marina.com/wp-content/uploads/stage-equitation-cours-anglais.jpg"),
-            (14,STR_TO_DATE('24-01-2023 16:00:00',"%d-%m-%Y %H:%i:%s"), STR_TO_DATE("02:00:00", "%H:%i:%s"), 'Cours de saut', "Ce cours portera sur la technique de saut d'obstacle pour les débutants", "Individuel", 100,1,"https://www.centre-equestre-marina.com/wp-content/uploads/stage-equitation-cours-anglais.jpg");
+            (14,STR_TO_DATE('24-01-2023 16:00:00',"%d-%m-%Y %H:%i:%s"), STR_TO_DATE("02:00:00", "%H:%i:%s"), 'Cours de saut', "Ce cours portera sur la technique de saut d'obstacle pour les débutants", "Collectif", 100,1,"https://www.centre-equestre-marina.com/wp-content/uploads/stage-equitation-cours-anglais.jpg");
 
             
 insert into poney (idpo, nomp, poidssup,url_image) values (1, "Chacha", 180,"https://i.pinimg.com/564x/66/2c/a3/662ca3a80f4c5471ac8f62ceb91d1b6b.jpg"),
@@ -90,7 +90,9 @@ insert into poney (idpo, nomp, poidssup,url_image) values (1, "Chacha", 180,"htt
                                                 (12, "Rose", 100,"https://i.pinimg.com/736x/4a/c8/ac/4ac8acb2b8e56f7f91907204447fe357.jpg"),
                                                 (13, "Victoria", 120,"https://i.pinimg.com/564x/a7/c3/f6/a7c3f670cd3082c5ba76bb3700b624ac.jpg");
 insert into admin (id) values (1);
-                            
+
+
+
 insert into reserver (id, idc, idpo, a_paye) values
     ( 6, 1, 1, true),
     ( 5, 14, 6, true),
