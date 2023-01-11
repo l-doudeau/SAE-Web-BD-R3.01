@@ -159,12 +159,12 @@ drop trigger if exists ajoutPersonneCollectif;
 drop trigger if exists ajoutPersonneHoraire;
 drop trigger if exists verifHeureRepos;
 drop trigger if exists verifHeureReservation;
-drop trigger if exists verifHeuresMaxCours;
+drop trigger if exists verifHeuresMaxcours;
 drop trigger if exists verifPayement;
 drop trigger if exists verifPersonneReserveDansClient;
 drop trigger if exists verifPoidsUpdate;
 drop trigger if exists verifHeureReservationUpdate;
-drop trigger if exists verifHeuresMaxCoursUpdate;
+drop trigger if exists verifHeuresMaxcoursUpdate;
 drop trigger if exists ajoutPersonneCollectifUpdate;
 drop trigger if exists ajoutPersonneHoraireUpdate;
 drop trigger if exists verifPayementUpdate;
@@ -172,7 +172,7 @@ drop trigger if exists verifPersonneReserveDansClientUpdate;
 drop trigger if exists ajouteTableAncienPersonne;
 drop trigger if exists ajouteTableAncienClient;
 drop trigger if exists ajouteTableAncienMoniteur;
-drop trigger if exists ajouteTableAncienCours;
+drop trigger if exists ajouteTableAnciencours;
 drop trigger if exists ajouteTableAncienPoney;
 drop trigger if exists ajouteTableAncienReserver;
 
@@ -215,11 +215,11 @@ create trigger verifPoidsUpdate before update on reserver for each row
 
 -- verifie que les horaires de la reservation du cours sont conformes au horaires du club (insert)
 
-create trigger verifHeureCoursInsert before insert on cours for each ROW
+create trigger verifHeurecoursInsert before insert on cours for each ROW
 begin
   declare msg VARCHAR(300);
       if TIME(new.jmahms)< TIME("08:00:00") or TIME(new.jmahms) > TIME("20:00:00") then
-        set msg = concat("Cours impossible car les cours n'ont lieux qu'entre 8 heures et 20 heures. ", "ID Personne : ", new.id,  ", ID Cours : ", new.idc);
+        set msg = concat("cours impossible car les cours n'ont lieux qu'entre 8 heures et 20 heures. ", "ID Personne : ", new.id,  ", ID cours : ", new.idc);
         signal SQLSTATE '45000' set MESSAGE_TEXT = msg;
       end if;
 end |
@@ -227,11 +227,11 @@ end |
 
 -- verifie que les horaires de la reservation du cours sont conformes au horaires du club (update)
 
-create trigger verifHeureCoursUpdate before update on cours for each ROW
+create trigger verifHeurecoursUpdate before update on cours for each ROW
 begin
   declare msg VARCHAR(300);
       if TIME(new.jmahms)< TIME("08:00:00") or TIME(new.jmahms) > TIME("20:00:00") then
-        set msg = concat("Cours impossible car les cours n'ont lieux qu'entre 8 heures et 20 heures. ", "ID Personne : ", new.id,  ", ID Cours : ", new.idc);
+        set msg = concat("cours impossible car les cours n'ont lieux qu'entre 8 heures et 20 heures. ", "ID Personne : ", new.id,  ", ID cours : ", new.idc);
         signal SQLSTATE '45000' set MESSAGE_TEXT = msg;
       end if;
 end |
@@ -239,11 +239,11 @@ end |
 
 -- trigger qui permet de verifier la duree du cours, qu'elle ne soit comprise entre 30min et 2h (insert)
 
-create trigger verifHeuresMaxCours before insert on cours for each row
+create trigger verifHeuresMaxcours before insert on cours for each row
 BEGIN
   declare msg VARCHAR(300);
       IF new.duree < TIME("00:30:00") or new.duree > TIME("02:00:00") then
-        set msg = concat("Cours impossible car un cours dure entre 30min et 2 heures.");
+        set msg = concat("cours impossible car un cours dure entre 30min et 2 heures.");
         signal SQLSTATE '45000' set MESSAGE_TEXT = msg;
       end if;
 end |
@@ -251,7 +251,7 @@ end |
 
 -- trigger qui permet de verifier la duree du cours, qu'elle ne soit comprise entre 30min et 2h (update)
 
-create trigger verifHeuresMaxCoursUpdate before update on cours for each row
+create trigger verifHeuresMaxcoursUpdate before update on cours for each row
 BEGIN
   declare msg VARCHAR(300);
       IF new.duree < TIME("00:30:00") or new.duree > TIME("02:00:00") then
@@ -267,17 +267,17 @@ create trigger ajoutPersonneCollectif before insert on reserver for each row
 begin
   declare nbmax int default 10;
   declare nbPersonnes int;
-  declare typeCours VARCHAR(42);
+  declare typecours VARCHAR(42);
   declare mes VARCHAR(100);
   select IFNULL(count(id),0) into nbPersonnes from reserver where idc = new.idc;
-  select typec into typeCours from cours where idc = new.idc;
-  if typeCours = "Collectif" then
+  select typec into typecours from cours where idc = new.idc;
+  if typecours = "Collectif" then
     if nbPersonnes + 1 > nbmax then
       set mes = concat ("Inscription impossible à l'activité avec l'id : ", new.idc, " car elle est complète");
       signal SQLSTATE '45000' set MESSAGE_TEXT = mes;
     end if;
   end if;
-  if typeCours = "Individuel" then
+  if typecours = "Individuel" then
     if nbPersonnes <> 0 then
     set mes = concat ("Inscription impossible à l'activité avec l'id : ", new.idc, " car elle est complète");
     signal SQLSTATE '45000' set MESSAGE_TEXT = mes;
@@ -297,8 +297,8 @@ BEGIN
     declare debutNew time;
     declare dureeNew time;
     
-    DECLARE lesReservations CURSOR FOR select time(Cours.jmahms) as debutAncien, TIME(Cours.duree) as dureeAncien
-    from reserver inner join Cours on reserver.idc = cours.idc
+    DECLARE lesReservations CURSOR FOR select time(cours.jmahms) as debutAncien, TIME(cours.duree) as dureeAncien
+    from reserver inner join cours on reserver.idc = cours.idc
     where reserver.id = new.id and cours.jmahms = (select jmahms from cours where idc = new.idc);
     
     DECLARE CONTINUE HANDLER FOR NOT FOUND SET done = TRUE;
@@ -361,13 +361,13 @@ begin
   declare fini int DEFAULT FALSE;
   declare heureRepos cursor for 
   select TIME(duree) as dureeAncien, TIME(jmahms) as debutAncien
-  from reserver inner join Cours on reserver.idc = cours.idc
-  where idpo = new.idpo and DATE(cours.jmahms) = (select DATE(jmahms) from Cours where idc = new.idc);
+  from reserver inner join cours on reserver.idc = cours.idc
+  where idpo = new.idpo and DATE(cours.jmahms) = (select DATE(jmahms) from cours where idc = new.idc);
 
   DECLARE CONTINUE HANDLER FOR NOT FOUND SET fini = TRUE;
  
-  set debutNew = (select TIME(jmahms) from Cours where idc = new.idc);
-  set dureeNew = (select TIME(duree) from Cours where idc = new.idc);
+  set debutNew = (select TIME(jmahms) from cours where idc = new.idc);
+  set dureeNew = (select TIME(duree) from cours where idc = new.idc);
   
   open heureRepos;
     boucle_heure : LOOP
@@ -398,7 +398,7 @@ end |
 
 
 
--- create trigger verifUniquePoneyParCours before insert on reserver for each row
+-- create trigger verifUniquePoneyParcours before insert on reserver for each row
 --   begin 
 --     declare msg VARCHAR(300);
 
@@ -427,10 +427,10 @@ create trigger verifPayementUpdate before update on reserver for each row
 begin
   declare msg VARCHAR(300);
   declare cotistationAnnuelle boolean;
-  declare payementCours boolean ;
+  declare payementcours boolean ;
   declare fini int DEFAULT FALSE;
   declare lesReservations cursor for 
-  select cotisationA as cotistationAnnuelle, new.a_paye as payementCours
+  select cotisationA as cotistationAnnuelle, new.a_paye as payementcours
   from client
   where id = new.id;
 
@@ -438,11 +438,11 @@ begin
 
   open lesReservations;
     boucle_heure : LOOP
-      FETCH lesReservations into cotistationAnnuelle, payementCours;
+      FETCH lesReservations into cotistationAnnuelle, payementcours;
       IF fini THEN
         LEAVE boucle_heure;
       END IF;
-        if cotistationAnnuelle = false and payementCours = true then
+        if cotistationAnnuelle = false and payementcours = true then
           set msg = concat ("Impossible de réserver l'activité : ", new.idc, ", car la cotisation annuel n'est pas réglé");
           signal SQLSTATE '45000' set MESSAGE_TEXT = msg;
         end if;
@@ -484,7 +484,7 @@ create trigger verifPersonneReserveDansClientUpdate before update on reserver fo
 
 -- trigger qui vérifie lors d'une réservation que la date du cours n'est pas dépasée (insert)
 
-create trigger verifCoursPasCommence before insert on cours for each row
+create trigger verifcoursPasCommence before insert on cours for each row
   begin
     declare msg VARCHAR(300);
     if new.jmahms < now() then
@@ -496,7 +496,7 @@ create trigger verifCoursPasCommence before insert on cours for each row
 
 -- trigger qui vérifie lors d'une réservation que la date du cours n'est pas dépasée (update)
 
-create trigger verifCoursPasCommenceUpdate before update on cours for each row
+create trigger verifcoursPasCommenceUpdate before update on cours for each row
   begin
     declare msg VARCHAR(300);
     if new.jmahms < now() then
@@ -527,7 +527,7 @@ create trigger ajouteTableAncienMoniteur before delete on moniteur for each row
   END |
 
 
-create trigger ajouteTableAncienCours before delete on cours for each row
+create trigger ajouteTableAnciencours before delete on cours for each row
   begin
       INSERT INTO ancien_cours(idc,jmahms,duree, nomc, descc, typec, prix) VALUES(old.idc,old.jmahms,old.duree, old.nomc, old.descc, old.typec , old.prix);
   END |
