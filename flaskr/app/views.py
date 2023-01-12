@@ -371,7 +371,7 @@ def CoursDetails(id):
         for moniteur in get_info_all_moniteur("","","","","",""):
             Moniteurs.append(str(moniteur.id) + " " + moniteur.personne.nomp + " " + moniteur.personne.prenomp)
         print(get_moniteur(idm))
-        return render_template("CoursDetails.html",Cours = get_cours(id),Moniteurs = Moniteurs,Moniteur = get_moniteur(idm),Personne=get_personne(current_user.id))
+        return render_template("coursDetails.html",Cours = get_cours(id),Moniteurs = Moniteurs,Moniteur = get_moniteur(idm),Personne=get_personne(current_user.id))
     return render_template("index.html",Personne=get_personne(current_user.id))
 
 @app.route('/Reservation/Details',methods=['POST',"GET"])
