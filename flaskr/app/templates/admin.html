@@ -13,7 +13,7 @@
          flex-wrap: wrap;
          justify-content: center;
          transition : all .2s ease-in-out;
-         box-shadow: 5px 5px 5px black;
+         
     }
 
     .gestion:hover{
@@ -23,31 +23,31 @@
 <main>
 <div class="container-fluid" style="margin : 0; padding: 7em 0 ;">
     <div class="row" style="display: flex;justify-content: space-around;">
-        <div  class="gestion" id="personnes" >
-            <img src="{{url_for('static', filename='./img/personnes.png')}}" alt="personnes"style="width: 20%;">
-            <p style="flex-basis: 100%;">Gérer les personnes</p>
+        <div class="gestion shadow" id="personnes" >
+            <img src="{{url_for('static', filename='./img/personnes.png')}}" alt="personnes" class="mt-3" style="width: 15%;">
+            <p class="fs-4" style="flex-basis: 100%;">Gérer les personnes</p>
         </div>
-        <div class="gestion" id="clients" >
-            <img src="{{url_for('static', filename='./img/client.png')}}" alt="personnes"style="width: 20%;">
-            <p style="flex-basis: 100%;">Gérer les clients</p>
+        <div class="gestion shadow" id="clients" >
+            <img src="{{url_for('static', filename='./img/client.png')}}" alt="personnes" class="mt-3" style="width: 15%;">
+            <p class="fs-4" style="flex-basis: 100%;">Gérer les clients</p>
         </div>
-        <div class="gestion" id="moniteurs"  >
-            <img src="{{url_for('static', filename='./img/moniteur.png')}}" alt="personnes"  style="width: 20%;">
-            <p style="flex-basis: 100%;">Gérer les moniteurs</p>
+        <div class="gestion shadow" id="moniteurs"  >
+            <img src="{{url_for('static', filename='./img/moniteur.png')}}" alt="personnes" class="mt-3" style="width: 15%;">
+            <p class="fs-4" style="flex-basis: 100%;">Gérer les moniteurs</p>
         </div>
     </div>
-    <div class="row" style="display: flex;justify-content: space-around;margin: 2em 0;">
-        <div class="gestion" id="poneys"  >
-            <img src="{{url_for('static', filename='./img/horse.png')}}" alt="personnes"  style="width: 20%;">
-            <p style="flex-basis: 100%;">Gérer les poneys</p>
+    <div class="row mt-5" style="display: flex;justify-content: space-around;margin: 2em 0;">
+        <div class="gestion shadow" id="poneys"  >
+            <img src="{{url_for('static', filename='./img/horse.png')}}" alt="personnes" class="mt-3" style="width: 15%;">
+            <p class="fs-4 mt-3" style="flex-basis: 100%;">Gérer les poneys</p>
         </div>
-        <div class="gestion" id="reservation"  >
-            <img src="{{url_for('static', filename='./img/reservation.png')}}" alt="personnes"  style="width: 20%">
-            <p style="flex-basis: 100%;">Gérer les réservations</p>
+        <div class="gestion shadow" id="reservation"  >
+            <img src="{{url_for('static', filename='./img/reservation.png')}}" alt="personnes" class="mt-3" style="width: 12%">
+            <p class="fs-4" style="flex-basis: 100%;">Gérer les réservations</p>
         </div>
-        <div class="gestion" id="cours" >
-            <img src="{{url_for('static', filename='./img/cours.png')}}" alt="personnes"  style="width: 20%;">
-            <p style="flex-basis: 100%;">Gérer les cours</p>
+        <div class="gestion shadow" id="cours" >
+            <img src="{{url_for('static', filename='./img/cours.png')}}" alt="personnes" class="mt-3" style="width: 13%;">
+            <p class="fs-4" style="flex-basis: 100%;">Gérer les cours</p>
         </div>
     </div>
 </div>
