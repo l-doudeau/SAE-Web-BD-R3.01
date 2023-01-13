@@ -32,13 +32,10 @@ def login():
             email = request.form["email"]
             password = request.form["password"]
             user = get_personne_email(email)
-            print(user)
             if user:
                 if user.mdp == password:
                     login_user(user)
-                    print(user)
                     if(request.args.get("next")):
-                        print(request.args.get("next"))
                         return redirect(request.args.get("next"))
                     return redirect(url_for("index"))
                 else:
@@ -71,7 +68,6 @@ def Moniteurs():
 @app.route('/estAdmin',methods=["POST"])
 @login_required
 def estAdmin():
-    print(request.form)
     id = request.form["id"]
     
     if(isAdmin(id)):
@@ -109,7 +105,6 @@ def Personnes():
 @app.route('/Reservations')
 @login_required
 def Reservations():
-    print(current_user.id)
     if(isAdmin(current_user.id)):
         Personne = []
         Cours = []
@@ -313,7 +308,6 @@ def data_coursReservation():
     infos = get_all_cours_a_reserver(id,typeActivite,date)
     
     for cours in infos:
-        print(cours)
         data["data"].append({
             
             "nomc" : cours.nomc,
@@ -433,7 +427,6 @@ def ReservationDetail():
 
 @app.route("/sendMail", methods=["POST"])
 def SendMail():
-    print(request.form)
     email = request.form["email"]
     date1 = request.form["date"].split(" ")[0]
     time = request.form["date"].split(" ")[1]
@@ -489,7 +482,6 @@ def UpdateCours():
 
 @app.route("/Poney/Update",methods=["POST"])
 def UpdatePoney():
-    print("a")
     idpo = request.form["idpo"]
     poids = request.form["poids"]
     nompo = request.form["nompo"]
@@ -525,7 +517,6 @@ def UpdateClient():
 
 @app.route("/Reservation/Update",methods=["POST"])
 def UpdateReservation():
-    print(request.form)
     id = request.form["id"]
     idc = request.form["idc"]
     idpo = request.form["idpo"]
@@ -600,7 +591,6 @@ def AddCours():
     typec = request.form["type"]
     prix = request.form["prix"]
     duree = request.form["duree"]
-    print(duree)
     jmahms = request.form["jmahms"]
     url = request.form["url"]
     id = request.form["id"]
