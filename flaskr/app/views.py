@@ -321,6 +321,25 @@ def data_coursReservation():
             "id" : cours.idc,
         })
     return data
+
+@app.route("/api/dataMesReservationCours",methods=["POST"])
+def data_mesCoursReservation():
+    data = {"data":[]}
+    id = request.form["id"]
+    typeActivite = request.form["typeActivite"]
+    date = request.form["jma"]
+    infos = get_all_mes_reservations(id,typeActivite,date)
+    for cours in infos:
+        data["data"].append({
+            
+            "nomc" : cours.nomc,
+            "date" : cours.jmahms,
+            "membres" : get_place(cours),
+            "prix" : str(cours.prix) + " " + str(cours.idc),
+            "id" : cours.idc,
+        })
+    return data
+
 @app.route('/api/datapersonnescombobox')
 def data_personneCombo():
     """
@@ -362,7 +381,11 @@ def ReserverCours():
     
     return render_template("ReservationCours.html",Personne=get_personne(current_user.id))
 
-
+@app.route("/MesReservations")
+@login_required
+def mesReservations():
+    
+    return render_template("mesReservationsCours.html",Personne=get_personne(current_user.id))
 
 @app.route("/Cours/<id>",methods=["POST","GET"])
 @login_required

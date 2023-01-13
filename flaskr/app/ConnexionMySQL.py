@@ -73,7 +73,6 @@ def get_poneys_possible(cours,idpersonne):
     reservations = Reserver.query.all()
     for r in reservations:
         date_fin_plus_repos = r.cours.jmahms+timedelta(hours=3+r.cours.duree.hour)
-        print (date_fin_plus_repos)
         if r.cours.jmahms.date() == cours.jmahms.date() and r.cours.jmahms <= cours.jmahms <= date_fin_plus_repos:
             poneys.remove(r.poney)
     
@@ -84,7 +83,6 @@ def get_info_all_moniteur(id,nom,prenom,naissance,telephone,adresseEmail):
     if(id!= "" and id != "0"):
         res = res.filter(Moniteur.id == id)
     if(nom!= ""):
-        print(res)
         res = res.filter(Moniteur.personne.has(Personne.nomp == nom))
 
     if(prenom!= ""):
@@ -148,7 +146,6 @@ def get_all_cours_a_reserver(id,typeActivite,date):
     reservation = Reserver.query.filter(Reserver.id == id).all()
     res = Cours.query.filter(Cours.jmahms > datetime.now())
     if(typeActivite != ""):
-        print(typeActivite)
         res = res.filter(Cours.typec == typeActivite)
     if(date != ""):
         jour = date.split("/")[0]
@@ -160,11 +157,28 @@ def get_all_cours_a_reserver(id,typeActivite,date):
 
     
     for r in reservation:
-        print(r)
         if r.cours in cours:
             cours.remove(r.cours)
     return cours
-    
+
+def get_all_mes_reservations(id, typeActivite, date):
+    reservation = Reserver.query.filter(Reserver.id == id).all()
+    res = Cours.query.filter(Cours.jmahms > datetime.now())
+    if(typeActivite != ""):
+        res = res.filter(Cours.typec == typeActivite)
+    if(date != ""):
+        jour = date.split("/")[0]
+        mois = date.split("/")[1]
+        annee = date.split("/")[2]
+        date1 = datetime.date(int(annee),int(mois),int(jour))
+        res = res.filter(Cours.jmahms > date1)
+    cours = res.all()
+    mesReservation = []
+
+    for r in reservation:
+        if r.cours in cours:
+            mesReservation.append(r.cours)
+    return mesReservation
     
 def get_info_all_personnes(id,nom,prenom,naissance,adresseEmail,telephone):
     res = Personne.query
@@ -181,9 +195,7 @@ def get_info_all_personnes(id,nom,prenom,naissance,adresseEmail,telephone):
         mois = naissance.split("/")[1]
         annee = naissance.split("/")[2]
         date = datetime.date(int(annee),int(mois),int(jour))
-        print(date)
         res = res.filter(Personne.ddn == date).all()
-        print(res)
     if(adresseEmail!= ""):
             res = res.filter(Personne.adressemail == adresseEmail)
 
@@ -193,10 +205,8 @@ def get_info_all_personnes(id,nom,prenom,naissance,adresseEmail,telephone):
 
 def get_info_all_poney(id,nom,poids):
     res = Poney.query
-    print(nom)
     if(id != ""and id != "0"):
         res = res.filter(Poney.idpo == id)
-        print(res)
     if(nom != ""):
         
         res = res.filter(Poney.nomp == nom)
@@ -237,7 +247,6 @@ def get_info_all_cours(idc,nomc,type,prix,nomMoniteur,jmahms,duree):
 def get_info_all_reservations(dateReservation,idp,idc,idpo,duree,a_cotise):
     res = Reserver.query
     if(dateReservation != ""):
-        print(dateReservation)
         date = dateReservation.split(' ')[0]
         temps = dateReservation.split(' ')[1]
         jour = date.split("/")[0]
@@ -292,7 +301,6 @@ def deleteclient(id):
         db.session.commit()
         return True
     except Exception as e:
-        print(e)
         db.session.rollback()
         return repr(e)
 
@@ -322,7 +330,6 @@ def update_client(id, cotisation):
         db.session.commit()
         return True
     except Exception as e:
-        print(e)
         db.session.rollback()
         return repr(e)
     
@@ -334,7 +341,6 @@ def update_reservation(id,idc,idpo,est_paye):
         
         return True
     except Exception as e:
-        print(e)
         db.session.rollback()
         return repr(e)
     
@@ -364,7 +370,6 @@ def deletereservation(date,id,idpo):
         db.session.commit()
         return True
     except Exception as e:
-        print(e)
         db.session.rollback()
         return repr(e)
 
@@ -381,14 +386,13 @@ def deletecours(idc):
         db.session.delete(reserv)
 
     cours = Cours.query.get(idc)
-    print(cours)
     db.session.delete(cours)
     try:
         db.session.commit()
         return True
 
     except Exception as e:
-        print(e)
+        
         db.session.rollback()
         return repr(e)
     
@@ -414,7 +418,7 @@ def delete_personne(id):
         db.session.commit()
         return True
     except Exception as e:
-        print(e)
+        
         db.session.rollback()
         return repr(e)
 
@@ -443,7 +447,7 @@ def modifier_Personne(personne):
         db.session.commit()
         return True
     except Exception as e:
-        print(e)
+        
         db.session.rollback()
         return repr(e)
 
@@ -456,7 +460,7 @@ def modifier_poney(poney):
         db.session.commit()
         return True
     except Exception as e:
-        print(e)
+        
         db.session.rollback()
         return repr(e)
 
@@ -473,7 +477,7 @@ def modifier_cours(cours):
         db.session.commit()
         return True
     except Exception as e:
-        print(e)
+        
         db.session.rollback()
         return repr(e)
 
@@ -496,7 +500,7 @@ def ajout_client(idp, cotise):
         db.session.commit()
         return True
     except Exception as e:
-        print(e)
+        
         db.session.rollback()
         return repr(e)
 
@@ -514,7 +518,7 @@ def ajout_poney(nom,poids,url):
         db.session.commit()
         return True
     except Exception as e:
-        print(e)
+        
         db.session.rollback()
         return repr(e)
 
@@ -531,15 +535,13 @@ def ajout_reservation(id,idpo,idc,a_paye):
     :param duree: time
     :param a_paye: booléen
     """
-    print(idpo,id)
     reservation = Reserver(id,idc,idpo,a_paye)
-    print(reservation)
     db.session.add(reservation)
     try:
         db.session.commit()
         return True
     except Exception as e:
-        print(e)
+        
         db.session.rollback()
         return repr(e)
 
@@ -564,7 +566,7 @@ def ajouteCours(nomc, descc, typec, prix,jmahms,duree,id,url):
         db.session.commit()
         return True
     except Exception as e:
-        print(e)
+        
         db.session.rollback()
         return repr(e)
        
@@ -582,7 +584,7 @@ def ajoute_moniteur(idp):
         db.session.commit()
         return True
     except Exception as e:
-        print(e)
+        
         db.session.rollback()
         return repr(e)
     
@@ -606,7 +608,7 @@ def delete_moniteur(id):
         db.session.commit()
         return True
     except Exception as e:
-        print(e)
+        
         db.session.rollback()
         return repr(e)
     
@@ -622,7 +624,7 @@ def ajoute_personne(nomp, prenomp, ddn, poids, adressemail, adresse, code_postal
         db.session.commit()
         return idp
     except Exception as e:
-        print(e)
+        
         db.session.rollback()
         return repr(e)
     

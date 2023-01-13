@@ -1,0 +1,176 @@
+{% include 'banner.html' %}
+
+
+<style>
+    td{
+        vertical-align: middle !important;
+    }
+    table p{
+        margin: 0;
+    }
+    #CoursDataTable  a , #CoursDataTable  p, #CoursDataTable  td {
+        font-size: 1.2em;
+    }
+
+  
+
+</style>
+<div class="container-fluid"  style="background-color: rgb(217, 250, 226);padding-bottom: 2em;">
+    <div class="row" style="background-color: rgb(159, 221, 176);">
+        <div class="col-md-6" style="text-align: center;padding:1em;border-right: solid 2px white;">
+            <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" fill="currentColor" class="bi bi-calendar" viewBox="0 0 16 16">
+                <path d="M3.5 0a.5.5 0 0 1 .5.5V1h8V.5a.5.5 0 0 1 1 0V1h1a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V3a2 2 0 0 1 2-2h1V.5a.5.5 0 0 1 .5-.5zM1 4v10a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V4H1z"/>
+              </svg> 
+            <p class="mt-3 mb-0 fs-5">Réservations disponibles</p>
+        </div>
+
+        <div class="col-md-6" style="text-align: center;padding:1em;border-right: solid 2px white;">
+            <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" fill="currentColor" class="bi bi-cart-check" viewBox="0 0 16 16">
+                <path d="M11.354 6.354a.5.5 0 0 0-.708-.708L8 8.293 6.854 7.146a.5.5 0 1 0-.708.708l1.5 1.5a.5.5 0 0 0 .708 0l3-3z"/>
+                <path d="M.5 1a.5.5 0 0 0 0 1h1.11l.401 1.607 1.498 7.985A.5.5 0 0 0 4 12h1a2 2 0 1 0 0 4 2 2 0 0 0 0-4h7a2 2 0 1 0 0 4 2 2 0 0 0 0-4h1a.5.5 0 0 0 .491-.408l1.5-8A.5.5 0 0 0 14.5 3H2.89l-.405-1.621A.5.5 0 0 0 2 1H.5zm3.915 10L3.102 4h10.796l-1.313 7h-8.17zM6 14a1 1 0 1 1-2 0 1 1 0 0 1 2 0zm7 0a1 1 0 1 1-2 0 1 1 0 0 1 2 0z"/>
+              </svg>         
+            <p class="mt-3 fs-5 mb-0">Mes réservations</p>
+        </div>
+
+
+    </div>
+    <div class="row" style="margin-top: 2em;">
+        <div class="col-md-3" style="display: flex; align-items: center;">
+            <div  class="col-md-1"></div>
+
+            <div class="col-md-11"  style="text-align: center;background-color: rgb(158, 224, 177);border-radius: 2em;height: 60%;display: flex;align-items: center;">
+                <div class="row" style="padding: 2em;">
+                    <h1 style="font-weight: bold;">FILTRES</h1>
+                    <input id="TypeActiviteFilter">
+                    <input id="DateFilter">
+                </div>
+            </div>
+        </div>
+        <div class="col-md-9">
+            <div class="container" style="border: solid 2px;padding: 2em;border-radius: 2em;">
+                <table id="CoursDataTable" class="table" style="width: 100%;">
+                    <thead>
+                        <tr>
+                            <th>Image</th>
+                            <th>Nom Cours</th>
+                            <th>Date</th>
+                            <th>Nombre Restant</th>
+                            <th>Prix</th>
+                            <th>Reserver</th>
+                        </tr>
+                    </thead>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="https://kendo.cdn.telerik.com/2022.3.1109/js/cultures/kendo.culture.fr-FR.min.js"></script>
+<script>
+    var table = null;
+    $("#Cours").addClass("active")
+    $(document).ready(function(){
+
+        $("#TypeActiviteFilter").kendoComboBox({
+            dataTextField: "text",
+            dataValueField: "value",
+            size:"medium",
+            dataSource: [
+                { text: "", value: "1" },
+                { text: "Collectif", value: "2" },
+                { text: "Individuel", value: "3" },
+                
+            ],
+            label:"Type Activité",
+            change: function(e) {
+                saveFilter();
+            }
+        });
+
+        $("#DateFilter").kendoDatePicker({
+                culture:"fr-FR",
+                size:"medium",
+                label : "A partir du",
+                change: function(e) {
+                saveFilter();
+            }
+                });
+        
+        table = $("#CoursDataTable").DataTable({
+            ajax: {
+                url:'/api/dataMesReservationCours', 
+                type:"POST",
+                data:function(d){
+                    if(d!=undefined){
+                        d.id = "{{Personne.id}}"
+                        d.typeActivite = $("#TypeActiviteFilter").data("kendoComboBox").text();
+                        d.jma = $("#DateFilter").val()
+                        return d
+                    }
+                }
+            },
+                
+            columns: [
+                {data: null, orderable:false,"render" : function () { 
+                    return "<img src='{{url_for('static',filename='img/poneyb.png')}}' alt='Poney' style='width:4em'>"
+                }
+            },
+                {data: 'nomc',orderable:true,className: "dt-center"},
+                {data: 'date',orderable:true,className: "dt-center","render" : function (data) { 
+                    let m = new Date(data);
+                    var date = moment.utc(m).format('DD/MM/YYYY HH:mm:ss');
+                    return date
+                }},
+                {data: "membres",orderable:true,className: "dt-center","render" : function (data) { 
+                    if(data > 1){
+                        return "<td><p style='color:green;font-weight:bold'>" +data+" PLACES</p></td>"
+
+                    }
+                    if(data == 1){
+                        return "<td><p style='color:orange;font-weight:bold'>" +data+" PLACE</p></td>"
+                        
+                    }
+                    if(data == 0){
+                        return "<td><p style='color:red;font-weight:bold'>COMPLET</p></td>"
+
+                    }
+                }},
+                {data: 'prix',orderable:true,className: "dt-center",
+                "render" : function (data) { 
+                        return "<p>"+data.split(' ')[0] +"€ </p>"
+
+                    }
+                },
+                {
+                        data : "id", className : "dt-center", "render" : function(data){
+                            return "<button type='button' onclick='redirectReservation(idCours);' class='btn btn-primary'>Réserver</button>".replace("idCours",data);    
+                        }
+                    },
+                
+           
+        ],
+        order: [[2, 'desc']],
+        paging: true,
+        info:false,
+        "searching" :false,
+        lengthMenu: [
+            [5, 10, 15, -1],
+            [5, 10, 15, 'All'],
+        ],
+        "language": {
+            "lengthMenu": "Afficher _MENU_ Cours",
+            "zeroRecords": "Aucun cours n'est programmé, revenez plus tard",
+            "infoEmpty": "Aucun cours n'est programmé, revenez plus tard",
+            "url": "//cdn.datatables.net/plug-ins/1.13.1/i18n/fr-FR.json"
+        }
+      });
+
+      $($("thead")[0]).hide()
+    });
+    function saveFilter(){
+        table.ajax.reload();
+    }
+    function redirectReservation(id){
+        window.location = "{{url_for('reserverCours',id='idCours')}}".replace("idCours",id)
+    }
+</script>
+{% include 'footer.html' %}
