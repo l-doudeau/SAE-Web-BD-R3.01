@@ -1,13 +1,13 @@
 
-    <ul style="display: flex; align-items: center; width: 100%;">
+    <ul style="display: flex; align-items: center; width: 100%; margin-top : 5%;">
         <li>
-            <img src="{{ url_for('static', filename='img/sologne.png') }}" alt="sologne">
+            <img src="{{ url_for('static', filename='img/sologne.png') }}" alt="sologne" style="margin-top: 7%;margin-bottom: 7%;">
         </li>
         <li>
-            <img src="{{ url_for('static', filename='img/FFE.png') }}" alt="FFE">
+            <img src="{{ url_for('static', filename='img/FFE.png') }}" alt="FFE" style="margin-top: 7%;margin-bottom: 7%;">
         </li>
         <li>
-            <img src="{{ url_for('static', filename='img/lamotte_beuvron.png') }}" alt="Lamotte-Beuvron">
+            <img src="{{ url_for('static', filename='img/lamotte_beuvron.png') }}" alt="Lamotte-Beuvron" style="margin-top: 7%;margin-bottom: 7%;">
         </li>
         <li>
             <img src="{{ url_for('static', filename='img/cheval_o_centre.png') }}" alt="Randonez">
@@ -20,9 +20,11 @@
 
 <style>
     ul img{
-        width: 100%;
+        width: 60%;
     }
     li{
         list-style: none;
+        display : flex;
+        justify-content: center;
     }
     </style>
