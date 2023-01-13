@@ -238,6 +238,7 @@ def data_moniteurs():
 @app.route('/api/datareservation',methods=["POST"])
 def data_reservations():
     data = {"data":[]}
+    
     jmahms = request.form["jmahms"]
     id = request.form["id"]
     idpo = request.form["idpo"]
@@ -247,6 +248,7 @@ def data_reservations():
 
 
     lignes = get_info_all_reservations(jmahms,id,idc,idpo,duree,a_paye)
+    
     for ligne in lignes:
         data["data"].append({
             "jmahms": ligne.cours.jmahms,
@@ -307,12 +309,16 @@ def data_coursReservation():
     typeActivite = request.form["typeActivite"]
     date = request.form["jma"]
     infos = get_all_cours_a_reserver(id,typeActivite,date)
+    
     for cours in infos:
+        print(cours)
         data["data"].append({
+            
             "nomc" : cours.nomc,
             "date" : cours.jmahms,
             "membres" : get_place(cours),
-            "prix" : str(cours.prix) + " " + str(cours.idc)
+            "prix" : str(cours.prix) + " " + str(cours.idc),
+            "id" : cours.idc,
         })
     return data
 @app.route('/api/datapersonnescombobox')
