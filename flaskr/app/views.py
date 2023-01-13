@@ -32,13 +32,10 @@ def login():
             email = request.form["email"]
             password = request.form["password"]
             user = get_personne_email(email)
-            print(user)
             if user:
                 if user.mdp == password:
                     login_user(user)
-                    print(user)
                     if(request.args.get("next")):
-                        print(request.args.get("next"))
                         return redirect(request.args.get("next"))
                     return redirect(url_for("index"))
                 else:
@@ -46,7 +43,6 @@ def login():
             else:
                 return render_template("login.html",error="Email ou mot de passe incorrect")
         except(KeyError):
-            print("salut")
             return render_template("login.html",error="Email ou mot de passe incorrect")
     return render_template("login.html")
 
@@ -62,8 +58,6 @@ def Clients():
 @login_required
 def Moniteurs():
     if(isAdmin(current_user.id)):
-
-        print(login_manager.login_message + "\n")
         return render_template('gerer_moniteur.html',Personne=get_personne(current_user.id))
     return render_template("index.html",Personne=get_personne(current_user.id))
 
@@ -71,7 +65,6 @@ def Moniteurs():
 @app.route('/estAdmin',methods=["POST"])
 @login_required
 def estAdmin():
-    print(request.form)
     id = request.form["id"]
     
     if(isAdmin(id)):
@@ -109,7 +102,6 @@ def Personnes():
 @app.route('/Reservations')
 @login_required
 def Reservations():
-    print(current_user.id)
     if(isAdmin(current_user.id)):
         Personne = []
         Cours = []
@@ -311,7 +303,6 @@ def data_coursReservation():
     infos = get_all_cours_a_reserver(id,typeActivite,date)
     
     for cours in infos:
-        print(cours)
         data["data"].append({
             
             "nomc" : cours.nomc,
@@ -399,7 +390,6 @@ def CoursDetails(id):
             
         for moniteur in get_info_all_moniteur("","","","","",""):
             Moniteurs.append(str(moniteur.id) + " " + moniteur.personne.nomp + " " + moniteur.personne.prenomp)
-        print(get_moniteur(idm))
         return render_template("coursDetails.html",Cours = get_cours(id),Moniteurs = Moniteurs,Moniteur = get_moniteur(idm),Personne=get_personne(current_user.id))
     return render_template("index.html",Personne=get_personne(current_user.id))
 
@@ -430,7 +420,6 @@ def ReservationDetail():
 
 @app.route("/sendMail", methods=["POST"])
 def SendMail():
-    print(request.form)
     email = request.form["email"]
     date1 = request.form["date"].split(" ")[0]
     time = request.form["date"].split(" ")[1]
@@ -486,7 +475,6 @@ def UpdateCours():
 
 @app.route("/Poney/Update",methods=["POST"])
 def UpdatePoney():
-    print("a")
     idpo = request.form["idpo"]
     poids = request.form["poids"]
     nompo = request.form["nompo"]
@@ -522,7 +510,6 @@ def UpdateClient():
 
 @app.route("/Reservation/Update",methods=["POST"])
 def UpdateReservation():
-    print(request.form)
     id = request.form["id"]
     idc = request.form["idc"]
     idpo = request.form["idpo"]
@@ -542,7 +529,6 @@ def AddPoney():
 def AddReservation():
     id = request.form["personne"]
     idpo = request.form["poney"]
-    print(idpo)
     idc = request.form["cours"]
     a_paye = request.form["cotise"]
     a_paye = True if a_paye == "true" else False
@@ -597,7 +583,6 @@ def AddCours():
     typec = request.form["type"]
     prix = request.form["prix"]
     duree = request.form["duree"]
-    print(duree)
     jmahms = request.form["jmahms"]
     url = request.form["url"]
     id = request.form["id"]
