@@ -12,19 +12,23 @@
         font-size: 1.2em;
     }
 
+    .divResDispo:hover{
+        background-color : #63ab76;
+    }
+
   
 
 </style>
-<div class="container-fluid"  style="background-color: rgb(217, 250, 226);padding-bottom: 2em;">
+<div class="container-fluid" style="background-color: rgb(217, 250, 226);padding-bottom: 2em;">
     <div class="row" style="background-color: rgb(159, 221, 176);">
-        <div class="col-md-6" style="text-align: center;padding:1em;border-right: solid 2px white;">
+        <div class="col-md-6 divResDispo"  style="text-align: center;padding:1em;border-right: solid 2px white;">
             <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" fill="currentColor" class="bi bi-calendar" viewBox="0 0 16 16">
                 <path d="M3.5 0a.5.5 0 0 1 .5.5V1h8V.5a.5.5 0 0 1 1 0V1h1a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V3a2 2 0 0 1 2-2h1V.5a.5.5 0 0 1 .5-.5zM1 4v10a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V4H1z"/>
               </svg> 
             <p class="mt-3 mb-0 fs-5">Réservations disponibles</p>
         </div>
 
-        <div class="col-md-6" style="text-align: center;padding:1em;border-right: solid 2px white;">
+        <div class="col-md-6 divResDispo" style="text-align: center;padding:1em;border-right: solid 2px white;">
             <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" fill="currentColor" class="bi bi-cart-check" viewBox="0 0 16 16">
                 <path d="M11.354 6.354a.5.5 0 0 0-.708-.708L8 8.293 6.854 7.146a.5.5 0 1 0-.708.708l1.5 1.5a.5.5 0 0 0 .708 0l3-3z"/>
                 <path d="M.5 1a.5.5 0 0 0 0 1h1.11l.401 1.607 1.498 7.985A.5.5 0 0 0 4 12h1a2 2 0 1 0 0 4 2 2 0 0 0 0-4h7a2 2 0 1 0 0 4 2 2 0 0 0 0-4h1a.5.5 0 0 0 .491-.408l1.5-8A.5.5 0 0 0 14.5 3H2.89l-.405-1.621A.5.5 0 0 0 2 1H.5zm3.915 10L3.102 4h10.796l-1.313 7h-8.17zM6 14a1 1 0 1 1-2 0 1 1 0 0 1 2 0zm7 0a1 1 0 1 1-2 0 1 1 0 0 1 2 0z"/>
@@ -119,7 +123,8 @@
                     let m = new Date(data);
                     var date = moment.utc(m).format('DD/MM/YYYY HH:mm:ss');
                     return date
-                }},
+                }
+            },
                 {data: "membres",orderable:true,className: "dt-center","render" : function (data) { 
                     if(data > 1){
                         return "<td><p style='color:green;font-weight:bold'>" +data+" PLACES</p></td>"
@@ -133,7 +138,8 @@
                         return "<td><p style='color:red;font-weight:bold'>COMPLET</p></td>"
 
                     }
-                }},
+                }
+            },
                 {data: 'prix',orderable:true,className: "dt-center",
                 "render" : function (data) { 
                         return "<p>"+data.split(' ')[0] +"€ </p>"
@@ -142,7 +148,7 @@
                 },
                 {
                         data : "id", className : "dt-center", "render" : function(data){
-                            return "<button type='button' onclick='redirectReservation(idCours);' class='btn btn-primary'>Réserver</button>".replace("idCours",data);    
+                            return "<button type='button' onclick='redirectReservation(idCours);' class='btn btn-success'>Réserver</button>".replace("idCours",data);    
                         }
                     },
                 
@@ -153,15 +159,15 @@
         info:false,
         "searching" :false,
         lengthMenu: [
-            [5, 10, 15, -1],
-            [5, 10, 15, 'All'],
-        ],
-        "language": {
-            "lengthMenu": "Afficher _MENU_ Cours",
-            "zeroRecords": "Aucun cours n'est programmé, revenez plus tard",
-            "infoEmpty": "Aucun cours n'est programmé, revenez plus tard",
-            "url": "//cdn.datatables.net/plug-ins/1.13.1/i18n/fr-FR.json"
-        }
+        [5, 10, 15, -1],
+        [5, 10, 15, 'All'],
+        ],
+           "language": {
+            "lengthMenu": "Afficher _MENU_ Cours",
+            "zeroRecords": "Aucun cours n'est programmé, revenez plus tard",
+            "infoEmpty": "Aucun cours n'est programmé, revenez plus tard",
+             "url": "//cdn.datatables.net/plug-ins/1.13.1/i18n/fr-FR.json"
+        }
       });
 
       $($("thead")[0]).hide()
