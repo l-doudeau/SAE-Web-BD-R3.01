@@ -7,7 +7,7 @@ from sqlalchemy.sql.expression import func
 from sqlalchemy.orm import sessionmaker,scoped_session
 from .models import *
 from secrets import token_urlsafe
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta,date
 from sqlalchemy import create_engine
 from sqlalchemy.ext.declarative import declarative_base
 
@@ -144,17 +144,17 @@ def get_place(cours):
         max=10
     return max-len(reservations)
 
-def get_all_cours_a_reserver(id,typeActivite,date):
+def get_all_cours_a_reserver(id,typeActivite,dateR):
     reservation = Reserver.query.filter(Reserver.id == id).all()
     res = Cours.query.filter(Cours.jmahms > datetime.now())
     if(typeActivite != ""):
         print(typeActivite)
         res = res.filter(Cours.typec == typeActivite)
-    if(date != ""):
-        jour = date.split("/")[0]
-        mois = date.split("/")[1]
-        annee = date.split("/")[2]
-        date1 = datetime.date(int(annee),int(mois),int(jour))
+    if(dateR != ""):
+        jour = dateR.split("/")[0]
+        mois = dateR.split("/")[1]
+        annee = dateR.split("/")[2]
+        date1 = date(int(annee),int(mois),int(jour))
         res = res.filter(Cours.jmahms > date1)
     cours = res.all()
 
@@ -342,7 +342,7 @@ def isAdmin(id):
     a = Admin.query.get(id)
     return a != None
 
-def deletereservation(date,id,idpo):
+def deletereservation(idc,id):
     """
     Il prend une date, un id et un idpo et supprime la réservation qui correspond à la date, l'id et
     l'idpo
@@ -352,12 +352,7 @@ def deletereservation(date,id,idpo):
     :param idpo: l'identifiant de l'utilisateur qui a effectué la réservation
     :return: une valeur booléenne.
     """
-    liste_date_time = date.split(" ")
-    liste_date = liste_date_time[0].split("/")
-    liste_time = liste_date_time[1].split(":")
-
-    jmahms = datetime(int(liste_date[2]),int(liste_date[1]),int(liste_date[0]),int(liste_time[0]),int(liste_time[1]),int(liste_time[2]))
-    reservation = Reserver.query.filter(Reserver.cours.has(Cours.jmahms == jmahms)).filter(Reserver.id == id).filter(Reserver.idpo == idpo).first()
+    reservation = Reserver.query.get((id,idc))
     db.session.delete(reservation)
     try : 
         
@@ -531,7 +526,8 @@ def ajout_reservation(id,idpo,idc,a_paye):
     :param duree: time
     :param a_paye: booléen
     """
-    print(idpo,id)
+    print(idpo)
+    print(id)
     reservation = Reserver(id,idc,idpo,a_paye)
     print(reservation)
     db.session.add(reservation)

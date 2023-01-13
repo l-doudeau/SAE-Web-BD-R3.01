@@ -16,9 +16,9 @@ def load_user(user_id):
 @app.route("/")
 def index():
     if(isinstance(current_user,Personne)):
-        return render_template("index.html",Personne=get_personne(current_user.id))
+        return render_template("index.html",Personne=get_personne(current_user.id),title="Acceuil")
     else:
-        return render_template("index.html",Personne = Personne("","","","","","","","","","",""))
+        return render_template("index.html",Personne = Personne("","","","","","","","","","",""),title="Acceuil")
     
 @app.route("/logout")
 def logout():
@@ -42,21 +42,21 @@ def login():
                         return redirect(request.args.get("next"))
                     return redirect(url_for("index"))
                 else:
-                    return render_template("login.html",error="Email ou mot de passe incorrect")
+                    return render_template("login.html",error="Email ou mot de passe incorrect",title="Login")
             else:
-                return render_template("login.html",error="Email ou mot de passe incorrect")
+                return render_template("login.html",error="Email ou mot de passe incorrect",title="Login")
         except(KeyError):
             print("salut")
-            return render_template("login.html",error="Email ou mot de passe incorrect")
-    return render_template("login.html")
+            return render_template("login.html",error="Email ou mot de passe incorrect",title="Login")
+    return render_template("login.html",title="Login")
 
 
 @app.route('/Clients')
 @login_required
 def Clients():
     if(isAdmin(current_user.id)):
-        return render_template('gerer_client.html',Personne=get_personne(current_user.id))
-    return render_template("index.html",Personne=get_personne(current_user.id))
+        return render_template('gerer_client.html',Personne=get_personne(current_user.id),title="Clients")
+    return render_template("index.html",Personne=get_personne(current_user.id),title="Acceuil")
 
 @app.route('/Moniteurs')
 @login_required
@@ -64,8 +64,8 @@ def Moniteurs():
     if(isAdmin(current_user.id)):
 
         print(login_manager.login_message + "\n")
-        return render_template('gerer_moniteur.html',Personne=get_personne(current_user.id))
-    return render_template("index.html",Personne=get_personne(current_user.id))
+        return render_template('gerer_moniteur.html',Personne=get_personne(current_user.id),title="Moniteurs")
+    return render_template("index.html",Personne=get_personne(current_user.id),title="Acceuil")
 
 
 @app.route('/estAdmin',methods=["POST"])
@@ -87,23 +87,23 @@ def cours():
         Moniteurs = []
         for m in get_info_all_moniteur("","","","","",""):
             Moniteurs.append(str(m.id) + " " + m.personne.nomp + " " + m.personne.prenomp)
-        return render_template('gerer_cours.html',Moniteurs = Moniteurs,Personne=get_personne(current_user.id))
-    return render_template("index.html",Personne=get_personne(current_user.id))
+        return render_template('gerer_cours.html',Moniteurs = Moniteurs,Personne=get_personne(current_user.id),title="Cours")
+    return render_template("index.html",Personne=get_personne(current_user.id),title="Acceuil")
  
 @app.route('/Poneys')
 @login_required
 def Poneys():
     if(isAdmin(current_user.id)):
-        return render_template('gerer_poneys.html',Personne=get_personne(current_user.id))
-    return render_template("index.html",Personne=get_personne(current_user.id))
+        return render_template('gerer_poneys.html',Personne=get_personne(current_user.id),title="Poneys")
+    return render_template("index.html",Personne=get_personne(current_user.id),title="Acceuil")
 
 @app.route('/Personnes')
 @login_required
 def Personnes():
     if(isAdmin(current_user.id)):
         
-        return render_template('gerer_personne.html',Personne=get_personne(current_user.id))
-    return render_template("index.html",Personne=get_personne(current_user.id))
+        return render_template('gerer_personne.html',Personne=get_personne(current_user.id),title="Personnes")
+    return render_template("index.html",Personne=get_personne(current_user.id),title="Acceuil")
 
 
 @app.route('/Reservations')
@@ -120,8 +120,8 @@ def Reservations():
             Cours.append(str(c.idc) + " " + c.nomc)
         for po in get_info_all_poney("","",""):
             Poneys.append(str(po.idpo)+ " " + po.nomp )
-        return render_template("gerer_reservations.html",Personnes = Personne, cours = Cours, poneys = Poneys,Personne=get_personne(current_user.id))
-    return render_template("index.html",Personne=get_personne(current_user.id))
+        return render_template("gerer_reservations.html",Personnes = Personne, cours = Cours, poneys = Poneys,Personne=get_personne(current_user.id),title="Reservations")
+    return render_template("index.html",Personne=get_personne(current_user.id),title="Acceuil")
 
 @app.route("/ReserverCours/<id>")
 @login_required
@@ -136,8 +136,10 @@ def reserverCours(id):
         return render_template("ReserverLeCours.html",Personne=get_personne(current_user.id),
                                             Cours = get_cours(id),
                                             Poneys = get_poneys_possible(get_cours(id),current_user.id),
-                                            Poney = po)
-    return render_template("index.html",Personne=get_personne(current_user.id))
+                                            Poney = po,
+                                            title="Reservation " + get_cours(id).nomc
+                                            )
+    return render_template("index.html",Personne=get_personne(current_user.id),title="Acceuil")
 
 
 @app.route('/api/dataclients',methods=["POST"])
@@ -245,7 +247,7 @@ def data_reservations():
     idc = request.form["idc"]
     duree = request.form["duree"]
     a_paye = request.form["a_paye"]
-
+    print(request.form)
 
     lignes = get_info_all_reservations(jmahms,id,idc,idpo,duree,a_paye)
     
@@ -346,21 +348,21 @@ def data_personneCombo():
 @login_required
 def PersonneDetail(id):
     if(isAdmin(current_user.id)):
-        return render_template("personneDetail.html",Personnes = get_personne(id),Personne=get_personne(current_user.id))
-    return render_template("index.html",Personne=get_personne(current_user.id))
+        return render_template("personneDetail.html",Personnes = get_personne(id),Personne=get_personne(current_user.id),title=get_personne(id).nomp + " " + get_personne(id).prenomp)
+    return render_template("index.html",Personne=get_personne(current_user.id),title = "Acceuil")
 
 @app.route('/Poney/<id>',methods=['POST',"GET"])
 @login_required
 def PoneyDetail(id):
     if(isAdmin(current_user.id)):
-        return render_template("poneyDetails.html",Poney = get_poney(id),Personne=get_personne(current_user.id))
-    return render_template("index.html",Personne=get_personne(current_user.id))
+        return render_template("poneyDetails.html",Poney = get_poney(id),Personne=get_personne(current_user.id),title =get_poney(id).nomc )
+    return render_template("index.html",Personne=get_personne(current_user.id),title = "Acceuil")
 
 @app.route("/ReserverCours")
 @login_required
 def ReserverCours():
     
-    return render_template("ReservationCours.html",Personne=get_personne(current_user.id))
+    return render_template("ReservationCours.html",Personne=get_personne(current_user.id),title = "Reserver un cours")
 
 
 
@@ -377,8 +379,8 @@ def CoursDetails(id):
         for moniteur in get_info_all_moniteur("","","","","",""):
             Moniteurs.append(str(moniteur.id) + " " + moniteur.personne.nomp + " " + moniteur.personne.prenomp)
         print(get_moniteur(idm))
-        return render_template("coursDetails.html",Cours = get_cours(id),Moniteurs = Moniteurs,Moniteur = get_moniteur(idm),Personne=get_personne(current_user.id))
-    return render_template("index.html",Personne=get_personne(current_user.id))
+        return render_template("coursDetails.html",Cours = get_cours(id),Moniteurs = Moniteurs,Moniteur = get_moniteur(idm),Personne=get_personne(current_user.id),title = get_cours(id).nomc)
+    return render_template("index.html",Personne=get_personne(current_user.id),title = "Acceuil")
 
 @app.route('/Reservation/Details',methods=['POST',"GET"])
 @login_required
@@ -402,8 +404,9 @@ def ReservationDetail():
                                                     Moniteur = moniteur,
                                                     Client = client,
                                                     Cours = cours,
-                                                    Personne=get_personne(current_user.id))
-    return render_template("index.html",Personne=get_personne(current_user.id))
+                                                    Personne=get_personne(current_user.id),
+                                                    title = "Reservation")
+    return render_template("index.html",Personne=get_personne(current_user.id),title = "Acceuil")
 
 @app.route("/sendMail", methods=["POST"])
 def SendMail():
@@ -517,9 +520,9 @@ def AddPoney():
     return "true" if save == True else save
 @app.route('/AddReservation',methods=['POST'])
 def AddReservation():
+    print(request.form)
     id = request.form["personne"]
     idpo = request.form["poney"]
-    print(idpo)
     idc = request.form["cours"]
     a_paye = request.form["cotise"]
     a_paye = True if a_paye == "true" else False
@@ -540,7 +543,7 @@ def DeleteClient():
 
 @app.route('/DeleteReservation',methods=['POST'])
 def DeleteReservation():
-    save = deletereservation(request.form["jmahms"],request.form["id"],request.form["idpo"])
+    save = deletereservation(request.form["idc"],request.form["id"])
     return "true" if save == True else save
 
 @app.route('/AddMoniteur',methods=['POST'])
@@ -632,4 +635,4 @@ def deletePersonne():
 @app.route('/adminPage/')
 @login_required
 def adminPage():
-    return render_template('admin.html',Personne=get_personne(current_user.id))
+    return render_template('admin.html',Personne=get_personne(current_user.id),title = "Admin")
