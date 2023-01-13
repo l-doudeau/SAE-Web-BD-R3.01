@@ -393,10 +393,8 @@
             info: false,
             "searching": false,
       });
-        const container = document.getElementById("modalAjouterReservation");
-        const modal = new bootstrap.Modal(container);
         document.getElementById("ajouterReservation").addEventListener("click", function () {
-            modal.show();
+            $("#modalAjouterReservation").modal("show")
         });
         document.getElementById("addReservation").addEventListener("click", function () {
             var prenom = $("#PersonneReservation").val()
@@ -411,31 +409,35 @@
 
             if(prenom != "" && nom != "" && poids != ""&& isNumeric(poids) && adresseemail != "" && adresse != "" && codepostal != ""&& isNumeric(codepostal) && ville != "" && tel != ""&& isNumeric(tel)&& datepicker._value != null){
 
-                modal.hide();
+                $("#modalAjouterReservation").modal("hide")
             }
       });
   
         
         $("#addReservation").on("click",function(){
+            
             var personne = $("#PersonneReservation").val()
-            var cours = $("#CoursReservation").val()
-            var poney = $("#PoneyReservation").val()
-            var duree = $("#DuréeReservation").val()
+            var cours = $("#CoursReservation").val().split(' ')[0]
+            var poney = $("#PoneyReservation").val().split(' ')[0]
             var cotise = $("#CotiseReservation").val() == "Oui"?true:false;
             
             personne == ""?$("#PersonneReservation").css("border","1px solid red"):$("#PersonneReservation").css("border","");
             cours == ""?$("#CoursReservation").css("border","1px solid red"):$("#CoursReservation").css("border","");
-            var datepicker = $("#DateReservation").data("kendoDatePicker");
-            datepicker._value == null?$('#DateReservation').css("border","1px solid red"):$("#DateReservation").css("border","");
             poney == ""?$("#PoneyReservation").css("border","1px solid red"):$("#PoneyReservation").css("border","");
-            duree == ""?$("#DuréeReservation").css("border","1px solid red"):$("#DuréeReservation").css("border","");
 
-            if(personne != "" && cours != "" && poney != ""&& duree != "" && cotise != "" && datepicker._value != null){
+
+            
+            console.log(personne != "")
+            console.log(cours != "")
+            console.log(poney != "")
+            console.log(cotise != "")
+
+            if(personne != "" && cours != "" && poney != "" && $("#CotiseReservation").val() != ""){
+                console.log("hey")
                 $.ajax({
                 url:'{{url_for("AddReservation")}}',
                 type:'POST',
                 data:{
-                    dateReservation : datepicker._value.toLocaleDateString(),
                     personne : personne,
                     cours : cours,
                     poney : poney,
@@ -443,15 +445,18 @@
                     },
             success: function(response){ 
                 if(response == "true"){
-
+                    $("#modalAjouterReservation").modal("hide")
                     table.ajax.reload();
                 }else{
                     alert(response)
                 }
 
-                } 
+                }
+                
             });
-        }     
+        }else{
+            console.log("hey2")
+        }
         });
 
        
@@ -481,9 +486,9 @@
             $.ajax({
                 url:'{{url_for("DeleteReservation")}}',
                 type:'POST',
-                data:{jmahms:$(row)[0].childNodes[0].innerHTML,
+                data:{
                     id:$(row)[0].childNodes[7].innerHTML,
-                    idpo:$(row)[0].childNodes[8].innerHTML},
+                    idc:$(row)[0].childNodes[8].innerHTML},
             success: function(response){
                 if(response == "true"){
                     table.ajax.reload();
@@ -514,7 +519,6 @@
                     idpo : table.row($(checkbox).parents()).data()["idpo"]
                 },
         success: function(response){
-            console.log(response)
                 if(response != "true"){
                     alert(response)
             }   
