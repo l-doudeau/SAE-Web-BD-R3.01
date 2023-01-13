@@ -1,5 +1,5 @@
 
-    <ul style="display: flex; align-items: center; width: 100%; margin-top : 5%;">
+    <ul style="display: flex; align-items: center; width: 100%; margin-top : 5%;" id="footer_toutes_img">
         <li>
             <img src="{{ url_for('static', filename='img/sologne.png') }}" alt="sologne" style="margin-top: 7%;margin-bottom: 7%;">
         </li>
@@ -19,8 +19,12 @@
 
 
 <style>
+    #footer_toutes_img{
+        background-color: #d4fdda;
+        margin-bottom: 0;
+    }
     ul img{
-        width: 60%;
+        width: 40%;
     }
     li{
         list-style: none;
