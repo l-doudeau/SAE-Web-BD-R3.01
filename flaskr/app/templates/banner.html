@@ -53,6 +53,30 @@
     header a:hover{
         color: rgb(90, 90, 90);
     }
+    li {
+    margin-bottom: 10px;
+}
+
+    .cool-link {
+        display: inline-block;
+        color: #000;
+        text-decoration: none;
+    }
+
+    .cool-link::after {
+        content: '';
+        display: block;
+        width: 0;
+        height: 2px;
+        background: #000;
+        transition: width .3s;
+    }
+
+    .cool-link:hover::after {
+        width: 100%;
+        transition: width .3s;
+    }
+
 </style>
 <header>
     <div class="container-fluid">
@@ -61,16 +85,16 @@
                 <nav style="display: flex;align-items: center;height: 100%">
                     <ul style="display: flex;align-items: center; border-right: solid 1px;margin:0;height: 70%;width: max-content;" id="ulnav">
                         <li>
-                            <a id="Acceuil" href="{{url_for('index')}}">Acceuil</a>
+                            <a id="Acceuil" class="cool-link" href="{{url_for('index')}}">Acceuil</a>
                         </li>
                         <li>
-                            <a  id="Cours" href="{{url_for('ReserverCours')}}">Cours</a>
+                            <a  id="Cours" class="cool-link" href="{{url_for('ReserverCours')}}">Cours</a>
                         </li>
                         <li>
-                            <a id="Compétition"  href="">Compétition</a>
+                            <a id="Compétition" class="cool-link" href="">Compétition</a>
                         </li>
                         <li>
-                            <a id="Info"  href="">Plus d'info</a>
+                            <a id="Info" class="cool-link" href="">Plus d'info</a>
                         </li>
                     </ul>
                 </nav>
@@ -105,7 +129,7 @@ if("{{Personne.nomp}}" != ""){
         data:{id : "{{Personne.id}}}"},
         success:function(response){
             if(response == "yes"){
-                $("#ulnav").append("<li><a id='Admin'href={{url_for('adminPage')}}>Admin</a></li>")
+                $("#ulnav").append("<li><a id='Admin' class='cool-link' href={{url_for('adminPage')}}>Admin</a></li>")
             }
         }
     })
