@@ -53,32 +53,111 @@ db.metadata.clear()
 init_db()
 
 def get_personne(id):
+    """
+    Il renvoie un objet personne de la base de données, étant donné un identifiant
+    
+    :param id: L'identifiant de la personne que vous souhaitez obtenir
+    :return: A Personne object
+    """
     return Personne.query.get(int(id))
+
 def get_cours(id):
+    """
+    Il prend un identifiant comme argument et renvoie un objet Cours avec cet identifiant
+    
+    :param id: L'identifiant du cours que vous souhaitez obtenir
+    :return: Un seul objet Cours
+    """
     return Cours.query.get(int(id))
+
+
 def get_client(id):
+    """
+    Il renvoie un objet client de la base de données, étant donné l'identifiant du client
+    
+    :param id: L'identifiant du client à obtenir
+    :return: Un objet Client
+    """
+
     return Client.query.get(id)
+
+
+
 def get_poney(id):
+    """
+    Il retourne un poney
+    
+    :param id: L'identifiant du poney que vous souhaitez obtenir
+    :return: Un objet poney
+    """
     return Poney.query.get(id)
 
 def get_moniteur(id):
+    """
+    Il renvoie un objet moniteur de la base de données, étant donné l'identifiant du moniteur
+    
+    :param id: l'identifiant du moniteur
+    :return: A Moniteur object
+    """
+
     return Moniteur.query.get(id)
+
+def place_libre(id):
+    c = Cours.query.get(id)
+    if(c.typec == "Collectif"):
+        if(len(Reserver.query.filter(Reserver.idc == id).all()) == 10):
+            return False
+    else:
+        if(len(Reserver.query.filter(Reserver.idc == id).all()) == 1):
+            return False
+    return True
+
 def get_personne_email(email):
+    """
+    Il renvoie le premier objet personne dont l'adresse email est égale au paramètre email
+    
+    :param email: l'adresse e-mail de la personne que vous souhaitez obtenir
+    :return: A Personne object
+    """
     return Personne.query.filter(Personne.adressemail == email).first()
 
 # des que l'on fait une jointure avec d'autre tables, on a soit pas les infos soit avec le add_columns des tuples et on peut plus faire ligne.id par exemple
 
 def get_poneys_possible(cours,idpersonne):
+    """
+    Il renvoie une liste de poneys qui ne sont pas réservés pour un cours donné
+    
+    :param cours: le cours à réserver
+    :param idpersonne: l'identifiant de la personne qui effectue la réservation
+    :return: Une liste de poneys qui ne sont pas réservés pour la date et l'heure données.
+    """
+    personne = Personne.query.get(idpersonne)
     poneys = Poney.query.all()
     reservations = Reserver.query.all()
     for r in reservations:
         date_fin_plus_repos = r.cours.jmahms+timedelta(hours=3+r.cours.duree.hour)
         if r.cours.jmahms.date() == cours.jmahms.date() and r.cours.jmahms <= cours.jmahms <= date_fin_plus_repos:
             poneys.remove(r.poney)
-    
-    return poneys
+    poneys2 = poneys.copy()
+    for p in poneys:
+        if p.poidssup<personne.poids:
+            poneys2.remove(p)
+
+    return poneys2
 
 def get_info_all_moniteur(id,nom,prenom,naissance,telephone,adresseEmail):
+    """
+    Il prend un tas de chaînes, et si elles ne sont pas vides, il filtre la requête par eux
+    
+    :param id: entier
+    :param nom: Chaîne
+    :param prenom: "",
+    :param naissance: "01/01/2000"
+    :param telephone: "0"
+    :param adresseEmail: "test@test.com"
+    :return: Un objet de requête.
+    """
+
     res = Moniteur.query
     if(id!= "" and id != "0"):
         res = res.filter(Moniteur.id == id)
@@ -103,6 +182,18 @@ def get_info_all_moniteur(id,nom,prenom,naissance,telephone,adresseEmail):
     return res
 
 def get_info_all_clients(id,nom,prenom,naissance,telephone,adresseEmail,a_paye):
+    """
+    Il prend un tas de paramètres, puis les utilise pour filtrer une requête
+    
+    :param id: entier
+    :param nom: Chaîne
+    :param prenom: "",
+    :param naissance: date de naissance
+    :param telephone: "0"
+    :param adresseEmail: "test@test.com"
+    :param a_paye: une chaîne qui peut être "Oui" ou "Non"
+    :return: Un objet requête
+    """
     res = Client.query
     if(id!= "" and id != "0"):
         res = res.filter(Client.id == id)
@@ -133,6 +224,12 @@ def get_info_all_clients(id,nom,prenom,naissance,telephone,adresseEmail,a_paye):
     return res
 
 def get_place(cours):
+    """
+    > Obtenir le nombre de places disponibles pour un cours donné
+    
+    :param cours: le cours
+    :return: Le nombre de places disponibles pour un cours.
+    """
     res = Reserver.query
     reservations = res.filter(Reserver.idc == cours.idc).all()
     
@@ -143,6 +240,15 @@ def get_place(cours):
     return max-len(reservations)
 
 def get_all_cours_a_reserver(id,typeActivite,dateR):
+    """
+    Il renvoie tous les cours qui ne sont pas réservés par l'utilisateur avec l'identifiant donné, et
+    qui sont du type donné et qui sont postérieurs à la date donnée
+    
+    :param id: l'identifiant de l'utilisateur
+    :param typeActivite: le type d'activité
+    :param dateR: la date de la réservation
+    :return: Une liste d'objets Cours
+    """
     reservation = Reserver.query.filter(Reserver.id == id).all()
     res = Cours.query.filter(Cours.jmahms > datetime.now())
     if(typeActivite != ""):
@@ -162,6 +268,15 @@ def get_all_cours_a_reserver(id,typeActivite,dateR):
     return cours
 
 def get_all_mes_reservations(id, typeActivite, date):
+    """
+    Il renvoie toutes les réservations d'un utilisateur, étant donné un type d'activité et une date
+    
+    :param id: l'identifiant de l'utilisateur
+    :param typeActivite: le type d'activité (ex: "Yoga")
+    :param date: une chaîne au format jj/mm/aaaa
+    :return: Une liste d'objets Cours
+    """
+
     reservation = Reserver.query.filter(Reserver.id == id).all()
     res = Cours.query.filter(Cours.jmahms > datetime.now())
     if(typeActivite != ""):
@@ -181,6 +296,17 @@ def get_all_mes_reservations(id, typeActivite, date):
     return mesReservation
     
 def get_info_all_personnes(id,nom,prenom,naissance,adresseEmail,telephone):
+    """
+    Il filtre la table Personne en fonction des paramètres qui lui sont transmis.
+    
+    :param id: "0"
+    :param nom: "",
+    :param prenom: "",
+    :param naissance: "01/01/2000"
+    :param adresseEmail: "test@test.com"
+    :param telephone: "0"
+    :return: Un objet de requête.
+    """
     res = Personne.query
     if(id!= "" and id != "0"):
         res = res.filter(Personne.id == id)
@@ -204,6 +330,13 @@ def get_info_all_personnes(id,nom,prenom,naissance,adresseEmail,telephone):
     return res
 
 def get_info_all_poney(id,nom,poids):
+    """
+    Il prend trois paramètres et renvoie un objet de requête
+    
+    :param id: l'id du poney
+    :param nom: le nom du poney
+    :param poids: masse
+    """
     res = Poney.query
     if(id != ""and id != "0"):
         res = res.filter(Poney.idpo == id)
@@ -213,7 +346,20 @@ def get_info_all_poney(id,nom,poids):
     if(poids != "" and poids != "0"):
         res = res.filter(Poney.poidssup > poids)
     return res
+
+
 def get_info_all_cours(idc,nomc,type,prix,nomMoniteur,jmahms,duree):
+    """
+    Cela prend un tas de paramètres, et s'ils ne sont pas vides, cela ajoute un filtre à la requête
+    
+    :param idc: l'identifiant du cours
+    :param nomc: nom du cours
+    :param type: type de cours
+    :param prix: le prix du cours
+    :param nomMoniteur: le nom de l'instructeur
+    :param jmahms: "01/01/2020 00:00"
+    :param duree: Durée du cours
+    """
     res = Cours.query
     if(idc != ""  and idc != "0"):
         res = res.filter(Cours.idc == idc)
@@ -244,7 +390,20 @@ def get_info_all_cours(idc,nomc,type,prix,nomMoniteur,jmahms,duree):
         res =  res.filter(Cours.duree == duree)
     
     return res
+
+
 def get_info_all_reservations(dateReservation,idp,idc,idpo,duree,a_cotise):
+    """
+    Il renvoie toutes les réservations qui correspondent aux critères donnés
+    
+    :param dateReservation: une chaîne au format "jj/mm/aaaa hh:mm"
+    :param idp: identifiant de la personne qui a effectué la réservation
+    :param idc: identifiant du client
+    :param idpo: identifiant de la piscine
+    :param duree: Durée du cours
+    :param a_cotise: une valeur booléenne
+    :return: Une liste d'objets Reserver.
+    """
     res = Reserver.query
     if(dateReservation != ""):
         date = dateReservation.split(' ')[0]
@@ -278,8 +437,20 @@ def get_info_all_reservations(dateReservation,idp,idc,idpo,duree,a_cotise):
 
 
 def get_moniteur(id):
+    """
+    Il renvoie le premier moniteur avec l'identifiant donné
+    
+    :param id: l'identifiant du moniteur
+    :return: A Moniteur object
+    """
     return Moniteur.query.filter(Moniteur.id == id).first()
 def get_client(id):
+    """
+    Il renvoie le premier client avec l'identifiant donné.
+    
+    :param id: L'identifiant du client à obtenir
+    :return: Un objet requête
+    """
     return Client.query.filter(Client.id == id).first()
 
 def deleteclient(id):
@@ -324,6 +495,13 @@ def deletePoney(id):
         db.session.rollback()
         return False
 def update_client(id, cotisation):
+    """
+    Il met à jour la cotisation d'un client avec l'identifiant donné
+    
+    :param id: l'identifiant du client
+    :param cotisation: la nouvelle valeur de cotisation
+    :return: La valeur de retour est une représentation sous forme de chaîne de l'exception.
+    """
     c = Client.query.get(id)
     c.cotisation = cotisation
     try : 
@@ -333,7 +511,17 @@ def update_client(id, cotisation):
         db.session.rollback()
         return repr(e)
     
+
 def update_reservation(id,idc,idpo,est_paye):
+    """
+    Il prend 3 paramètres et renvoie une valeur booléenne
+    
+    :param id: l'identifiant de la réservation
+    :param idc: identifiant du client
+    :param idpo: identifiant du poste
+    :param est_paye: est une valeur booléenne
+    :return: La valeur de retour est une représentation sous forme de chaîne de l'exception.
+    """
     reservation = Reserver.query.filter(Reserver.id == id and Reserver.idc == idc and Reserver.idpo == idpo).first()
     reservation.a_paye = True if est_paye == "true" else False
     try : 
@@ -345,6 +533,12 @@ def update_reservation(id,idc,idpo,est_paye):
         return repr(e)
     
 def isAdmin(id):
+    """
+    Si l'utilisateur est un administrateur, renvoie True, sinon renvoie False
+    
+    :param id: L'identifiant de l'utilisateur
+    :return: La valeur de retour est un booléen.
+    """
     a = Admin.query.get(id)
     return a != None
 
@@ -394,6 +588,14 @@ def deletecours(idc):
     
     
 def delete_personne(id):
+    """
+    Si la personne est un client, supprimez le client, si la personne est un moniteur, supprimez tous
+    les cours qu'il enseigne, puis supprimez le moniteur, puis supprimez la personne
+    
+    :param id: l'id de la personne à supprimer
+    :return: La valeur de retour est une représentation sous forme de chaîne de l'exception.
+    """
+    print(id)
     personne = Personne.query.get(id)
     client = Client.query.filter(Client.id == id).first()
     moniteur = Moniteur.query.filter(Moniteur.id == id).first()
@@ -420,13 +622,32 @@ def delete_personne(id):
     
 
 def get_max_id_personne():
+    """
+    Elle renvoie la valeur maximale de la colonne id de la table Personne
+    :return: La valeur maximale de l'identifiant dans la table Personne.
+    """
     return db.session.query(func.max(Personne.id)).first()[0]
 
 def get_max_id_cours():
+    """
+    Elle renvoie la valeur maximale de la colonne idc de la table Cours
+    :return: La valeur idc maximale dans la table Cours.
+    """
     return db.session.query(func.max(Cours.idc)).first()[0]
 def get_max_id_poney():
+    """
+    Il renvoie l'identifiant maximum de la table Poney
+    :return: L'identifiant maximum de la table Poney.
+    """
     return db.session.query(func.max(Poney.idpo)).first()[0]
 def modifier_Personne(personne):
+    """
+    Il prend un objet personne, trouve la personne dans la base de données et met à jour la base de
+    données avec les nouvelles valeurs
+    
+    :param personne: 
+    :return: La valeur de retour est une représentation sous forme de chaîne de l'exception.
+    """
     p = Personne.query.get(personne.id)
     p.adressemail = personne.adressemail
     p.prenomp =  personne.prenomp
@@ -447,6 +668,13 @@ def modifier_Personne(personne):
         return repr(e)
 
 def modifier_poney(poney):
+    """
+    Il prend un objet Poney comme argument, obtient l'objet Poney de la base de données avec le même
+    identifiant, puis met à jour l'objet de base de données avec les valeurs de l'argument
+    
+    :param poney: l'objet qui contient les données à modifier
+    :return: La valeur de retour est une représentation sous forme de chaîne de l'objet exception.
+    """
     po = Poney.query.get(poney.idpo)
     po.nomp = poney.nomp
     po.poidssup = poney.poidssup
@@ -460,6 +688,11 @@ def modifier_poney(poney):
         return repr(e)
 
 def modifier_cours(cours):
+    """
+    Il prend un objet Cours comme argument et met à jour la base de données avec les nouvelles valeurs
+    
+    :param cours: l'objet qui contient les nouvelles données
+    """
     c = Cours.query.get(cours.idc)
     c.nomc = cours.nomc
     c.descc = cours.descc
@@ -530,8 +763,7 @@ def ajout_reservation(id,idpo,idc,a_paye):
     :param duree: time
     :param a_paye: booléen
     """
-    print(idpo)
-    print(id)
+
     reservation = Reserver(id,idc,idpo,a_paye)
     db.session.add(reservation)
     try:
@@ -611,10 +843,24 @@ def delete_moniteur(id):
     
     
 def ajoute_personne(nomp, prenomp, ddn, poids, adressemail, adresse, code_postal, ville, numerotel) : 
+    """
+    Il ajoute une nouvelle personne à la base de données
+    
+    :param nomp: nom de famille
+    :param prenomp: chaîne
+    :param ddn: date de naissance
+    :param poids: masse
+    :param adressemail: vachar(50)
+    :param adresse: chaîne
+    :param code_postal: '75000'
+    :param ville: vachar(50)
+    :param numerotel: +33 6 12 34 56 78
+    :return: L'identifiant de la personne ajoutée à la base de données.
+    """
     idp = get_max_id_personne() +1
     mdp = token_urlsafe(6)
     liste = ddn.split("/")
-    date_naissance = datetime.date(int(liste[2]),int(liste[1]),int(liste[0]))
+    date_naissance = date(int(liste[2]),int(liste[1]),int(liste[0]))
     personne = Personne(idp, nomp, prenomp, date_naissance, poids, adressemail, adresse, code_postal, ville, numerotel, mdp)
     db.session.add(personne)
     try :

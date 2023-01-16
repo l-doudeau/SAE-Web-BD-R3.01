@@ -43,7 +43,6 @@ def login():
             else:
                 return render_template("login.html",error="Email ou mot de passe incorrect",title="Login")
         except(KeyError):
-            print("salut")
             return render_template("login.html",error="Email ou mot de passe incorrect",title="Login")
     return render_template("login.html",title="Login")
 
@@ -60,7 +59,6 @@ def Clients():
 def Moniteurs():
     if(isAdmin(current_user.id)):
 
-        print(login_manager.login_message + "\n")
         return render_template('gerer_moniteur.html',Personne=get_personne(current_user.id),title="Moniteurs")
     return render_template("index.html",Personne=get_personne(current_user.id),title="Acceuil")
 
@@ -120,14 +118,17 @@ def Reservations():
 
 @app.route("/ReserverCours/<id>")
 @login_required
-def reserverCours(id):
+def reserverUnCours(id):
     if(get_client(current_user.id) != None):
         if(request.method == "POST"):
             idp = request.form["id"]
             po = get_poney(idp)
         else:
             po = Poney("","","","")
-                
+        if(not place_libre(id)):
+            return render_template("index.html",Personne=get_personne(current_user.id),title="Acceuil")
+
+
         return render_template("ReserverLeCours.html",Personne=get_personne(current_user.id),
                                             Cours = get_cours(id),
                                             Poneys = get_poneys_possible(get_cours(id),current_user.id),
@@ -242,7 +243,6 @@ def data_reservations():
     idc = request.form["idc"]
     duree = request.form["duree"]
     a_paye = request.form["a_paye"]
-    print(request.form)
 
     lignes = get_info_all_reservations(jmahms,id,idc,idpo,duree,a_paye)
     
@@ -368,7 +368,7 @@ def PersonneDetail(id):
 @login_required
 def PoneyDetail(id):
     if(isAdmin(current_user.id)):
-        return render_template("poneyDetails.html",Poney = get_poney(id),Personne=get_personne(current_user.id),title =get_poney(id).nomc )
+        return render_template("poneyDetails.html",Poney = get_poney(id),Personne=get_personne(current_user.id),title =get_poney(id).nomp )
     return render_template("index.html",Personne=get_personne(current_user.id),title = "Acceuil")
 
 @app.route("/ReserverCours")
@@ -381,7 +381,7 @@ def ReserverCours():
 @login_required
 def mesReservations():
     
-    return render_template("mesReservationsCours.html",Personne=get_personne(current_user.id))
+    return render_template("mesReservationsCours.html",Personne=get_personne(current_user.id),title="Mes reservations")
 
 @app.route("/Cours/<id>",methods=["POST","GET"])
 @login_required
@@ -395,7 +395,6 @@ def CoursDetails(id):
             
         for moniteur in get_info_all_moniteur("","","","","",""):
             Moniteurs.append(str(moniteur.id) + " " + moniteur.personne.nomp + " " + moniteur.personne.prenomp)
-        print(get_moniteur(idm))
         return render_template("coursDetails.html",Cours = get_cours(id),Moniteurs = Moniteurs,Moniteur = get_moniteur(idm),Personne=get_personne(current_user.id),title = get_cours(id).nomc)
     return render_template("index.html",Personne=get_personne(current_user.id),title = "Acceuil")
 
@@ -534,7 +533,6 @@ def AddPoney():
     return "true" if save == True else save
 @app.route('/AddReservation',methods=['POST'])
 def AddReservation():
-    print(request.form)
     id = request.form["personne"]
     idpo = request.form["poney"]
     idc = request.form["cours"]
