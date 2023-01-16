@@ -9,7 +9,7 @@
     object-fit: cover;
 }
 </style>
-<div class="container-fluid" style="margin: 2em 0;">
+<div class="container-fluid" style="min-height:65vh;margin: 2em 0;">
     <div class="row" style="height: 100%;">
         <div class="col-md-4" style="display:flex;align-items:center;">
             <img src="{{Cours.url_image}}" alt="Image Cours" style="width: 100%;">
@@ -24,6 +24,8 @@
                 <div class="row" style="text-align: left;">
                     <label style="font-size: 1.4em;font-weight: 600;">Date du cours : </label>
                     <p id="dateCours"></p>
+                    <label style="font-size: 1.4em;font-weight: 600;">Moniteur du cours : </label>
+                    <p>{{PersonneMoniteur.nomp}} {{PersonneMoniteur.prenomp}}</p>
                 </div>
                 <div class="row" style="text-align: left;">
                     <label style="font-size: 1.4em;font-weight: 600;">Veuillez selectionner votre poney : </label>

@@ -49,6 +49,9 @@
             </div>
             <div class="row">
                 <input id="idPersonne"/>
+            </div> 
+            <div class="row">
+                <input id="RolePersonne"/>
             </div>
         </div>
     </div>
@@ -128,6 +131,26 @@
             value: '{{Personnes.id}}',
             enable: false,
         });
+
+        $("#RolePersonne").kendoComboBox({
+            label:"Role",
+            dataTextField: "text",
+            placeholder: "Entrer le rôle d'une personne",
+
+            dataValueField: "value",
+            dataSource: [
+                { text: "", value: "1" },
+                { text: "Moniteur", value: "2" },
+                { text: "Client", value: "3" },
+                { text: "Moniteur Client", value: "3" },
+                
+            ]
+        });
+
+
+        var combobox = $("#RolePersonne").data("kendoComboBox");
+        combobox.value('{{Role}}');
+        
         $("#NomPersonne").kendoTextBox({
             label: "Nom",
             value: '{{Personnes.nomp}}',
@@ -176,6 +199,7 @@
             var id = $("#idPersonne").val()
             var password = $("#PasswordPersonne").val()
             var email = $("#EmailPersonne").val()
+            var role = $("#RolePersonne").data("kendoComboBox").text() 
             $.ajax({
                 url : '{{url_for("UpdatePersonne")}}',
                 data:{
@@ -190,6 +214,7 @@
                     "id":id,
                     "password":password,
                     "email":email,
+                    "role":role,
                 
                 },
                 type:'POST',

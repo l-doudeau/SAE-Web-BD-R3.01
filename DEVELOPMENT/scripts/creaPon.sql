@@ -96,20 +96,26 @@ CREATE TABLE ancien_personne (
   ville VARCHAR(20),
   numerotel VARCHAR(20),
   mdp VARCHAR(42),
-  PRIMARY KEY (id)
+  dateModif datetime,
+  user VARCHAR(50),
+  PRIMARY KEY (id,dateModif)
 ) ENGINE=InnoDB DEFAULT CHARSET=UTF8MB4;
 
 
 CREATE TABLE ancien_moniteur (
   id int,
-  PRIMARY KEY (id)
+  dateModif datetime,
+  user VARCHAR(50),
+  PRIMARY KEY (id,dateModif)
 ) ENGINE=InnoDB DEFAULT CHARSET=UTF8MB4;
 
 
 CREATE TABLE ancien_client (
   id int,
   cotisationA boolean,
-  PRIMARY KEY (id)
+  dateModif datetime,
+  user VARCHAR(50),
+  PRIMARY KEY (id,dateModif)
 ) ENGINE=InnoDB DEFAULT CHARSET=UTF8MB4;  
 
 
@@ -122,7 +128,9 @@ CREATE TABLE ancien_cours (
   prix decimal(4.2),
   duree time,
   id int,
-  PRIMARY KEY (idc)
+  dateModif datetime,
+  user VARCHAR(50),
+  PRIMARY KEY (idc,dateModif)
 ) ENGINE=InnoDB DEFAULT CHARSET=UTF8MB4;
 
 
@@ -130,7 +138,9 @@ CREATE TABLE ancien_poney (
   idpo int,
   nomp VARCHAR(42),
   poidssup decimal(3.3),
-  PRIMARY KEY (idpo)
+  dateModif datetime,
+  user VARCHAR(50),
+  PRIMARY KEY (idpo,dateModif)
 ) ENGINE=InnoDB DEFAULT CHARSET=UTF8MB4;
 
 
@@ -139,7 +149,9 @@ CREATE TABLE ancien_reserver (
   idc int,
   idpo int,
   a_paye boolean,
-  PRIMARY KEY (idc, id, idpo)
+  dateModif datetime,
+  user VARCHAR(50),
+  PRIMARY KEY (idc, id, idpo,dateModif)
 ) ENGINE=InnoDB DEFAULT CHARSET=UTF8MB4;
 
 -- les contraintes
@@ -510,38 +522,38 @@ create trigger verifcoursPasCommenceUpdate before update on cours for each row
 
 create trigger ajouteTableAncienPersonne before delete on personne for each row
   begin
-    INSERT INTO ancien_personne(id, nomp, prenomp, ddn, poids, adressemail, adresse, code_postal, ville, numerotel, mdp)
-    VALUES (old.id, old.nomp, old.prenomp, old.ddn, old.poids, old.adressemail, old.adresse, old.code_postal, old.ville, old.numerotel, old.mdp);
+    INSERT INTO ancien_personne(id, nomp, prenomp, ddn, poids, adressemail, adresse, code_postal, ville, numerotel, mdp,dateModif,user)
+    VALUES (old.id, old.nomp, old.prenomp, old.ddn, old.poids, old.adressemail, old.adresse, old.code_postal, old.ville, old.numerotel, old.mdp,NOW(),CURRENT_USER());
   END |
 
 
 create trigger ajouteTableAncienClient before delete on client for each row
   begin
-      INSERT INTO ancien_client(id, cotisationA) VALUES(old.id, old.cotisationA);
+      INSERT INTO ancien_client(id, cotisationA,dateModif,user) VALUES(old.id, old.cotisationA,NOW(),CURRENT_USER());
   END |
 
 
 create trigger ajouteTableAncienMoniteur before delete on moniteur for each row
   begin
-      INSERT INTO ancien_moniteur(id) VALUES(old.id);
+      INSERT INTO ancien_moniteur(id,dateModif,user) VALUES(old.id,NOW(),CURRENT_USER());
   END |
 
 
 create trigger ajouteTableAnciencours before delete on cours for each row
   begin
-      INSERT INTO ancien_cours(idc,jmahms,duree, nomc, descc, typec, prix) VALUES(old.idc,old.jmahms,old.duree, old.nomc, old.descc, old.typec , old.prix);
+      INSERT INTO ancien_cours(idc,jmahms,duree, nomc, descc, typec, prix,dateModif,user) VALUES(old.idc,old.jmahms,old.duree, old.nomc, old.descc, old.typec , old.prix,NOW(),CURRENT_USER());
   END |
 
 
 create trigger ajouteTableAncienPoney before delete on poney for each row
   begin
-      INSERT INTO ancien_poney(idpo, nomp, poidssup) VALUES(old.idpo, old.nomp, old.poidssup);
+      INSERT INTO ancien_poney(idpo, nomp, poidssup,dateModif,user) VALUES(old.idpo, old.nomp, old.poidssup,NOW(),CURRENT_USER());
   END |
 
 
 create trigger ajouteTableAncienReserver before delete on reserver for each row
   begin
-      INSERT INTO ancien_reserver(id, idc, idpo, a_paye) VALUES(old.id, old.idc, old.idpo, old.a_paye);
+      INSERT INTO ancien_reserver(id, idc, idpo, a_paye,dateModif,user) VALUES(old.id, old.idc, old.idpo, old.a_paye,NOW(),CURRENT_USER());
   END |
 
 delimiter ;

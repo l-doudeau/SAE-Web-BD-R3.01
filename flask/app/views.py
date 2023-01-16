@@ -128,11 +128,12 @@ def reserverUnCours(id):
         if(not place_libre(id)):
             return render_template("index.html",Personne=get_personne(current_user.id),title="Acceuil")
 
-
+        cours = get_cours(id)
         return render_template("ReserverLeCours.html",Personne=get_personne(current_user.id),
                                             Cours = get_cours(id),
                                             Poneys = get_poneys_possible(get_cours(id),current_user.id),
                                             Poney = po,
+                                            PersonneMoniteur = get_moniteur(cours.id).personne,
                                             title="Reservation " + get_cours(id).nomc
                                             )
     return render_template("index.html",Personne=get_personne(current_user.id),title="Acceuil")
@@ -361,7 +362,16 @@ def data_personneCombo():
 @login_required
 def PersonneDetail(id):
     if(isAdmin(current_user.id)):
-        return render_template("personneDetail.html",Personnes = get_personne(id),Personne=get_personne(current_user.id),title=get_personne(id).nomp + " " + get_personne(id).prenomp)
+        role = ""
+        if get_moniteur(id) is not None : 
+            role = "Moniteur" 
+            if get_client(id) is not None:
+                role  +=  " Client"
+        elif get_client(id) is not None:
+            role = "Client"
+        else :
+            role = ""
+        return render_template("personneDetail.html",Personnes = get_personne(id),Personne=get_personne(current_user.id),title=get_personne(id).nomp + " " + get_personne(id).prenomp,Role = role)
     return render_template("index.html",Personne=get_personne(current_user.id),title = "Acceuil")
 
 @app.route('/Poney/<id>',methods=['POST',"GET"])
@@ -503,8 +513,22 @@ def UpdatePersonne():
     ville = request.form["ville"]
     tel = request.form["tel"]
     password = request.form["password"]
+    role = request.form["role"]
     p = Personne(id,nom,prenom,ddn,poids,email,adresse,code_postal,ville,tel,password)
     save = modifier_Personne(p)
+    if("Client" in role):
+        if(get_client(id) == None):
+            ajout_client(id,False)
+    elif(get_client(id) != None):
+        c = get_client(id)
+        db.session.delete(c)
+        db.session.commit()
+    if("Moniteur" in  role):
+        if(get_moniteur(id) == None):
+            ajoute_moniteur(id)
+    elif(get_moniteur(id) != None):
+        
+        print(delete_moniteur(id))
     return "true" if save == True else save
 
 @app.route('/Client/Update',methods=['POST'])

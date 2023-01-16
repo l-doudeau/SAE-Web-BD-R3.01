@@ -545,7 +545,6 @@
         $("#personnes").on("dblclick", "tr", function() {
             const id = $(row)[0].childNodes[0].innerHTML
             const url = '{{url_for("PersonneDetail",id="idPersonne")}}'.replace("idPersonne",id)
-            $("#loader-background").show()
             window.location.href = "/Personne/"+id; 
                
 
