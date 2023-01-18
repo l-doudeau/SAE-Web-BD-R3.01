@@ -12,8 +12,8 @@ from sqlalchemy import create_engine
 from sqlalchemy.ext.declarative import declarative_base
 
 #engine = create_engine('mysql+mysqlconnector://faucher:Thierry45.@servinfo-mariadb/DBfaucher', convert_unicode=True)
-engine = create_engine('mysql+mysqlconnector://root:root@localhost/GRAND_GALOP', convert_unicode=True)
-#engine = create_engine('mysql+mysqlconnector://doudeau:doudeau@servinfo-mariadb/DBdoudeau', convert_unicode=True)
+#engine = create_engine('mysql+mysqlconnector://root:root@localhost/GRAND_GALOP', convert_unicode=True)
+engine = create_engine('mysql+mysqlconnector://doudeau:doudeau@servinfo-mariadb/DBdoudeau', convert_unicode=True)
 #engine = create_engine('mysql+mysqlconnector://doudeau:doudeau@localhost/GRAND_GALOP', convert_unicode=True)
 
 db_session = scoped_session(sessionmaker(autocommit=False,
@@ -267,7 +267,7 @@ def get_all_cours_a_reserver(id,typeActivite,dateR):
             cours.remove(r.cours)
     return cours
 
-def get_all_mes_reservations(id, typeActivite, date):
+def get_all_mes_reservations(id, typeActivite, dateReservation):
     """
     Il renvoie toutes les réservations d'un utilisateur, étant donné un type d'activité et une date
     
@@ -281,11 +281,11 @@ def get_all_mes_reservations(id, typeActivite, date):
     res = Cours.query.filter(Cours.jmahms > datetime.now())
     if(typeActivite != ""):
         res = res.filter(Cours.typec == typeActivite)
-    if(date != ""):
-        jour = date.split("/")[0]
-        mois = date.split("/")[1]
-        annee = date.split("/")[2]
-        date1 = datetime.date(int(annee),int(mois),int(jour))
+    if(dateReservation != ""):
+        jour = dateReservation.split("/")[0]
+        mois = dateReservation.split("/")[1]
+        annee = dateReservation.split("/")[2]
+        date1 = date(int(annee),int(mois),int(jour))
         res = res.filter(Cours.jmahms > date1)
     cours = res.all()
     mesReservation = []

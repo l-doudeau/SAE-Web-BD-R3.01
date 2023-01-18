@@ -325,6 +325,7 @@ def data_mesCoursReservation():
     id = request.form["id"]
     typeActivite = request.form["typeActivite"]
     date = request.form["jma"]
+    print(date)
     infos = get_all_mes_reservations(id,typeActivite,date)
     for cours in infos:
         data["data"].append({
